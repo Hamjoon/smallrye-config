@@ -1,0 +1,182 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.microprofile.config.inject.ConfigMapping;
+import org.eclipse.microprofile.config.inject.ConfigProperties;
+import org.junit.Test;
+
+/**
+ * Unit tests for {@link ConfigMappings}.
+ * <p>
+ * The tests focus on the public static utility methods that can be exercised without requiring the full
+ * SmallRye configuration infrastructure.  All tests use only the classes, constructors and methods that are
+ * visible in the supplied source code and its public API.
+ */
+public class ConfigMappingsTest {
+
+    /* --------------------------------------------------------------------- */
+    /*  Helper types used for the {@code ConfigClass} factory tests          */
+    /* --------------------------------------------------------------------- */
+
+    @ConfigMapping(prefix = "interface.prefix")
+    interface DummyMapping {
+        // no members needed
+    }
+
+    @ConfigProperties(prefix = "class.prefix")
+    static class DummyProperties {
+        // no members needed
+    }
+
+    @ConfigProperties(prefix = ConfigProperties.UNCONFIGURED_PREFIX)
+    static class DummyUnconfiguredProperties {
+        // no members needed
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  Tests for the {@code prefix} helper method                           */
+    /* --------------------------------------------------------------------- */
+
+    @Test
+    public void testPrefixWithEmptyPrefixReturnsPath() {
+        assertEquals("my.path", ConfigMappings.prefix("", "my.path"));
+        // also when both are empty
+        assertEquals("", ConfigMappings.prefix("", ""));
+    }
+
+    @Test
+    public void testPrefixWithEmptyPathReturnsPrefix() {
+        assertEquals("my.prefix", ConfigMappings.prefix("my.prefix", ""));
+    }
+
+    @Test
+    public void testPrefixWithBracketedPathKeepsBracketDirectlyAfterPrefix() {
+        assertEquals("my.prefix[0]", ConfigMappings.prefix("my.prefix", "[0]"));
+    }
+
+    @Test
+    public void testPrefixWithNormalPathAddsDotSeparator() {
+        assertEquals("my.prefix.sub", ConfigMappings.prefix("my.prefix", "sub"));
+        // also when prefix already contains a dot
+        assertEquals("my.prefix.sub", ConfigMappings.prefix("my.prefix", "sub"));
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  Tests for {@code ConfigClass} static factories and contract methods  */
+    /* --------------------------------------------------------------------- */
+
+    @Test
+    public void testConfigClassFactoryWithExplicitPrefix() {
+        ConfigMappings.ConfigClass cc = ConfigMappings.ConfigClass.configClass(DummyProperties.class, "explicit.prefix");
+        assertEquals(DummyProperties.class, cc.getKlass());
+        assertEquals("explicit.prefix", cc.getPrefix());
+    }
+
+    @Test
+    public void testConfigClassFactoryFromInterfaceUsesConfigMappingAnnotation() {
+        ConfigMappings.ConfigClass cc = ConfigMappings.ConfigClass.configClass(DummyMapping.class);
+        assertEquals(DummyMapping.class, cc.getKlass());
+        assertEquals("interface.prefix", cc.getPrefix());
+    }
+
+    @Test
+    public void testConfigClassFactoryFromClassUsesConfigPropertiesAnnotation() {
+        ConfigMappings.ConfigClass cc = ConfigMappings.ConfigClass.configClass(DummyProperties.class);
+        assertEquals(DummyProperties.class, cc.getKlass());
+        assertEquals("class.prefix", cc.getPrefix());
+    }
+
+    @Test
+    public void testConfigClassFactoryFromClassWithUnconfiguredPrefixResultsInEmptyPrefix() {
+        ConfigMappings.ConfigClass cc = ConfigMappings.ConfigClass.configClass(DummyUnconfiguredProperties.class);
+        assertEquals(DummyUnconfiguredProperties.class, cc.getKlass());
+        assertEquals("", cc.getPrefix());
+    }
+
+    @Test
+    public void testConfigClassEqualsAndHashCodeContract() {
+        ConfigMappings.ConfigClass cc1 = ConfigMappings.ConfigClass.configClass(DummyProperties.class, "same.prefix");
+        ConfigMappings.ConfigClass cc2 = ConfigMappings.ConfigClass.configClass(DummyProperties.class, "same.prefix");
+        ConfigMappings.ConfigClass cc3 = ConfigMappings.ConfigClass.configClass(DummyProperties.class, "different.prefix");
+        ConfigMappings.ConfigClass cc4 = ConfigMappings.ConfigClass.configClass(DummyMapping.class, "same.prefix");
+
+        // reflexive
+        assertTrue(cc1.equals(cc1));
+
+        // symmetric & transitive
+        assertTrue(cc1.equals(cc2));
+        assertTrue(cc2.equals(cc1));
+        assertEquals(cc1.hashCode(), cc2.hashCode());
+
+        // inequality by prefix
+        assertFalse(cc1.equals(cc3));
+
+        // inequality by class
+        assertFalse(cc1.equals(cc4));
+
+        // null and different type
+        assertFalse(cc1.equals(null));
+        assertFalse(cc1.equals("some string"));
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  Tests for the registration helper methods                            */
+    /* --------------------------------------------------------------------- */
+
+    /**
+     * The {@code registerConfigMappings} and {@code registerConfigProperties} methods delegate
+     * to {@code mapConfiguration}.  When the supplied set is empty the delegation should be
+     * skipped, meaning the method must simply return without throwing any exception.
+     */
+    @Test
+    public void testRegisterConfigMappingsWithEmptySetDoesNotThrow() {
+        SmallRyeConfig config = new SmallRyeConfig();
+        Set<ConfigMappings.ConfigClass> emptySet = Collections.emptySet();
+        // No exception expected
+        ConfigMappings.registerConfigMappings(config, emptySet);
+    }
+
+    @Test
+    public void testRegisterConfigPropertiesWithEmptySetDoesNotThrow() {
+        SmallRyeConfig config = new SmallRyeConfig();
+        Set<ConfigMappings.ConfigClass> emptySet = Collections.emptySet();
+        // No exception expected
+        ConfigMappings.registerConfigProperties(config, emptySet);
+    }
+
+    /**
+     * When a non‑empty set is supplied the methods should still complete without throwing
+     * a {@link ConfigValidationException}.  The real mapping logic is exercised only
+     * indirectly via {@code SmallRyeConfigBuilder.withMapping(ConfigClass)} which accepts any
+     * {@code ConfigClass} instance.
+     */
+    @Test
+    public void testRegisterConfigMappingsWithNonEmptySetDoesNotThrow() {
+        SmallRyeConfig config = new SmallRyeConfig();
+        Set<ConfigMappings.ConfigClass> set = new HashSet<>();
+        set.add(ConfigMappings.ConfigClass.configClass(DummyProperties.class, "test.prefix"));
+        // No exception expected – any validation would be thrown as ConfigValidationException
+        ConfigMappings.registerConfigMappings(config, set);
+    }
+
+    @Test
+    public void testRegisterConfigPropertiesWithNonEmptySetDoesNotThrow() {
+        SmallRyeConfig config = new SmallRyeConfig();
+        Set<ConfigMappings.ConfigClass> set = new HashSet<>();
+        set.add(ConfigMappings.ConfigClass.configClass(DummyMapping.class, "test.prefix"));
+        // No exception expected – any validation would be thrown as ConfigValidationException
+        ConfigMappings.registerConfigProperties(config, set);
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  Note: The {@code getProperties} method requires the full SmallRye   */
+    /*  configuration infrastructure (ConfigMappingLoader, ConfigMapping    */
+    /*  Interface, etc.) which is outside the scope of these unit tests.   */
+    /*  Therefore it is not exercised here.                                 */
+    /* --------------------------------------------------------------------- */
+}

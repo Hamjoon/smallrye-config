@@ -1,0 +1,211 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.util.*;
+
+import org.eclipse.microprofile.config.inject.ConfigMapping;
+import org.eclipse.microprofile.config.inject.ConfigProperties;
+import org.junit.Test;
+
+/**
+ * Comprehensive JUnit‑4 test suite for {@link ConfigMappings}.
+ *
+ * <p>The tests focus on the public static helpers and the nested {@link ConfigMappings.ConfigClass}
+ * utility.  They avoid any mocking and rely only on the public API that is available in the
+ * source snippet and the listed dependency signatures.</p>
+ *
+ * <p>Typical use‑cases, edge‑cases and error scenarios are covered:</p>
+ * <ul>
+ *   <li>String prefix handling (empty prefix / path, array‑style paths).</li>
+ *   <li>Construction of {@code ConfigClass} from interfaces and classes.</li>
+ *   <li>Validation that illegal annotation combinations throw the expected {@code IllegalStateException}.</li>
+ *   <li>Equality and hash‑code contracts for {@code ConfigClass}.</li>
+ *   <li>Behaviour of {@code getProperties} and {@code propertyNamesMatcher} when the mapping
+ *       contains no properties.</li>
+ *   <li>Verification that the registration helpers execute without throwing when given
+ *       empty or non‑empty sets.</li>
+ * </ul>
+ */
+public class ConfigMappingsTest {
+
+    /* ---------------------------------------------------------------------- */
+    /*  Helper annotation‑based types used by the tests                         */
+    /* ---------------------------------------------------------------------- */
+
+    @ConfigMapping(prefix = "my.prefix")
+    interface EmptyMapping {
+        // No methods – the mapping has no properties.
+    }
+
+    @ConfigProperties(prefix = "my.props")
+    static class EmptyProperties {
+        // No fields – the mapping has no properties.
+    }
+
+    @ConfigMapping(prefix = "illegal")
+    static class IllegalMappingClass {
+        // This class is NOT an interface; using @ConfigMapping on a class is illegal.
+    }
+
+    @ConfigProperties(prefix = "illegal")
+    interface IllegalPropertiesInterface {
+        // This interface is NOT a class; using @ConfigProperties on an interface is illegal.
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  Tests for the private static prefix helpers                              */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testPrefixBothNonEmpty() {
+        assertEquals("base.sub", ConfigMappings.prefix("base", "sub"));
+    }
+
+    @Test
+    public void testPrefixEmptyPrefix() {
+        assertEquals("onlyPath", ConfigMappings.prefix("", "onlyPath"));
+    }
+
+    @Test
+    public void testPrefixEmptyPath() {
+        assertEquals("onlyPrefix", ConfigMappings.prefix("onlyPrefix", ""));
+    }
+
+    @Test
+    public void testPrefixArrayStylePath() {
+        assertEquals("list[0]", ConfigMappings.prefix("list", "[0]"));
+    }
+
+    @Test
+    public void testPrefixWithStringBuilderReuse() {
+        // The overload that receives a StringBuilder must behave identically.
+        StringBuilder sb = new StringBuilder("pre");
+        assertEquals("pre.suf", ConfigMappings.prefix("pre", "suf", sb));
+        // Ensure the builder was not polluted for a subsequent call.
+        sb.setLength(0);
+        sb.append("x");
+        assertEquals("x[1]", ConfigMappings.prefix("x", "[1]", sb));
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  Tests for ConfigClass construction and factories                         */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testConfigClassFromInterface() {
+        ConfigMappings.ConfigClass cfg = ConfigMappings.ConfigClass.configClass(EmptyMapping.class);
+        assertEquals(EmptyMapping.class, cfg.getType());
+        assertEquals("my.prefix", cfg.getPrefix());
+        // No properties – map should be empty.
+        assertTrue(cfg.getProperties().isEmpty());
+        assertTrue(cfg.getSecrets().isEmpty());
+    }
+
+    @Test
+    public void testConfigClassFromClass() {
+        ConfigMappings.ConfigClass cfg = ConfigMappings.ConfigClass.configClass(EmptyProperties.class);
+        assertEquals(EmptyProperties.class, cfg.getType());
+        assertEquals("my.props", cfg.getPrefix());
+        // No properties – map should be empty.
+        assertTrue(cfg.getProperties().isEmpty());
+        assertTrue(cfg.getSecrets().isEmpty());
+    }
+
+    @Test
+    public void testConfigClassEqualityAndHashCode() {
+        ConfigMappings.ConfigClass a = ConfigMappings.ConfigClass.configClass(EmptyMapping.class, "my.prefix");
+        ConfigMappings.ConfigClass b = ConfigMappings.ConfigClass.configClass(EmptyMapping.class, "my.prefix");
+        ConfigMappings.ConfigClass c = ConfigMappings.ConfigClass.configClass(EmptyMapping.class, "other.prefix");
+
+        assertEquals(a, b);
+        assertEquals(a.hashCode(), b.hashCode());
+
+        assertNotEquals(a, c);
+        assertNotEquals(a.hashCode(), c.hashCode());
+    }
+
+    @Test
+    public void testConfigClassFactoryRejectsIllegalMappingAnnotationOnClass() {
+        try {
+            ConfigMappings.ConfigClass.configClass(IllegalMappingClass.class);
+            fail("Expected IllegalStateException due to @ConfigMapping on a class");
+        } catch (IllegalStateException e) {
+            // The message comes from ConfigMessages.mappingAnnotationNotSupportedInClass
+            assertTrue(e.getMessage().contains("mappingAnnotationNotSupportedInClass"));
+        }
+    }
+
+    @Test
+    public void testConfigClassFactoryRejectsIllegalPropertiesAnnotationOnInterface() {
+        try {
+            ConfigMappings.ConfigClass.configClass(IllegalPropertiesInterface.class);
+            fail("Expected IllegalStateException due to @ConfigProperties on an interface");
+        } catch (IllegalStateException e) {
+            // The message comes from ConfigMessages.propertiesAnnotationNotSupportedInInterface
+            assertTrue(e.getMessage().contains("propertiesAnnotationNotSupportedInInterface"));
+        }
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  Tests for getProperties – empty mapping case                             */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetPropertiesEmptyMapping() {
+        ConfigMappings.ConfigClass cfg = ConfigMappings.ConfigClass.configClass(EmptyMapping.class);
+        Map<String, ConfigMappingInterface.Property> props = ConfigMappings.getProperties(cfg);
+        assertNotNull(props);
+        assertTrue("Properties map should be empty for a mapping with no methods", props.isEmpty());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  Tests for propertyNamesMatcher – empty mapping list                      */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testPropertyNamesMatcherWithNoProperties() {
+        List<ConfigMappings.ConfigClass> list = Collections.singletonList(
+                ConfigMappings.ConfigClass.configClass(EmptyMapping.class));
+        PropertyNamesMatcher matcher = ConfigMappings.propertyNamesMatcher(list);
+
+        // No property names were added, so any match should be false.
+        assertFalse(matcher.matches("any.name"));
+        assertFalse(matcher.matches("my.prefix"));
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  Tests for the registration helpers (they should not throw)             */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testRegisterConfigMappingsWithEmptySet() throws Exception {
+        // Build a minimal config instance.
+        SmallRyeConfig config = new SmallRyeConfigBuilder().build();
+        // Empty set – the method should simply return without error.
+        ConfigMappings.registerConfigMappings(config, Collections.emptySet());
+    }
+
+    @Test
+    public void testRegisterConfigMappingsWithNonEmptySet() throws Exception {
+        SmallRyeConfig config = new SmallRyeConfigBuilder().build();
+        Set<ConfigMappings.ConfigClass> set = new HashSet<>();
+        set.add(ConfigMappings.ConfigClass.configClass(EmptyMapping.class));
+        // The mapping contains no properties, but the registration flow must complete.
+        ConfigMappings.registerConfigMappings(config, set);
+    }
+
+    @Test
+    public void testRegisterConfigPropertiesWithEmptySet() throws Exception {
+        SmallRyeConfig config = new SmallRyeConfigBuilder().build();
+        ConfigMappings.registerConfigProperties(config, Collections.emptySet());
+    }
+
+    @Test
+    public void testRegisterConfigPropertiesWithNonEmptySet() throws Exception {
+        SmallRyeConfig config = new SmallRyeConfigBuilder().build();
+        Set<ConfigMappings.ConfigClass> set = new HashSet<>();
+        set.add(ConfigMappings.ConfigClass.configClass(EmptyProperties.class));
+        ConfigMappings.registerConfigProperties(config, set);
+    }
+}

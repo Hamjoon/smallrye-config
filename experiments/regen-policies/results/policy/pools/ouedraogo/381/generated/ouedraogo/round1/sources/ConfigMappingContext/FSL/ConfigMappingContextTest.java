@@ -1,0 +1,361 @@
+package io.smallrye.config;
+import io.smallrye.config.SmallRyeConfigBuilder.MappingBuilder;
+
+
+import static org.junit.Assert.*;
+
+import java.util.*;
+import java.util.function.*;
+
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Test;
+
+/**
+ * Unit tests for {@link ConfigMappingContext}.  The tests use a very small concrete
+ * implementation of {@link SmallRyeConfig} that supplies only the methods required by
+ * the {@code ConfigMappingContext} code paths exercised in the tests.
+ *
+ * No external mocking frameworks are used – all collaborators are plain Java objects.
+ */
+public class ConfigMappingContextTest {
+
+    /* -----------------------------------------------------------------------
+     * Helper classes used by the tests
+     * --------------------------------------------------------------------- */
+
+    /** Simple {@link Converter} that returns the supplied string unchanged. */
+    public static class IdentityStringConverter implements Converter<String> {
+        @Override
+        public String convert(String value) {
+            return value;
+        }
+    }
+
+    /** Simple {@link Converter} that parses an {@code Integer}. */
+    public static class IntegerConverter implements Converter<Integer> {
+        @Override
+        public Integer convert(String value) {
+            return Integer.valueOf(value);
+        }
+    }
+
+    /** Minimal {@link ConfigValue} implementation – only the methods used by the
+     *  {@code ConfigMappingContext.reportUnknown} path are needed. */
+    public static class SimpleConfigValue implements ConfigValue {
+        private final String name;
+        private final String value;
+        private final String sourceName;
+        private final int sourceOrdinal;
+        private final String location;
+
+        SimpleConfigValue(String name, String value, String sourceName, int sourceOrdinal, String location) {
+            this.name = name;
+            this.value = value;
+            this.sourceName = sourceName;
+            this.sourceOrdinal = sourceOrdinal;
+            this.location = location;
+        }
+
+        @Override public String getName() { return name; }
+        @Override public String getValue() { return value; }
+        @Override public String getSourceName() { return sourceName; }
+        @Override public int getSourceOrdinal() { return sourceOrdinal; }
+        @Override public String getLocation() { return location; }
+    }
+
+    /**
+     * Very small concrete {@link SmallRyeConfig}.  Only the methods that are touched
+     * by the tests are overridden.  All other methods inherit the default (empty)
+     * behaviour from {@code SmallRyeConfig}.
+     */
+    public static class TestConfig extends SmallRyeConfig {
+
+        private final Map<String, String> values = new HashMap<>();
+        private final Set<String> propertyNames = new LinkedHashSet<>();
+
+        /** Register a property/value pair that the config will expose. */
+        public void add(String name, String value) {
+            values.put(name, value);
+            propertyNames.add(name);
+        }
+
+        @Override
+        public Iterable<String> getPropertyNames() {
+            return propertyNames;
+        }
+
+        @Override
+        public <T> T getValue(String name, Converter<T> converter) {
+            String raw = values.get(name);
+            if (raw == null) {
+                return null;
+            }
+            return converter.convert(raw);
+        }
+
+        @Override
+        public <T> Optional<T> getOptionalValue(String name, Converter<T> converter) {
+            return Optional.ofNullable(getValue(name, converter));
+        }
+
+        @Override
+        public <T> Converter<T> requireConverter(Class<T> type) {
+            // only String and Integer are needed for the tests
+            if (type == String.class) {
+                @SuppressWarnings("unchecked")
+                Converter<T> c = (Converter<T>) new IdentityStringConverter();
+                return c;
+            }
+            if (type == Integer.class) {
+                @SuppressWarnings("unchecked")
+                Converter<T> c = (Converter<T>) new IntegerConverter();
+                return c;
+            }
+            throw new IllegalArgumentException("Unsupported converter type: " + type);
+        }
+
+        @Override
+        public List<Integer> getIndexedPropertiesIndexes(String property) {
+            // for collection tests we always return two indexes: 0 and 1
+            return List.of(0, 1);
+        }
+
+        @Override
+        public ConfigValue getConfigValue(String name) {
+            // a dummy location is sufficient for the tests
+            return new SimpleConfigValue(name, values.get(name), null, 0, "dummyLocation");
+        }
+
+        // The following methods are not required for the current test suite,
+        // but they must exist because the real class declares them.
+        @Override public List<String> getIndexedProperties(String property) { return List.of(); }
+        @Override public Map<String, String> getMapKeys(String name) { return Collections.emptyMap(); }
+        @Override public Map<String, String> getMapIndexedKeys(String name) { return Collections.emptyMap(); }
+        @Override public <K, V> Map<K, V> getValues(String name, Converter<K> keyConverter,
+                                                   Converter<V> valueConverter,
+                                                   IntFunction<Map<K, V>> mapFactory) { return Collections.emptyMap(); }
+        @Override public <K, V, C extends Collection<V>> Map<K, C> getValues(String name,
+                Converter<K> keyConverter, Converter<V> valueConverter,
+                IntFunction<Map<K, C>> mapFactory, IntFunction<C> collectionFactory) { return Collections.emptyMap(); }
+        @Override public <T, C extends Collection<T>> C getValues(String name, Converter<T> converter,
+                IntFunction<C> collectionFactory) { return null; }
+        @Override public <T, C extends Collection<T>> C getOptionalValues(String name,
+                Converter<T> converter, IntFunction<C> collectionFactory) { return null; }
+        @Override public <T, C extends Collection<T>> Optional<C> getIndexedOptionalValues(String name,
+                Converter<T> converter, IntFunction<C> collectionFactory) { return Optional.empty(); }
+        @Override public <K, V> Optional<Map<K, V>> getOptionalValues(String name,
+                Converter<K> keyConverter, Converter<V> valueConverter) { return Optional.empty(); }
+        @Override public <K, V> Optional<Map<K, V>> getOptionalValues(String name,
+                Converter<K> keyConverter, Converter<V> valueConverter,
+                IntFunction<Map<K, V>> mapFactory) { return Optional.empty(); }
+        @Override public <K, V, C extends Collection<V>> Optional<Map<K, C>> getOptionalValues(String name,
+                Converter<K> keyConverter, Converter<V> valueConverter,
+                IntFunction<Map<K, C>> mapFactory, IntFunction<C> collectionFactory) { return Optional.empty(); }
+        @Override public <T> T getConfigMapping(Class<T> type) { return null; }
+        @Override public <T> T getConfigMapping(Class<T> type, String prefix) { return null; }
+        @Override public Iterable<String> getLatestPropertyNames() { return propertyNames; }
+        @Override public boolean isPropertyPresent(String name) { return values.containsKey(name); }
+        @Override public Iterable<ConfigSource> getConfigSources() { return Collections.emptyList(); }
+        @Override public Iterable<ConfigSource> getConfigSources(Class<?> type) { return Collections.emptyList(); }
+        @Override public Optional<ConfigSource> getConfigSource(String name) { return Optional.empty(); }
+        @Override public <T> T convert(String value, Class<T> asType) { return null; }
+        @Override public <T> Converter<T> getConverter$$bridge(Class<T> asType) { return null; }
+        @Override public <T> Optional<Converter<T>> getConverter(Class<T> asType) { return Optional.empty(); }
+        @Override public <T> T unwrap(Class<T> type) { return null; }
+        @Override public List<String> getProfiles() { return Collections.emptyList(); }
+        @Override public String getRawValue(String name) { return values.get(name); }
+    }
+
+    /** Dummy mapping interface – required only so that {@code ConfigMappingLoader} can
+     *  create a mapping object.  The interface is empty because the tests never call
+     *  any of its methods. */
+    public interface DummyMapping {}
+
+    /* -----------------------------------------------------------------------
+     * Test fixtures
+     * --------------------------------------------------------------------- */
+
+    /** Builds an empty {@link MappingBuilder}. */
+    private MappingBuilder emptyMappingBuilder() {
+        return new MappingBuilder(); // all collections are initially empty
+    }
+
+    /** Creates a {@link ConfigMappingContext} that uses the supplied {@code TestConfig}
+     *  and an empty {@link MappingBuilder}. */
+    private ConfigMappingContext newContext(TestConfig config) {
+        return new ConfigMappingContext(config, emptyMappingBuilder());
+    }
+
+    /* -----------------------------------------------------------------------
+     * Tests
+     * --------------------------------------------------------------------- */
+
+    @Test
+    public void testApplyPrefixAndToPropertyName() {
+        TestConfig config = new TestConfig();
+        config.add("my.prefix", "value");
+        ConfigMappingContext ctx = newContext(config);
+
+        // set a prefix – this will be returned when the name argument is empty
+        ctx.applyPrefix("my.prefix");
+
+        // use the static helper that goes through ConfigMappingContext.toPropertyName()
+        String result = ConfigMappingContext.ObjectCreator.stringValue(ctx, false, "");
+        assertEquals("value", result);
+    }
+
+    @Test
+    public void testApplyNamingStrategyAndBeanStyleGetters() {
+        TestConfig config = new TestConfig();
+        // property name after bean‑style conversion: getFoo -> foo
+        config.add("foo", "bar");
+        ConfigMappingContext ctx = newContext(config);
+
+        // switch to bean‑style getters
+        ctx.applyBeanStyleGetters(true);
+        // now request the property using a bean‑style name
+        String result = ConfigMappingContext.ObjectCreator.stringValue(ctx, true, "getFoo");
+        assertEquals("bar", result);
+    }
+
+    @Test
+    public void testGetConverterInstanceCaching() {
+        TestConfig config = new TestConfig();
+        ConfigMappingContext ctx = newContext(config);
+
+        // request the same converter class twice – must return the same instance
+        Converter<String> first = ctx.getConverterInstance(IdentityStringConverter.class);
+        Converter<String> second = ctx.getConverterInstance(IdentityStringConverter.class);
+        assertSame(first, second);
+    }
+
+    @Test
+    public void testObjectCreatorStringValue() {
+        TestConfig config = new TestConfig();
+        config.add("my.prop", "hello");
+        ConfigMappingContext ctx = newContext(config);
+
+        ConfigMappingContext.ObjectCreator<String> creator =
+                new ConfigMappingContext.ObjectCreator<>("my.prop");
+        creator.value(String.class, null);
+        String value = creator.get();
+        assertEquals("hello", value);
+    }
+
+    @Test
+    public void testObjectCreatorIntegerValue() {
+        TestConfig config = new TestConfig();
+        config.add("int.prop", "42");
+        ConfigMappingContext ctx = newContext(config);
+
+        ConfigMappingContext.ObjectCreator<Integer> creator =
+                new ConfigMappingContext.ObjectCreator<>("int.prop");
+        creator.value(Integer.class, null);
+        Integer value = creator.get();
+        assertEquals(Integer.valueOf(42), value);
+    }
+
+    @Test
+    public void testObjectCreatorOptionalValuePresent() {
+        TestConfig config = new TestConfig();
+        config.add("opt.prop", "present");
+        ConfigMappingContext ctx = newContext(config);
+
+        ConfigMappingContext.ObjectCreator<Optional<String>> creator =
+                new ConfigMappingContext.ObjectCreator<>("opt.prop");
+        creator.optionalValue(String.class, null);
+        Optional<String> opt = creator.get();
+        assertTrue(opt.isPresent());
+        assertEquals("present", opt.get());
+    }
+
+    @Test
+    public void testObjectCreatorOptionalValueEmpty() {
+        TestConfig config = new TestConfig(); // no property added
+        ConfigMappingContext ctx = newContext(config);
+
+        ConfigMappingContext.ObjectCreator<Optional<String>> creator =
+                new ConfigMappingContext.ObjectCreator<>("missing.prop");
+        creator.optionalValue(String.class, null);
+        Optional<String> opt = creator.get();
+        assertFalse(opt.isPresent());
+    }
+
+    @Test
+    public void testObjectCreatorCollection() {
+        TestConfig config = new TestConfig();
+        // two indexed entries for the collection "my.list"
+        config.add("my.list[0]", "zero");
+        config.add("my.list[1]", "one");
+        ConfigMappingContext ctx = newContext(config);
+
+        ConfigMappingContext.ObjectCreator<List<String>> creator =
+                new ConfigMappingContext.ObjectCreator<>("my.list");
+        creator.collection(List.class);
+        List<String> list = creator.get();
+
+        assertEquals(2, list.size());
+        assertEquals("zero", list.get(0));
+        assertEquals("one", list.get(1));
+    }
+
+    @Test
+    public void testObjectCreatorMapWithExplicitKeys() {
+        TestConfig config = new TestConfig();
+        config.add("my.map.keyA", "valueA");
+        config.add("my.map.keyB", "valueB");
+        ConfigMappingContext ctx = newContext(config);
+
+        ConfigMappingContext.ObjectCreator<Map<String, String>> creator =
+                new ConfigMappingContext.ObjectCreator<>("my.map");
+        creator.map(String.class, null, null, Arrays.asList("keyA", "keyB"));
+        Map<String, String> map = creator.get();
+
+        assertEquals(2, map.size());
+        assertEquals("valueA", map.get("keyA"));
+        assertEquals("valueB", map.get("keyB"));
+    }
+
+    @Test
+    public void testIsPropertyInRootLogic() throws Exception {
+        // Use reflection to access the private static method
+        java.lang.reflect.Method m = ConfigMappingContext.class.getDeclaredMethod(
+                "isPropertyInRoot", String.class, String.class);
+        m.setAccessible(true);
+
+        // Direct match
+        assertTrue((Boolean) m.invoke(null, "foo.bar", "foo.bar"));
+        // Property starts with root and next char is '.' -> true
+        assertTrue((Boolean) m.invoke(null, "foo.bar.baz", "foo.bar"));
+        // Property starts with root and next char is '[' -> true
+        assertTrue((Boolean) m.invoke(null, "foo.bar[0]", "foo.bar"));
+        // Property shorter than root -> false
+        assertFalse((Boolean) m.invoke(null, "foo", "foo.bar"));
+        // Property starts with root but next char is something else -> false
+        assertFalse((Boolean) m.invoke(null, "foo.barX", "foo.bar"));
+    }
+
+    @Test
+    public void testReportUnknownIgnoresKnownProperties() {
+        // Build a config that contains a property that is not used by any mapping
+        TestConfig config = new TestConfig();
+        config.add("unused.prop", "value");
+        // also add a property that will be considered "used"
+        config.add("used.prop", "value");
+        ConfigMappingContext ctx = newContext(config);
+
+        // Simulate a used property by calling a creator that accesses it
+        ConfigMappingContext.ObjectCreator<String> usedCreator =
+                new ConfigMappingContext.ObjectCreator<>("used.prop");
+        usedCreator.value(String.class, null);
+        usedCreator.get(); // marks the property as used inside the creator
+
+        // No ignored paths
+        ctx.reportUnknown(Collections.emptySet());
+
+        // The context should have recorded a single problem for the unknown property
+        List<ConfigValidationException.Problem> problems = ctx.getProblems();
+        assertEquals(1, problems.size());
+        assertTrue(problems.get(0).getMessage().contains("unused.prop"));
+    }
+}

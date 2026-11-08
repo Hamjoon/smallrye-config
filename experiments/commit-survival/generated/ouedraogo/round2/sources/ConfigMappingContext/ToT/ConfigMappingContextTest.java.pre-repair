@@ -1,0 +1,242 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.*;
+
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Comprehensive JUnit‑4 test suite for {@link ConfigMappingContext}.
+ *
+ * <p>This test class focuses on the public behaviour of {@code ConfigMappingContext}
+ * and on the private static utility methods that are critical for the mapping logic.
+ * All tests use only the APIs that are declared in the source snippet or in the
+ * provided public signatures – no external mocking frameworks are employed.
+ *
+ * <p>Where a method under test is {@code private} or {@code static}, reflection is used
+ * to invoke it while keeping the test code readable.
+ */
+public class ConfigMappingContextTest {
+
+    /** A very small concrete {@link SmallRyeConfig} implementation used only for tests. */
+    private static class TestConfig extends SmallRyeConfig {
+        private final Map<String, ConfigValue> values = new HashMap<>();
+        private final Set<String> propertyNames = new LinkedHashSet<>();
+
+        void addValue(String name, String rawValue, String sourceName) {
+            propertyNames.add(name);
+            values.put(name, new ConfigValue(name, rawValue, sourceName, 0));
+        }
+
+        @Override
+        public Iterable<String> getPropertyNames() {
+            return propertyNames;
+        }
+
+        @Override
+        public ConfigValue getConfigValue(String name) {
+            ConfigValue cv = values.get(name);
+            if (cv == null) {
+                // simulate non‑existent property – return a dummy ConfigValue with empty source
+                return new ConfigValue(name, null, "", 0);
+            }
+            return cv;
+        }
+
+        // The remaining methods are not needed for the current test suite.
+    }
+
+    /** Simple {@link Converter} implementation used to verify {@code getConverterInstance}. */
+    public static class UpperCaseConverter implements Converter<String> {
+        @Override
+        public String convert(String value) {
+            return value == null ? null : value.toUpperCase(Locale.ROOT);
+        }
+    }
+
+    /** Converter without a public no‑arg constructor – used to trigger an error path. */
+    public static class NoDefaultCtorConverter implements Converter<String> {
+        private final String prefix;
+
+        public NoDefaultCtorConverter(String prefix) {
+            this.prefix = prefix;
+        }
+
+        @Override
+        public String convert(String value) {
+            return prefix + value;
+        }
+    }
+
+    private ConfigMappingContext context;
+    private TestConfig testConfig;
+
+    @Before
+    public void setUp() {
+        testConfig = new TestConfig();
+
+        // No roots and no name mappings – the constructor must still succeed.
+        Map<String, List<Class<?>>> roots = Collections.emptyMap();
+        Map<String, Map<String, Set<String>>> names = Collections.emptyMap();
+
+        context = new ConfigMappingContext(testConfig, roots, names);
+    }
+
+    /* --------------------------------------------------------------
+     *  Tests for the public API
+     * -------------------------------------------------------------- */
+
+    @Test
+    public void applyNamingStrategy_ShouldSetProvidedStrategy() {
+        // Explicitly set a strategy and verify that it is stored.
+        NamingStrategy result = context.applyNamingStrategy(NamingStrategy.VERBATIM);
+        assertEquals(NamingStrategy.VERBATIM, result);
+        // Subsequent call with null must keep the already set strategy.
+        NamingStrategy same = context.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.VERBATIM, same);
+    }
+
+    @Test
+    public void applyNamingStrategy_ShouldDefaultToKebabCaseWhenNoneSet() {
+        // New context without any prior strategy.
+        ConfigMappingContext fresh = new ConfigMappingContext(testConfig,
+                Collections.emptyMap(),
+                Collections.emptyMap());
+
+        NamingStrategy result = fresh.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.KEBAB_CASE, result);
+    }
+
+    @Test
+    public void getStringBuilder_ShouldReturnSameInstanceEachCall() {
+        StringBuilder sb1 = context.getStringBuilder();
+        StringBuilder sb2 = context.getStringBuilder();
+        assertSame(sb1, sb2);
+        sb1.append("test");
+        assertEquals("test", sb2.toString());
+    }
+
+    @Test
+    public void reportProblem_ShouldAddProblemToList() {
+        RuntimeException ex = new IllegalArgumentException("boom");
+        context.reportProblem(ex);
+        List<Problem> problems = context.getProblems();
+        assertEquals(1, problems.size());
+        assertEquals("java.lang.IllegalArgumentException: boom", problems.get(0).getMessage());
+    }
+
+    @Test
+    public void getConverterInstance_ShouldCreateAndCacheConverter() {
+        // First call creates a new instance
+        Converter<String> first = context.getConverterInstance(UpperCaseConverter.class);
+        assertNotNull(first);
+        assertEquals("HELLO", first.convert("hello"));
+
+        // Second call returns the same instance (cached)
+        Converter<String> second = context.getConverterInstance(UpperCaseConverter.class);
+        assertSame(first, second);
+    }
+
+    @Test(expected = InstantiationError.class)
+    public void getConverterInstance_ShouldThrowWhenNoDefaultConstructor() {
+        // The converter class lacks a public no‑arg constructor, leading to InstantiationError.
+        context.getConverterInstance(NoDefaultCtorConverter.class);
+    }
+
+    @Test
+    public void getRootsMap_ShouldBeInitiallyEmpty() {
+        assertTrue(context.getRootsMap().isEmpty());
+    }
+
+    /* --------------------------------------------------------------
+     *  Tests for private static helpers (via reflection)
+     * -------------------------------------------------------------- */
+
+    private static boolean invokeIsPropertyInRoot(String property, String root) throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod("isPropertyInRoot", String.class, String.class);
+        m.setAccessible(true);
+        return (Boolean) m.invoke(null, property, root);
+    }
+
+    private static Iterable<String> invokeFilterPropertiesInRoots(Iterable<String> props, Set<String> roots) throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod("filterPropertiesInRoots", Iterable.class, Set.class);
+        m.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        Iterable<String> result = (Iterable<String>) m.invoke(null, props, roots);
+        return result;
+    }
+
+    @Test
+    public void isPropertyInRoot_ShouldMatchExactRoot() throws Exception {
+        assertTrue(invokeIsPropertyInRoot("foo.bar", "foo.bar"));
+    }
+
+    @Test
+    public void isPropertyInRoot_ShouldMatchWhenPrefixFollowedByDotOrBracket() throws Exception {
+        assertTrue(invokeIsPropertyInRoot("foo.bar.baz", "foo.bar"));
+        assertTrue(invokeIsPropertyInRoot("foo.bar[0]", "foo.bar"));
+    }
+
+    @Test
+    public void isPropertyInRoot_ShouldRejectWhenNotProperlyDelimited() throws Exception {
+        // property starts with root but the next char is not '.' or '['
+        assertFalse(invokeIsPropertyInRoot("foo.barbaz", "foo.bar"));
+    }
+
+    @Test
+    public void isPropertyInRoot_ShouldRejectWhenPropertyShorterThanRoot() throws Exception {
+        assertFalse(invokeIsPropertyInRoot("foo", "foo.bar"));
+    }
+
+    @Test
+    public void filterPropertiesInRoots_ShouldReturnAllWhenRootsEmpty() throws Exception {
+        List<String> props = Arrays.asList("a", "b.c", "d[0]");
+        Iterable<String> filtered = invokeFilterPropertiesInRoots(props, Collections.emptySet());
+        assertEquals(props, toList(filtered));
+    }
+
+    @Test
+    public void filterPropertiesInRoots_ShouldReturnAllWhenRootContainsEmptyString() throws Exception {
+        List<String> props = Arrays.asList("x", "y.z");
+        Set<String> roots = new HashSet<>(Arrays.asList(""));
+        Iterable<String> filtered = invokeFilterPropertiesInRoots(props, roots);
+        assertEquals(props, toList(filtered));
+    }
+
+    @Test
+    public void filterPropertiesInRoots_ShouldFilterCorrectly() throws Exception {
+        List<String> props = Arrays.asList(
+                "app.name",          // matches root "app"
+                "app.version",       // matches root "app"
+                "db.url",            // does NOT match any root
+                "app.extra[0]" );   // matches root "app"
+
+        Set<String> roots = new HashSet<>(Arrays.asList("app"));
+        Iterable<String> filtered = invokeFilterPropertiesInRoots(props, roots);
+        List<String> expected = Arrays.asList("app.name", "app.version", "app.extra[0]");
+        assertEquals(expected, toList(filtered));
+    }
+
+    @Test
+    public void mapWithDefault_ShouldReturnDefaultWhenKeyMissing() {
+        ConfigMappingContext.MapWithDefault<String, Integer> map = new ConfigMappingContext.MapWithDefault<>(42);
+        map.put("one", 1);
+        assertEquals(Integer.valueOf(1), map.get("one"));
+        // Missing key returns the default value supplied at construction time
+        assertEquals(Integer.valueOf(42), map.get("missing"));
+    }
+
+    /* --------------------------------------------------------------
+     *  Helper methods
+     * -------------------------------------------------------------- */
+
+    private static List<String> toList(Iterable<String> iterable) {
+        List<String> list = new ArrayList<>();
+        iterable.forEach(list::add);
+        return list;
+    }
+}

@@ -1,0 +1,221 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+
+import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Test;
+
+/**
+ * Unit tests for {@link ConfigMappingContext}. The tests focus on the public API
+ * as well as the private helper methods {@code indexOfDashes} and {@code isPropertyInRoot}
+ * (accessed via reflection). No external mocking frameworks are used; a minimal
+ * concrete {@link SmallRyeConfig} implementation is provided to satisfy the
+ * constructor requirements.
+ */
+public class ConfigMappingContextTest {
+
+    /** Minimal {@link SmallRyeConfig} implementation that provides only the methods
+     *  required for the tested {@link ConfigMappingContext} behaviour. All methods
+     *  return empty or null values because the tests do not depend on actual config
+     *  data. */
+    static class TestSmallRyeConfig extends SmallRyeConfig {
+        @Override
+        public Iterable<String> getPropertyNames() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<String> getProfiles() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Iterable<ConfigSource> getConfigSources(Class<?> type) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public ConfigValue getConfigValue(String name) {
+            // Returning a dummy ConfigValue that never triggers the Env‑source check.
+            return new ConfigValue() {
+                @Override public String getName() { return name; }
+                @Override public String getValue() { return null; }
+                @Override public String getRawValue() { return null; }
+                @Override public String getSourceName() { return null; }
+                @Override public int getSourceOrdinal() { return 0; }
+                @Override public ConfigSource getConfigSource() { return null; }
+                @Override public ConfigSource getConfigSource(String name) { return null; }
+                @Override public String getLocation() { return "unknown-location"; }
+            };
+        }
+
+        // All other methods inherit the default behaviour from SmallRyeConfig.
+    }
+
+    /** Simple {@link Converter} implementation used for successful converter‑instance tests. */
+    public static class SimpleStringConverter implements Converter<String> {
+        @Override
+        public String convert(String value) {
+            return value;
+        }
+    }
+
+    /** Converter without a no‑arg constructor – used to verify {@link InstantiationError}. */
+    public static class NoDefaultCtorConverter implements Converter<String> {
+        public NoDefaultCtorConverter(String dummy) { }
+        @Override public String convert(String value) { return value; }
+    }
+
+    /** Converter whose constructor throws a runtime exception – used to verify exception propagation. */
+    public static class ThrowingConverter implements Converter<String> {
+        public ThrowingConverter() {
+            throw new IllegalArgumentException("constructor failure");
+        }
+        @Override public String convert(String value) { return value; }
+    }
+
+    /** Helper to invoke private static methods via reflection. */
+    private static Object invokePrivateStatic(String methodName, Class<?>[] paramTypes, Object... args) throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod(methodName, paramTypes);
+        m.setAccessible(true);
+        return m.invoke(null, args);
+    }
+
+    /** Helper to invoke private instance methods via reflection. */
+    private static Object invokePrivateInstance(Object target, String methodName, Class<?>[] paramTypes, Object... args) throws Exception {
+        Method m = target.getClass().getDeclaredMethod(methodName, paramTypes);
+        m.setAccessible(true);
+        return m.invoke(target, args);
+    }
+
+    @Test
+    public void testApplyPrefixAndNameBuilder() {
+        ConfigMappingContext ctx = new ConfigMappingContext(new TestSmallRyeConfig(), Collections.emptyMap());
+        ctx.applyPrefix("my.prefix");
+        assertEquals("my.prefix", ctx.getNameBuilder().toString());
+
+        // applying a second prefix should replace the existing content
+        ctx.applyPrefix("new");
+        assertEquals("new", ctx.getNameBuilder().toString());
+    }
+
+    @Test
+    public void testApplyNamingStrategyAndPropertyName() {
+        ConfigMappingContext ctx = new ConfigMappingContext(new TestSmallRyeConfig(), Collections.emptyMap());
+
+        // default strategy is KEBAB_CASE
+        assertEquals("foo-bar", ctx.propertyName().apply("fooBar"));
+
+        // switch to SNAKE_CASE and verify conversion
+        ctx.applyNamingStrategy(NamingStrategy.SNAKE_CASE);
+        assertEquals("foo_bar", ctx.propertyName().apply("fooBar"));
+    }
+
+    @Test
+    public void testApplyBeanStyleGettersAndCombinedPropertyName() {
+        ConfigMappingContext ctx = new ConfigMappingContext(new TestSmallRyeConfig(), Collections.emptyMap());
+
+        // enable bean‑style getters
+        ctx.applyBeanStyleGetters(true);
+        // bean style strips the "get" prefix and lower‑cases the first character
+        // then KEBAB_CASE turns "fooBar" into "foo-bar"
+        assertEquals("foo-bar", ctx.propertyName().apply("getFooBar"));
+        assertEquals("active", ctx.propertyName().apply("isActive"));
+    }
+
+    @Test
+    public void testGetConverterInstanceSuccess() {
+        ConfigMappingContext ctx = new ConfigMappingContext(new TestSmallRyeConfig(), Collections.emptyMap());
+        Converter<String> conv = ctx.getConverterInstance(SimpleStringConverter.class);
+        assertNotNull(conv);
+        assertTrue(conv instanceof SimpleStringConverter);
+        // subsequent calls should return the cached instance
+        Converter<String> conv2 = ctx.getConverterInstance(SimpleStringConverter.class);
+        assertSame(conv, conv2);
+    }
+
+    @Test(expected = InstantiationError.class)
+    public void testGetConverterInstanceNoDefaultConstructor() {
+        ConfigMappingContext ctx = new ConfigMappingContext(new TestSmallRyeConfig(), Collections.emptyMap());
+        ctx.getConverterInstance(NoDefaultCtorConverter.class);
+    }
+
+    @Test
+    public void testGetConverterInstanceConstructorThrows() {
+        ConfigMappingContext ctx = new ConfigMappingContext(new TestSmallRyeConfig(), Collections.emptyMap());
+        try {
+            ctx.getConverterInstance(ThrowingConverter.class);
+            fail("Expected IllegalArgumentException to be thrown from the constructor");
+        } catch (IllegalArgumentException e) {
+            assertEquals("constructor failure", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testReportProblemAndGetProblems() {
+        ConfigMappingContext ctx = new ConfigMappingContext(new TestSmallRyeConfig(), Collections.emptyMap());
+        RuntimeException ex = new RuntimeException("boom");
+        ctx.reportProblem(ex);
+        List<Problem> problems = ctx.getProblems();
+        assertEquals(1, problems.size());
+        assertEquals("java.lang.RuntimeException: boom", problems.get(0).getMessage());
+    }
+
+    @Test
+    public void testGetMappingsIsEmptyWhenNoMappingsProvided() {
+        ConfigMappingContext ctx = new ConfigMappingContext(new TestSmallRyeConfig(), Collections.emptyMap());
+        assertTrue(ctx.getMappings().isEmpty());
+    }
+
+    @Test
+    public void testIndexOfDashesVariousScenarios() throws Exception {
+        // Case 1: identical property – no dashes to replace
+        List<Integer> result1 = (List<Integer>) invokePrivateStatic(
+                "indexOfDashes",
+                new Class<?>[]{String.class, String.class},
+                "foo.bar", "foo.bar");
+        assertTrue(result1.isEmpty());
+
+        // Case 2: dash in the mapped property corresponds to a dot in the env property
+        List<Integer> result2 = (List<Integer>) invokePrivateStatic(
+                "indexOfDashes",
+                new Class<?>[]{String.class, String.class},
+                "foo-bar", "foo.bar");
+        assertEquals(Collections.singletonList(3), result2); // position of the '.' (index 3)
+
+        // Case 3: mismatched characters – should return null
+        List<Integer> result3 = (List<Integer>) invokePrivateStatic(
+                "indexOfDashes",
+                new Class<?>[]{String.class, String.class},
+                "foo", "bar");
+        assertNull(result3);
+    }
+
+    @Test
+    public void testIsPropertyInRootScenarios() throws Exception {
+        // Exact match
+        assertTrue((Boolean) invokePrivateStatic("isPropertyInRoot",
+                new Class<?>[]{String.class, String.class}, "foo.bar", "foo.bar"));
+
+        // Property is a child (dot separator)
+        assertTrue((Boolean) invokePrivateStatic("isPropertyInRoot",
+                new Class<?>[]{String.class, String.class}, "foo.bar.baz", "foo.bar"));
+
+        // Property is a child (array style)
+        assertTrue((Boolean) invokePrivateStatic("isPropertyInRoot",
+                new Class<?>[]{String.class, String.class}, "foo[0].baz", "foo"));
+
+        // Same prefix but next char is not '.' or '[' – should be false
+        assertFalse((Boolean) invokePrivateStatic("isPropertyInRoot",
+                new Class<?>[]{String.class, String.class}, "foobar", "foo"));
+
+        // Property shorter than root – false
+        assertFalse((Boolean) invokePrivateStatic("isPropertyInRoot",
+                new Class<?>[]{String.class, String.class}, "foo", "foo.bar"));
+    }
+}

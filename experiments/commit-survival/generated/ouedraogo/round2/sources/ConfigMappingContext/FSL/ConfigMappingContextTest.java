@@ -1,0 +1,197 @@
+package io.smallrye.config;
+import io.smallrye.config.ConfigMapping.NamingStrategy;
+import io.smallrye.config.ConfigValidationException.Problem;
+
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ConfigMappingContextTest {
+
+    private ConfigMappingContext context;
+    private SmallRyeConfig config;
+
+    @Before
+    public void setUp() {
+        // SmallRyeConfig has a public no‑arg constructor in the library.
+        config = new SmallRyeConfig();
+        // No roots and no names – we only test the utility methods.
+        context = new ConfigMappingContext(config, Collections.emptyMap(), Collections.emptyMap());
+    }
+
+    @Test
+    public void testApplyNamingStrategy_DefaultWhenNull() {
+        // initial namingStrategy is null
+        NamingStrategy result = context.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.KEBAB_CASE, result);
+        // subsequent call with null should keep the already set strategy
+        NamingStrategy again = context.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.KEBAB_CASE, again);
+    }
+
+    @Test
+    public void testApplyNamingStrategy_CustomStrategy() {
+        NamingStrategy custom = NamingStrategy.VERBATIM;
+        NamingStrategy result = context.applyNamingStrategy(custom);
+        assertEquals(custom, result);
+        // calling with another non‑null should replace the current one
+        NamingStrategy other = NamingStrategy.SNAKE_CASE;
+        NamingStrategy result2 = context.applyNamingStrategy(other);
+        assertEquals(other, result2);
+    }
+
+    @Test
+    public void testStringBuilderIsShared() {
+        StringBuilder sb = context.getStringBuilder();
+        assertEquals(0, sb.length());
+        sb.append("prefix");
+        // the same instance is returned each time
+        assertSame(sb, context.getStringBuilder());
+        assertEquals("prefix", sb.toString());
+    }
+
+    @Test
+    public void testReportProblemAddsProblem() {
+        RuntimeException ex = new RuntimeException("boom");
+        context.reportProblem(ex);
+        List<Problem> problems = context.getProblems();
+        assertEquals(1, problems.size());
+        assertEquals(ex.toString(), problems.get(0).getMessage());
+    }
+
+    @Test
+    public void testGetRootsMapInitiallyEmpty() {
+        Map<Class<?>, Map<String, ConfigMappingObject>> roots = context.getRootsMap();
+        assertTrue(roots.isEmpty());
+    }
+
+    @Test
+    public void testFilterPropertiesInRoots_NoRootsReturnsOriginal() {
+        List<String> props = Arrays.asList("a.b", "c.d");
+        Iterable<String> result = invokeFilterPropertiesInRoots(props, Collections.emptySet());
+        assertSame(props, result);
+    }
+
+    @Test
+    public void testFilterPropertiesInRoots_EmptyRootMatchesAll() {
+        List<String> props = Arrays.asList("x", "y.z");
+        Set<String> roots = new HashSet<>(Collections.singletonList(""));
+        Iterable<String> result = invokeFilterPropertiesInRoots(props, roots);
+        assertSame(props, result);
+    }
+
+    @Test
+    public void testFilterPropertiesInRoots_MatchesCorrectly() {
+        List<String> props = Arrays.asList("app.timeout", "app.name", "db.url", "app");
+        Set<String> roots = new HashSet<>(Collections.singletonList("app"));
+        Iterable<String> result = invokeFilterPropertiesInRoots(props, roots);
+        List<String> expected = Arrays.asList("app.timeout", "app.name", "app");
+        assertEquals(expected, new ArrayList<>((Collection<?>) result));
+    }
+
+    @Test
+    public void testIsPropertyInRootExactMatch() {
+        assertTrue(invokeIsPropertyInRoot("my.prop", "my.prop"));
+    }
+
+    @Test
+    public void testIsPropertyInRootStartsWithDot() {
+        assertTrue(invokeIsPropertyInRoot("my.prop.sub", "my.prop"));
+    }
+
+    @Test
+    public void testIsPropertyInRootStartsWithBracket() {
+        assertTrue(invokeIsPropertyInRoot("my.list[0]", "my.list"));
+    }
+
+    @Test
+    public void testIsPropertyInRootDoesNotMatch() {
+        assertFalse(invokeIsPropertyInRoot("myprop", "my.prop"));
+        assertFalse(invokeIsPropertyInRoot("my.propX", "my.prop"));
+    }
+
+    @Test
+    public void testCreateCollectionFactory_List() throws Exception {
+        Method m = ConfigMappingContext.ObjectCreator.class.getDeclaredMethod("createCollectionFactory", Class.class);
+        m.setAccessible(true);
+        ConfigMappingContext.ObjectCreator<?> creator = context.constructObject("test");
+        Object result = m.invoke(creator, List.class);
+        assertTrue(result instanceof java.util.function.IntFunction);
+        @SuppressWarnings("unchecked")
+        Collection<?> col = ((java.util.function.IntFunction<Collection<?>>) result).apply(0);
+        assertTrue(col instanceof ArrayList);
+    }
+
+    @Test
+    public void testCreateCollectionFactory_Set() throws Exception {
+        Method m = ConfigMappingContext.ObjectCreator.class.getDeclaredMethod("createCollectionFactory", Class.class);
+        m.setAccessible(true);
+        ConfigMappingContext.ObjectCreator<?> creator = context.constructObject("test");
+        Object result = m.invoke(creator, Set.class);
+        @SuppressWarnings("unchecked")
+        Collection<?> col = ((java.util.function.IntFunction<Collection<?>>) result).apply(0);
+        assertTrue(col instanceof HashSet);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateCollectionFactory_Unsupported() throws Throwable {
+        Method m = ConfigMappingContext.ObjectCreator.class.getDeclaredMethod("createCollectionFactory", Class.class);
+        m.setAccessible(true);
+        ConfigMappingContext.ObjectCreator<?> creator = context.constructObject("test");
+        try {
+            m.invoke(creator, Map.class);
+        } catch (InvocationTargetException e) {
+            throw e.getCause();
+        }
+    }
+
+    @Test
+    public void testObjectCreatorCollectionWithSupportedTypeDoesNotThrow() {
+        ConfigMappingContext.ObjectCreator<String> creator = context.constructObject("path");
+        // Should not throw for List
+        creator.collection(List.class);
+    }
+
+    @Test
+    public void testObjectCreatorCollectionWithUnsupportedTypeThrows() {
+        ConfigMappingContext.ObjectCreator<String> creator = context.constructObject("path");
+        try {
+            creator.collection(Map.class);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+            // expected
+        }
+    }
+
+    /* ----------------------------------------------------------------------
+     * Helper methods to invoke the private static methods of ConfigMappingContext
+     * ---------------------------------------------------------------------- */
+    private static Iterable<String> invokeFilterPropertiesInRoots(Iterable<String> props, Set<String> roots) {
+        try {
+            Method m = ConfigMappingContext.class.getDeclaredMethod("filterPropertiesInRoots",
+                    Iterable.class, Set.class);
+            m.setAccessible(true);
+            return (Iterable<String>) m.invoke(null, props, roots);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static boolean invokeIsPropertyInRoot(String property, String root) {
+        try {
+            Method m = ConfigMappingContext.class.getDeclaredMethod("isPropertyInRoot",
+                    String.class, String.class);
+            m.setAccessible(true);
+            return (boolean) m.invoke(null, property, root);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

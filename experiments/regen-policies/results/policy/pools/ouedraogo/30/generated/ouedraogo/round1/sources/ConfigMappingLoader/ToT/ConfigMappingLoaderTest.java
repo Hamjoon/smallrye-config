@@ -1,0 +1,280 @@
+package io.smallrye.config;
+import io.smallrye.config._private.ConfigMessages;
+
+
+import org.junit.Test;
+import org.junit.Assert;
+
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * Comprehensive JUnit‑4 test suite for {@link ConfigMappingLoader}.
+ *
+ * <p>The tests focus on the public static behaviour that can be exercised without
+ * needing the full SmallRye Config runtime.  They deliberately avoid any external
+ * mocking frameworks and rely only on the classes, constructors and methods that
+ * appear in the source code or in the supplied public API.</p>
+ *
+ * <p>Three “experts” are simulated by grouping the test methods according to the
+ * method they target – each expert contributes one test case per method.  The
+ * suite therefore covers typical use cases, edge cases and error scenarios for
+ * the following public members:</p>
+ *
+ * <ul>
+ *   <li>{@link ConfigMappingLoader#getConfigMappingsMetadata(Class)}</li>
+ *   <li>{@link ConfigMappingLoader#validateAnnotations(Class)}</li>
+ *   <li>{@link ConfigMappingLoader#getClassLoaderLock(String)}</li>
+ * </ul>
+ *
+ * <p>Additional private helpers are exercised via reflection where necessary
+ * (e.g. to inject a test implementation of {@link ConfigMessages}).</p>
+ */
+public class ConfigMappingLoaderTest {
+
+    /* ---------------------------------------------------------------------- */
+    /* Helper – a minimal implementation of ConfigMessages that we can inject */
+    /* ---------------------------------------------------------------------- */
+    private static class TestConfigMessages implements ConfigMessages {
+
+        // Only the two methods used by the test need concrete behaviour.
+        @Override
+        public IllegalStateException mappingAnnotationNotSupportedInClass(Class<?> type) {
+            return new IllegalStateException("Mapping annotation not supported on class: " + type.getName());
+        }
+
+        @Override
+        public IllegalStateException propertiesAnnotationNotSupportedInInterface(Class<?> type) {
+            return new IllegalStateException("Properties annotation not supported on interface: " + type.getName());
+        }
+
+        // All other methods throw UnsupportedOperationException – they are never called.
+        private IllegalStateException unsupported() {
+            throw new UnsupportedOperationException("Not used in this test suite");
+        }
+
+        @Override public IllegalStateException fileNotFound(String fileName) { return unsupported(); }
+        @Override public IllegalStateException failedToLoadConfig(Throwable throwable) { return unsupported(); }
+        @Override public IllegalArgumentException failedCharacterConversion(String value) { return unsupported(); }
+        @Override public IllegalStateException singleTypeConverter(String className) { return unsupported(); }
+        @Override public IllegalArgumentException notArrayType(String arrayType) { return unsupported(); }
+        @Override public IllegalArgumentException valueNotMatchPattern(java.util.regex.Pattern pattern, String value) { return unsupported(); }
+        @Override public IllegalArgumentException lessThanMinimumValue(Object minimum, String value) { return unsupported(); }
+        @Override public IllegalArgumentException lessThanEqualToMinimumValue(Object minimum, String value) { return unsupported(); }
+        @Override public IllegalArgumentException greaterThanMaximumValue(Object maximum, String value) { return unsupported(); }
+        @Override public IllegalArgumentException greaterThanEqualToMaximumValue(Object maximum, String value) { return unsupported(); }
+        @Override public InvalidObjectException unknownConverterId(int id) { return unsupported(); }
+        @Override public java.util.NoSuchElementException expandingElementNotFound(String key, String valueName) { return unsupported(); }
+        @Override public IllegalStateException unableToAddConverter(Converter<?> converter) { return unsupported(); }
+        @Override public IllegalArgumentException noRegisteredConverter(Class<?> type) { return unsupported(); }
+        @Override public String propertyNotFound(String name) { return unsupported(); }
+        @Override public IllegalStateException noConfigForClassloader() { return unsupported(); }
+        @Override public IllegalArgumentException configIsNull() { return unsupported(); }
+        @Override public IllegalStateException configAlreadyRegistered() { return unsupported(); }
+        @Override public IllegalArgumentException malformedEncoding() { return unsupported(); }
+        @Override public IllegalArgumentException constructorConverterFailure(Throwable cause) { return unsupported(); }
+        @Override public IllegalArgumentException staticMethodConverterFailure(Throwable cause) { return unsupported(); }
+        @Override public IllegalArgumentException classConverterNotFound(Throwable cause, String className) { return unsupported(); }
+        @Override public IllegalArgumentException unknownHost(Throwable cause, String host) { return unsupported(); }
+        @Override public IllegalArgumentException unknownArrayType() { return unsupported(); }
+        @Override public SecurityException notAllowed(String name) { return unsupported(); }
+        @Override public IllegalArgumentException expressionExpansionTooDepth(String name) { return unsupported(); }
+        @Override public IllegalArgumentException malformedUUID(Throwable cause, String malformedUUID) { return unsupported(); }
+        @Override public java.util.NoSuchElementException mappingNotFound(String className) { return unsupported(); }
+        @Override public java.util.NoSuchElementException mappingPrefixNotFound(String className, String prefix) { return unsupported(); }
+        @Override public NumberFormatException integerExpected(String value) { return unsupported(); }
+        @Override public NumberFormatException longExpected(String value) { return unsupported(); }
+        @Override public NumberFormatException doubleExpected(String value) { return unsupported(); }
+        @Override public NumberFormatException floatExpected(String value) { return unsupported(); }
+        @Override public IllegalArgumentException schemeNotSupported(String scheme) { return unsupported(); }
+        @Override public IllegalArgumentException uriSyntaxInvalid(Throwable cause, String uri) { return unsupported(); }
+        @Override public IllegalArgumentException failedToLoadResource(Throwable cause, String location) { return unsupported(); }
+        @Override public IllegalArgumentException getTypeNotSupportedForUnwrapping(Class<?> type) { return unsupported(); }
+        @Override public NullPointerException converterNullValue() { return unsupported(); }
+        @Override public IllegalArgumentException noRawType(Type type) { return unsupported(); }
+        @Override public IllegalArgumentException converterException(Throwable converterException, String configProperty, String configValue, String causeMessage) { return unsupported(); }
+        @Override public java.util.NoSuchElementException propertyEmptyString(String configPropertyName, String converter) { return unsupported(); }
+        @Override public java.util.NoSuchElementException converterReturnedNull(String configPropertyName, String configValue, String converter) { return unsupported(); }
+        @Override public java.util.NoSuchElementException valueNotMatchMapFormat(String value) { return unsupported(); }
+        @Override public IllegalStateException mappingAnnotationNotSupportedInClass(Class<?> type) { return mappingAnnotationNotSupportedInClass(type); }
+        @Override public IllegalStateException propertiesAnnotationNotSupportedInInterface(Class<?> type) { return propertiesAnnotationNotSupportedInInterface(type); }
+        @Override public IllegalArgumentException classIsNotAMapping(Class<?> type) { return unsupported(); }
+        @Override public java.util.NoSuchElementException secretKeyHandlerNotFound(String handler) { return unsupported(); }
+        @Override public IllegalStateException ambiguousMapping(String path, String amb1, String amb2) { return unsupported(); }
+        @Override public IllegalArgumentException explicitNameInUnnamed(String name, String key) { return unsupported(); }
+        @Override public IllegalArgumentException cannotConvertEnum(String value, Class<?> enumType, String values) { return unsupported(); }
+        @Override public IllegalStateException propertyDoesNotMapToAnyRoot(String name, String location) { return unsupported(); }
+    }
+
+    /**
+     * Injects {@link TestConfigMessages} into the static {@code ConfigMessages.msg}
+     * field using reflection.  The field is {@code public static final} in the
+     * interface, but reflection can still modify it for the purpose of the test.
+     */
+    private static void injectTestConfigMessages() throws Exception {
+        Field field = ConfigMessages.class.getDeclaredField("msg");
+        field.setAccessible(true);
+
+        // Remove the {@code final} modifier (Java 12+ uses a different internal API,
+        // but setting accessible and writing works on the versions used for the kata).
+        java.lang.reflect.Field modifiers = java.lang.reflect.Field.class.getDeclaredField("modifiers");
+        modifiers.setAccessible(true);
+        modifiers.setInt(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);
+
+        field.set(null, new TestConfigMessages());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 1. Expert A – tests for {@link ConfigMappingLoader#getConfigMappingsMetadata} */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * When the supplied type does not represent a configuration mapping,
+     * {@code getConfigMappingsMetadata} must return an empty immutable list.
+     */
+    @Test
+    public void testGetConfigMappingsMetadataReturnsEmptyForNonMapping() {
+        List<ConfigMappingMetadata> result = ConfigMappingLoader.getConfigMappingsMetadata(String.class);
+        Assert.assertNotNull("Result must never be null", result);
+        Assert.assertTrue("Result should be empty for a non‑mapping class", result.isEmpty());
+        // The returned list should be immutable – attempts to modify must throw.
+        try {
+            result.add(null);
+            Assert.fail("List should be immutable");
+        } catch (UnsupportedOperationException expected) {
+            // expected
+        }
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 2. Expert B – tests for {@link ConfigMappingLoader#validateAnnotations} */
+    /* ---------------------------------------------------------------------- */
+
+    // Define the two annotations that the loader checks for.
+    // They are placed in the same package so that the loader sees them.
+    @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+    @java.lang.annotation.Target(java.lang.annotation.ElementType.TYPE)
+    public @interface ConfigMapping {}
+
+    @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+    @java.lang.annotation.Target(java.lang.annotation.ElementType.TYPE)
+    public @interface ConfigProperties {}
+
+    /**
+     * A concrete class (not an interface) annotated with {@code @ConfigMapping}.
+     * According to {@code validateAnnotations} this should raise an
+     * {@link IllegalStateException} produced by {@code ConfigMessages}.
+     */
+    @ConfigMapping
+    public static class ClassWithMappingAnnotation {}
+
+    /**
+     * An interface annotated with {@code @ConfigProperties}.
+     * Validation must reject this combination.
+     */
+    @ConfigProperties
+    public interface InterfaceWithPropertiesAnnotation {}
+
+    /**
+     * A normal class without any of the two annotations – validation must pass silently.
+     */
+    public static class PlainClass {}
+
+    /**
+     * Verify that {@code validateAnnotations} throws the expected
+     * {@link IllegalStateException} for the two illegal annotation usages.
+     */
+    @Test
+    public void testValidateAnnotationsDetectsIllegalUsage() throws Exception {
+        // Install the test {@code ConfigMessages} implementation.
+        injectTestConfigMessages();
+
+        // 1️⃣  Class annotated with @ConfigMapping (illegal because it is not an interface)
+        try {
+            ConfigMappingLoader.validateAnnotations(ClassWithMappingAnnotation.class);
+            Assert.fail("Expected IllegalStateException for @ConfigMapping on a class");
+        } catch (IllegalStateException e) {
+            Assert.assertTrue(e.getMessage().contains("Mapping annotation not supported on class"));
+        }
+
+        // 2️⃣  Interface annotated with @ConfigProperties (illegal)
+        try {
+            ConfigMappingLoader.validateAnnotations(InterfaceWithPropertiesAnnotation.class);
+            Assert.fail("Expected IllegalStateException for @ConfigProperties on an interface");
+        } catch (IllegalStateException e) {
+            Assert.assertTrue(e.getMessage().contains("Properties annotation not supported on interface"));
+        }
+
+        // 3️⃣  A well‑formed class – should not throw.
+        ConfigMappingLoader.validateAnnotations(PlainClass.class);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 3. Expert C – tests for {@link ConfigMappingLoader#getClassLoaderLock} */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * The lock objects are cached per class name.  The same name must return the
+     * same instance, while different names must yield different instances.
+     */
+    @Test
+    public void testGetClassLoaderLockCachingBehavior() {
+        String nameA = "com.example.FooImpl";
+        String nameB = "com.example.BarImpl";
+
+        Object lockA1 = invokeGetClassLoaderLock(nameA);
+        Object lockA2 = invokeGetClassLoaderLock(nameA);
+        Object lockB = invokeGetClassLoaderLock(nameB);
+
+        Assert.assertSame("Same class name must return the same lock object", lockA1, lockA2);
+        Assert.assertNotSame("Different class names must return different lock objects", lockA1, lockB);
+    }
+
+    /**
+     * Helper that invokes the package‑private {@code getClassLoaderLock}
+     * method via reflection.
+     */
+    private static Object invokeGetClassLoaderLock(String className) {
+        try {
+            java.lang.reflect.Method m = ConfigMappingLoader.class.getDeclaredMethod("getClassLoaderLock", String.class);
+            m.setAccessible(true);
+            return m.invoke(null, className);
+        } catch (Exception e) {
+            throw new RuntimeException("Reflection failure while invoking getClassLoaderLock", e);
+        }
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 4. Additional sanity test – ensure the internal cache does not leak */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * The {@code classLoaderLocks} map should never contain {@code null} keys or values.
+     * This test simply accesses the map through the public accessor and checks its
+     * internal consistency after a few lock requests.
+     */
+    @Test
+    public void testClassLoaderLocksMapIntegrity() throws Exception {
+        // Access the private static field.
+        Field field = ConfigMappingLoader.class.getDeclaredField("classLoaderLocks");
+        field.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        ConcurrentHashMap<String, Object> map = (ConcurrentHashMap<String, Object>) field.get(null);
+        int originalSize = map.size();
+
+        // Request a few locks.
+        invokeGetClassLoaderLock("a.b.C1");
+        invokeGetClassLoaderLock("a.b.C2");
+        invokeGetClassLoaderLock("a.b.C1"); // duplicate – should not increase size
+
+        Assert.assertEquals("Map size should have increased by exactly two entries",
+                originalSize + 2, map.size());
+
+        // Verify that none of the stored keys or values are null.
+        for (java.util.Map.Entry<String, Object> entry : map.entrySet()) {
+            Assert.assertNotNull("Lock map must not contain null keys", entry.getKey());
+            Assert.assertNotNull("Lock map must not contain null values", entry.getValue());
+        }
+    }
+}

@@ -1,0 +1,182 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.util.Map;
+import java.util.Set;
+
+import org.junit.Test;
+
+/**
+ * Unit tests for {@link ConfigMappings}.
+ *
+ * <p>
+ * The tests focus on the parts of {@code ConfigMappings} that can be exercised without
+ * needing a full SmallRye Config runtime. In particular we verify:
+ * <ul>
+ *   <li>Prefix extraction from a class annotated with {@code @ConfigMapping}</li>
+ *   <li>Behaviour of {@code ConfigClassWithPrefix} (equals, hashCode, getters)</li>
+ *   <li>That the property‑related helpers return empty collections for a
+ *       mapping interface that has no properties.</li>
+ * </ul>
+ *
+ * <p>All objects are created via public constructors or factory methods that appear
+ * in the supplied source code; no mocking frameworks are used.
+ */
+public class ConfigMappingsTest {
+
+    /* ---------------------------------------------------------------------- */
+    /* Helper interface used for the tests                                    */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * A minimal configuration mapping interface. It has no methods, therefore
+     * the generated {@link ConfigMappingInterface} will contain no properties.
+     */
+    @ConfigMapping(prefix = "test.prefix")
+    public interface EmptyMapping {
+        // no configuration properties
+    }
+
+    /**
+     * Another minimal configuration mapping without an explicit prefix.
+     * The default prefix should be the empty string.
+     */
+    @ConfigMapping
+    public interface NoPrefixMapping {
+        // no configuration properties
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* Tests for ConfigMappings.getPrefix()                                    */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetPrefixWhenAnnotationPresent() {
+        String prefix = ConfigMappings.getPrefix(EmptyMapping.class);
+        assertEquals("test.prefix", prefix);
+    }
+
+    @Test
+    public void testGetPrefixWhenAnnotationAbsentOrEmpty() {
+        // No @ConfigMapping annotation – should return empty string
+        class PlainClass {}
+        String prefix = ConfigMappings.getPrefix(PlainClass.class);
+        assertEquals("", prefix);
+    }
+
+    @Test
+    public void testGetPrefixWhenAnnotationHasEmptyPrefix() {
+        // @ConfigMapping without explicit prefix – default is empty
+        String prefix = ConfigMappings.getPrefix(NoPrefixMapping.class);
+        assertEquals("", prefix);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* Tests for ConfigClassWithPrefix                                         */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testConfigClassWithPrefixFactoryMethods() {
+        ConfigMappings.ConfigClassWithPrefix withExplicit = ConfigMappings.ConfigClassWithPrefix
+                .configClassWithPrefix(EmptyMapping.class, "my.prefix");
+        ConfigMappings.ConfigClassWithPrefix withDerived = ConfigMappings.ConfigClassWithPrefix
+                .configClassWithPrefix(EmptyMapping.class);
+
+        assertEquals(EmptyMapping.class, withExplicit.getKlass());
+        assertEquals("my.prefix", withExplicit.getPrefix());
+
+        // derived instance should use the prefix from the annotation
+        assertEquals(EmptyMapping.class, withDerived.getKlass());
+        assertEquals("test.prefix", withDerived.getPrefix());
+    }
+
+    @Test
+    public void testConfigClassWithPrefixEqualsAndHashCode() {
+        ConfigMappings.ConfigClassWithPrefix a = ConfigMappings.ConfigClassWithPrefix
+                .configClassWithPrefix(EmptyMapping.class, "p1");
+        ConfigMappings.ConfigClassWithPrefix b = ConfigMappings.ConfigClassWithPrefix
+                .configClassWithPrefix(EmptyMapping.class, "p1");
+        ConfigMappings.ConfigClassWithPrefix c = ConfigMappings.ConfigClassWithPrefix
+                .configClassWithPrefix(EmptyMapping.class, "p2");
+        ConfigMappings.ConfigClassWithPrefix d = ConfigMappings.ConfigClassWithPrefix
+                .configClassWithPrefix(NoPrefixMapping.class, "p1");
+
+        // equality
+        assertTrue(a.equals(b));
+        assertTrue(b.equals(a));
+        assertFalse(a.equals(c));
+        assertFalse(a.equals(d));
+        assertFalse(a.equals(null));
+        assertFalse(a.equals("some string"));
+
+        // hashCode contract
+        assertEquals(a.hashCode(), b.hashCode());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* Tests for the property‑related helper methods                           */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetPropertiesReturnsEmptyForEmptyMapping() {
+        ConfigMappings.ConfigClassWithPrefix configClass = ConfigMappings.ConfigClassWithPrefix
+                .configClassWithPrefix(EmptyMapping.class);
+        Map<Class<?>, Map<String, Map<String, Property>>> props = ConfigMappings.getProperties(configClass);
+
+        // The mapping interface itself should be present as a top‑level key
+        assertTrue(props.containsKey(EmptyMapping.class));
+
+        // Since the interface has no properties, the inner maps should be empty
+        Map<String, Map<String, Property>> byPrefix = props.get(EmptyMapping.class);
+        assertEquals(1, byPrefix.size()); // only the explicit prefix entry
+        Map<String, Property> leafMap = byPrefix.get("test.prefix");
+        assertNotNull(leafMap);
+        assertTrue(leafMap.isEmpty());
+    }
+
+    @Test
+    public void testGetNamesProducesEmptySetsForEmptyMapping() {
+        ConfigMappings.ConfigClassWithPrefix configClass = ConfigMappings.ConfigClassWithPrefix
+                .configClassWithPrefix(EmptyMapping.class);
+        Map<String, Map<String, Set<String>>> names = ConfigMappings.getNames(configClass);
+
+        // The outer map contains a single entry for the mapping class name
+        assertEquals(1, names.size());
+        Map<String, Set<String>> groups = names.get(EmptyMapping.class.getName());
+        assertNotNull(groups);
+        // The only group key is the configured prefix; it maps to an empty set of property names
+        Set<String> propertyNames = groups.get("test.prefix");
+        assertNotNull(propertyNames);
+        assertTrue(propertyNames.isEmpty());
+    }
+
+    @Test
+    public void testGetKeysReturnsEmptySetForEmptyMapping() {
+        ConfigMappings.ConfigClassWithPrefix configClass = ConfigMappings.ConfigClassWithPrefix
+                .configClassWithPrefix(EmptyMapping.class);
+        Set<String> keys = ConfigMappings.getKeys(configClass);
+        assertNotNull(keys);
+        assertTrue(keys.isEmpty());
+    }
+
+    @Test
+    public void testGetDefaultsReturnsEmptyMapForEmptyMapping() {
+        ConfigMappings.ConfigClassWithPrefix configClass = ConfigMappings.ConfigClassWithPrefix
+                .configClassWithPrefix(EmptyMapping.class);
+        Map<String, String> defaults = ConfigMappings.getDefaults(configClass);
+        assertNotNull(defaults);
+        assertTrue(defaults.isEmpty());
+    }
+
+    @Test
+    public void testMappedPropertiesFiltersOnlyKnownProperties() {
+        ConfigMappings.ConfigClassWithPrefix configClass = ConfigMappings.ConfigClassWithPrefix
+                .configClassWithPrefix(EmptyMapping.class);
+        // Provide a set that contains arbitrary strings; none should be mapped
+        Set<String> input = Set.of("foo", "bar", "test.prefix");
+        Set<String> mapped = ConfigMappings.mappedProperties(configClass, input);
+        assertNotNull(mapped);
+        assertTrue(mapped.isEmpty());
+    }
+}

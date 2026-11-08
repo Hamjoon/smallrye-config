@@ -1,0 +1,185 @@
+package io.smallrye.config;
+import io.smallrye.config.ConfigMapping.NamingStrategy;
+import io.smallrye.config.ConfigValidationException.Problem;
+
+
+import static org.junit.Assert.*;
+
+import java.util.*;
+
+import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ConfigMappingContextTest {
+
+    private SmallRyeConfig config;
+    private ConfigMappingContext context;
+
+    @Before
+    public void setUp() {
+        // SmallRyeConfig has a public no‑arg constructor in the library.
+        this.config = new SmallRyeConfig();
+        // Initialise the context with an empty roots map – this will not trigger any EnvConfigSource handling.
+        this.context = new ConfigMappingContext(config, Collections.emptyMap());
+    }
+
+    @Test
+    public void testApplyNamingStrategy_DefaultsToKebabCase() {
+        // When no strategy has been set, the default should be KEBAB_CASE
+        NamingStrategy result = context.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.KEBAB_CASE, result);
+        // Subsequent call with null must keep the previously set strategy
+        result = context.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.KEBAB_CASE, result);
+    }
+
+    @Test
+    public void testApplyNamingStrategy_ExplicitSetting() {
+        NamingStrategy result = context.applyNamingStrategy(NamingStrategy.SNAKE_CASE);
+        assertEquals(NamingStrategy.SNAKE_CASE, result);
+        // Setting again with a different strategy replaces the previous one
+        result = context.applyNamingStrategy(NamingStrategy.VERBATIM);
+        assertEquals(NamingStrategy.VERBATIM, result);
+    }
+
+    @Test
+    public void testApplyRootPathAndNameBuilder() {
+        String root = "my.root.path";
+        String returnedRoot = context.applyRootPath(root);
+        assertEquals(root, returnedRoot);
+        StringBuilder sb = context.applyNameBuilder(root);
+        assertSame(context.getNameBuilder(), sb);
+        assertEquals(root, sb.toString());
+
+        // Changing the builder should not affect the stored rootPath string
+        sb.append(".extra");
+        assertEquals(root, context.applyRootPath(root)); // rootPath unchanged
+    }
+
+    @Test
+    public void testGetNameBuilderIsMutable() {
+        StringBuilder sb1 = context.getNameBuilder();
+        sb1.append("abc");
+        StringBuilder sb2 = context.getNameBuilder();
+        assertEquals("abc", sb2.toString());
+    }
+
+    @Test
+    public void testReportProblemCollectsProblem() {
+        RuntimeException ex = new IllegalArgumentException("test problem");
+        context.reportProblem(ex);
+        List<Problem> problems = context.getProblems();
+        assertEquals(1, problems.size());
+        assertEquals("java.lang.IllegalArgumentException: test problem", problems.get(0).getMessage());
+    }
+
+    @Test
+    public void testIndexOfDashesSimpleMatch() {
+        // mappedProperty contains a dash that must be reflected in the env property
+        List<Integer> dashes = invokeIndexOfDashes("foo-bar.baz", "FOO_BAR_BAZ");
+        assertNotNull(dashes);
+        assertEquals(Collections.singletonList(3), dashes); // dash at position 3 in env string
+    }
+
+    @Test
+    public void testIndexOfDashesNoMatchReturnsNull() {
+        // Different characters – should return null
+        List<Integer> dashes = invokeIndexOfDashes("foo.bar", "FOO_BAZ");
+        assertNull(dashes);
+    }
+
+    @Test
+    public void testIndexOfDashesWithWildcardMap() {
+        // '*' represents a map segment – it should be skipped correctly
+        List<Integer> dashes = invokeIndexOfDashes("servers.*.port", "SERVERS_FOO_PORT");
+        assertNotNull(dashes);
+        assertTrue(dashes.isEmpty()); // no dash needed
+    }
+
+    @Test
+    public void testIsPropertyInRootExactMatch() {
+        assertTrue(invokeIsPropertyInRoot("my.root", "my.root"));
+    }
+
+    @Test
+    public void testIsPropertyInRootWithDotSeparator() {
+        assertTrue(invokeIsPropertyInRoot("my.root.prop", "my.root"));
+        assertFalse(invokeIsPropertyInRoot("myroot.prop", "my.root"));
+    }
+
+    @Test
+    public void testIsPropertyInRootWithArrayNotation() {
+        assertTrue(invokeIsPropertyInRoot("my.root[0].value", "my.root"));
+        assertFalse(invokeIsPropertyInRoot("myroot[0].value", "my.root"));
+    }
+
+    @Test
+    public void testFilterPropertiesInRootsEmptyRootsReturnsAll() {
+        List<String> props = Arrays.asList("a", "b.c", "d[0]");
+        Iterable<String> result = invokeFilterPropertiesInRoots(props, Collections.emptySet());
+        assertEquals(new HashSet<>(props), toSet(result));
+    }
+
+    @Test
+    public void testFilterPropertiesInRootsMatchesRoot() {
+        List<String> props = Arrays.asList("app.name", "app.port", "other.value");
+        Set<String> roots = new HashSet<>(Arrays.asList("app"));
+        Iterable<String> result = invokeFilterPropertiesInRoots(props, roots);
+        Set<String> expected = new HashSet<>(Arrays.asList("app.name", "app.port"));
+        assertEquals(expected, toSet(result));
+    }
+
+    @Test
+    public void testFilterPropertiesInRootsRootIsEmptyStringMatchesAll() {
+        List<String> props = Arrays.asList("x", "y.z");
+        Set<String> roots = new HashSet<>(Arrays.asList(""));
+        Iterable<String> result = invokeFilterPropertiesInRoots(props, roots);
+        assertEquals(new HashSet<>(props), toSet(result));
+    }
+
+    /* ----------------------------------------------------------------------
+     * Helper methods to access the private static methods via reflection
+     * ---------------------------------------------------------------------- */
+    @SuppressWarnings("unchecked")
+    private List<Integer> invokeIndexOfDashes(String mapped, String env) {
+        try {
+            java.lang.reflect.Method m = ConfigMappingContext.class
+                    .getDeclaredMethod("indexOfDashes", String.class, String.class);
+            m.setAccessible(true);
+            return (List<Integer>) m.invoke(null, mapped, env);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean invokeIsPropertyInRoot(String property, String root) {
+        try {
+            java.lang.reflect.Method m = ConfigMappingContext.class
+                    .getDeclaredMethod("isPropertyInRoot", String.class, String.class);
+            m.setAccessible(true);
+            return (boolean) m.invoke(null, property, root);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Iterable<String> invokeFilterPropertiesInRoots(Iterable<String> properties, Set<String> roots) {
+        try {
+            java.lang.reflect.Method m = ConfigMappingContext.class
+                    .getDeclaredMethod("filterPropertiesInRoots", Iterable.class, Set.class);
+            m.setAccessible(true);
+            return (Iterable<String>) m.invoke(null, properties, roots);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Set<String> toSet(Iterable<String> iterable) {
+        Set<String> set = new HashSet<>();
+        for (String s : iterable) {
+            set.add(s);
+        }
+        return set;
+    }
+}

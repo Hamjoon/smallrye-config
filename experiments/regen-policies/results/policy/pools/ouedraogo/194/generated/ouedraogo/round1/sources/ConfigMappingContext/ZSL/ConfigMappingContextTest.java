@@ -1,0 +1,360 @@
+package io.smallrye.config;
+import io.smallrye.config._private.ConfigMessages;
+import io.smallrye.config.ConfigValidationException.Problem;
+
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Field;
+import java.util.*;
+
+import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Unit tests for {@link ConfigMappingContext}.
+ *
+ * The tests use only the public API of {@code ConfigMappingContext} and the
+ * minimal set of helper classes defined in this file. No external mocking
+ * frameworks are used – all collaborators are simple concrete implementations
+ * that satisfy the contracts required by the class under test.
+ */
+public class ConfigMappingContextTest {
+
+    /** Simple {@link Converter} implementation used for testing {@code getConverterInstance}. */
+    public static class SimpleStringConverter implements Converter<String> {
+        public SimpleStringConverter() {}
+        @Override
+        public String convert(String value) {
+            return value;
+        }
+    }
+
+    /** Minimal {@link ConfigValue} implementation needed by {@code reportUnknown}. */
+    public static class DummyConfigValue implements ConfigValue {
+        private final String name;
+        private final String sourceName;
+        private final String location;
+
+        public DummyConfigValue(String name, String sourceName, String location) {
+            this.name = name;
+            this.sourceName = sourceName;
+            this.location = location;
+        }
+
+        @Override public String getName() { return name; }
+        @Override public String getValue() { return null; }
+        @Override public String getRawValue() { return null; }
+        @Override public String getSourceName() { return sourceName; }
+        @Override public ConfigSource getConfigSource() { return null; }
+        @Override public String getLocation() { return location; }
+    }
+
+    /** Minimal {@link ConfigSource} that pretends to be an {@code EnvConfigSource}. */
+    public static class DummyEnvConfigSource implements ConfigSource {
+        public static final String NAME = "Env";
+
+        private final Set<String> propertyNames = new HashSet<>();
+
+        @Override public String getName() { return NAME; }
+        @Override public int getOrdinal() { return 0; }
+        @Override public Map<String, String> getProperties() { return Collections.emptyMap(); }
+
+        public Set<String> getPropertyNames() { return propertyNames; }
+    }
+
+    /** Very small {@link ConfigValidator} stub – validation is a no‑op. */
+    public static class DummyValidator {
+        public void validateMapping(Class<?> type, String prefix, Object mapping) {
+            // no validation required for the tests
+        }
+    }
+
+    /** Stub implementation of {@link SmallRyeConfig} providing only the behaviour needed by the tests. */
+    public static class TestSmallRyeConfig extends SmallRyeConfig {
+        private Set<String> propertyNames = new HashSet<>();
+
+        public void setPropertyNames(Set<String> names) {
+            this.propertyNames = names;
+        }
+
+        @Override
+        public Iterable<String> getPropertyNames() {
+            return propertyNames;
+        }
+
+        @Override
+        public List<String> getProfiles() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Iterable<ConfigSource> getConfigSources(Class<?> type) {
+            if (type == EnvConfigSource.class) {
+                return List.of(new DummyEnvConfigSource());
+            }
+            return Collections.emptyList();
+        }
+
+        @Override
+        public ConfigValue getConfigValue(String name) {
+            // sourceName is null so the Env‑source check in reportUnknown is bypassed
+            return new DummyConfigValue(name, null, "location-of-" + name);
+        }
+
+        @Override
+        public DummyValidator getConfigValidator() {
+            return new DummyValidator();
+        }
+
+        @Override
+        public List<Integer> getIndexedPropertiesIndexes(String property) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<String> getIndexedProperties(String property) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Map<String, String> getMapKeys(String name) {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public Map<String, String> getMapIndexedKeys(String name) {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public <T> Converter<T> requireConverter(Class<T> asType) {
+            if (asType == String.class) {
+                @SuppressWarnings("unchecked")
+                Converter<T> conv = (Converter<T>) new SimpleStringConverter();
+                return conv;
+            }
+            throw new IllegalArgumentException("Unsupported converter type");
+        }
+    }
+
+    /** Minimal implementation of {@link ConfigMessages} required for the static import used inside the class. */
+    public static class DummyConfigMessages implements ConfigMessages {
+        @Override public IllegalStateException propertyDoesNotMapToAnyRoot(String name, String location) {
+            return new IllegalStateException("Property '" + name + "' does not map to any root (" + location + ")");
+        }
+
+        // -----------------------------------------------------------------
+        // All other methods are irrelevant for the current test suite.
+        // They simply throw {@link UnsupportedOperationException}.
+        // -----------------------------------------------------------------
+        @Override public IllegalStateException fileNotFound(String fileName) { throw new UnsupportedOperationException(); }
+        @Override public IllegalStateException failedToLoadConfig(Throwable throwable) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException failedCharacterConversion(String value) { throw new UnsupportedOperationException(); }
+        @Override public IllegalStateException singleTypeConverter(String className) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException notArrayType(String arrayType) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException valueNotMatchPattern(java.util.regex.Pattern pattern, String value) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException lessThanMinimumValue(Object minimum, String value) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException lessThanEqualToMinimumValue(Object minimum, String value) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException greaterThanMaximumValue(Object maximum, String value) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException greaterThanEqualToMaximumValue(Object maximum, String value) { throw new UnsupportedOperationException(); }
+        @Override public java.io.InvalidObjectException unknownConverterId(int id) { throw new UnsupportedOperationException(); }
+        @Override public java.util.NoSuchElementException expandingElementNotFound(String key, String valueName) { throw new UnsupportedOperationException(); }
+        @Override public IllegalStateException unableToAddConverter(Converter<?> converter) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException noRegisteredConverter(Class<?> type) { throw new UnsupportedOperationException(); }
+        @Override public String propertyNotFound(String name) { throw new UnsupportedOperationException(); }
+        @Override public IllegalStateException noConfigForClassloader() { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException configIsNull() { throw new UnsupportedOperationException(); }
+        @Override public IllegalStateException configAlreadyRegistered() { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException malformedEncoding() { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException constructorConverterFailure(Throwable cause) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException staticMethodConverterFailure(Throwable cause) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException classConverterNotFound(Throwable cause, String className) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException unknownHost(Throwable cause, String host) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException unknownArrayType() { throw new UnsupportedOperationException(); }
+        @Override public SecurityException notAllowed(String name) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException expressionExpansionTooDepth(String name) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException malformedUUID(Throwable cause, String malformedUUID) { throw new UnsupportedOperationException(); }
+        @Override public java.util.NoSuchElementException mappingNotFound(String className) { throw new UnsupportedOperationException(); }
+        @Override public java.util.NoSuchElementException mappingPrefixNotFound(String className, String prefix) { throw new UnsupportedOperationException(); }
+        @Override public NumberFormatException integerExpected(String value) { throw new UnsupportedOperationException(); }
+        @Override public NumberFormatException longExpected(String value) { throw new UnsupportedOperationException(); }
+        @Override public NumberFormatException doubleExpected(String value) { throw new UnsupportedOperationException(); }
+        @Override public NumberFormatException floatExpected(String value) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException schemeNotSupported(String scheme) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException uriSyntaxInvalid(Throwable cause, String uri) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException failedToLoadResource(Throwable cause, String location) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException getTypeNotSupportedForUnwrapping(Class<?> type) { throw new UnsupportedOperationException(); }
+        @Override public NullPointerException converterNullValue() { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException noRawType(java.lang.reflect.Type type) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException converterException(Throwable converterException, String configProperty, String configValue, String causeMessage) { throw new UnsupportedOperationException(); }
+        @Override public java.util.NoSuchElementException propertyEmptyString(String configPropertyName, String converter) { throw new UnsupportedOperationException(); }
+        @Override public java.util.NoSuchElementException converterReturnedNull(String configPropertyName, String configValue, String converter) { throw new UnsupportedOperationException(); }
+        @Override public java.util.NoSuchElementException valueNotMatchMapFormat(String value) { throw new UnsupportedOperationException(); }
+        @Override public IllegalStateException mappingAnnotationNotSupportedInClass(Class<?> type) { throw new UnsupportedOperationException(); }
+        @Override public IllegalStateException propertiesAnnotationNotSupportedInInterface(Class<?> type) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException classIsNotAMapping(Class<?> type) { throw new UnsupportedOperationException(); }
+        @Override public java.util.NoSuchElementException secretKeyHandlerNotFound(String handler) { throw new UnsupportedOperationException(); }
+        @Override public IllegalStateException ambiguousMapping(String path, String amb1, String amb2) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException explicitNameInUnnamed(String name, String key) { throw new UnsupportedOperationException(); }
+        @Override public IllegalArgumentException cannotConvertEnum(String value, Class<?> enumType, String values) { throw new UnsupportedOperationException(); }
+        @Override public IllegalStateException couldNotGenerateMapping(Throwable throwable) { throw new UnsupportedOperationException(); }
+    }
+
+    // Initialise the static field used by the static import in ConfigMappingContext
+    static {
+        try {
+            Class<?> cfgMsgClass = Class.forName("io.smallrye.config._private.ConfigMessages");
+            java.lang.reflect.Field msgField = cfgMsgClass.getDeclaredField("msg");
+            msgField.setAccessible(true);
+            msgField.set(null, new DummyConfigMessages());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private TestSmallRyeConfig config;
+    private ConfigMappingContext context;
+
+    @Before
+    public void setUp() {
+        config = new TestSmallRyeConfig();
+        // An empty mapping map – this keeps the constructor cheap and avoids any
+        // interaction with ConfigMappingLoader or validation logic.
+        context = new ConfigMappingContext(config, Collections.emptyMap());
+    }
+
+    @Test
+    public void testApplyPrefixAndNameBuilder() {
+        context.applyPrefix("my.prefix");
+        assertEquals("my.prefix", context.getNameBuilder().toString());
+
+        // Verify that applying another prefix overwrites the previous content
+        context.applyPrefix("other");
+        assertEquals("other", context.getNameBuilder().toString());
+    }
+
+    @Test
+    public void testNamingStrategyAndBeanStyleGetters() {
+        // Use VERBATIM (identity) strategy and enable bean‑style getters
+        context.applyNamingStrategy(NamingStrategy.VERBATIM);
+        context.applyBeanStyleGetters(true);
+
+        // "getFoo" → bean style removes "get" and lower‑cases next char → "foo"
+        String result = context.propertyName().apply("getFoo");
+        assertEquals("foo", result);
+
+        // When bean style is disabled the function should be the identity strategy
+        context.applyBeanStyleGetters(false);
+        assertEquals("getBar", context.propertyName().apply("getBar"));
+    }
+
+    @Test
+    public void testReportProblemAddsProblem() {
+        RuntimeException ex = new RuntimeException("boom");
+        context.reportProblem(ex);
+        List<Problem> problems = context.getProblems();
+        assertEquals(1, problems.size());
+        assertTrue(problems.get(0).getMessage().contains("boom"));
+    }
+
+    @Test
+    public void testGetConverterInstanceCachesInstances() {
+        Converter<String> first = context.getConverterInstance(SimpleStringConverter.class);
+        assertNotNull(first);
+        Converter<String> second = context.getConverterInstance(SimpleStringConverter.class);
+        assertSame("Converter instances should be cached", first, second);
+    }
+
+    @Test
+    public void testReportUnknownDetectsUnmappedProperties() throws Exception {
+        // -----------------------------------------------------------------
+        // Prepare a synthetic mapping with prefix "my"
+        // -----------------------------------------------------------------
+        Map<Class<?>, Map<String, Object>> syntheticMappings = new HashMap<>();
+        syntheticMappings.put(Object.class, Collections.singletonMap("my", new Object()));
+        // inject the synthetic mapping via reflection (the field is private)
+        Field mappingsField = ConfigMappingContext.class.getDeclaredField("mappings");
+        mappingsField.setAccessible(true);
+        mappingsField.set(context, syntheticMappings);
+
+        // -----------------------------------------------------------------
+        // Prepare the config to expose two property names:
+        //   - "my.prop"   – should be reported as unmapped
+        //   - "other.prop" – should be ignored because it does not belong to the root prefix
+        // -----------------------------------------------------------------
+        config.setPropertyNames(Set.of("my.prop", "other.prop"));
+
+        // Execute the method under test
+        context.reportUnknown(Collections.emptySet());
+
+        // Verify that exactly one problem has been recorded and that it mentions the unmapped property
+        List<Problem> problems = context.getProblems();
+        assertEquals(1, problems.size());
+        assertTrue(problems.get(0).getMessage().contains("my.prop"));
+    }
+
+    @Test
+    public void testObjectCreatorValueAndOptionalValue() {
+        // Use the ObjectCreator to fetch a simple value from the config.
+        // The test config will return the raw string as the value.
+        config.setPropertyNames(Set.of("simple"));
+        // Stub getValue to return the property name itself
+        TestSmallRyeConfig spyConfig = new TestSmallRyeConfig() {
+            @Override
+            public <T> T getValue(String name, Class<T> propertyType) {
+                @SuppressWarnings("unchecked")
+                T result = (T) name;
+                return result;
+            }
+
+            @Override
+            public <T> Optional<T> getOptionalValue(String name, Class<T> propertyType) {
+                @SuppressWarnings("unchecked")
+                Optional<T> result = Optional.of((T) name);
+                return result;
+            }
+        };
+        ConfigMappingContext ctx = new ConfigMappingContext(spyConfig, Collections.emptyMap());
+
+        ConfigMappingContext.ObjectCreator<String> creator = ctx.constructObject("simple");
+        creator.value(String.class, null);
+        assertEquals("simple", creator.get());
+
+        ConfigMappingContext.ObjectCreator<String> optCreator = ctx.constructObject("simple");
+        optCreator.optionalValue(String.class, null);
+        assertEquals(Optional.of("simple"), optCreator.get());
+    }
+
+    @Test
+    public void testObjectCreatorCollection() {
+        // Simulate indexed properties "list[0]" and "list[1]"
+        config.setPropertyNames(Set.of("list"));
+        TestSmallRyeConfig spyConfig = new TestSmallRyeConfig() {
+            @Override
+            public List<Integer> getIndexedPropertiesIndexes(String property) {
+                if ("list".equals(property)) {
+                    return List.of(0, 1);
+                }
+                return Collections.emptyList();
+            }
+
+            @Override
+            public <T> T getValue(String name, Converter<T> converter) {
+                // Strip the index part and return the index as a string
+                String indexStr = name.substring(name.lastIndexOf('[') + 1, name.length() - 1);
+                @SuppressWarnings("unchecked")
+                T result = (T) indexStr;
+                return result;
+            }
+        };
+        ConfigMappingContext ctx = new ConfigMappingContext(spyConfig, Collections.emptyMap());
+
+        ConfigMappingContext.ObjectCreator<List<String>> creator = ctx.constructObject("list");
+        creator.collection(List.class);
+        List<String> result = creator.get();
+        assertEquals(List.of("0", "1"), result);
+    }
+}

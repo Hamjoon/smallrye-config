@@ -1,0 +1,69 @@
+index,sha,date,subject,scope_executable,dev-scope_covered,dev-scope_percent,ktester_covered,ktester_percent,ouedraogo_covered,ouedraogo_percent
+2,17c02e676e3c24db0331ee5701d90f49cd25ebeb,2024-03-01T16:49:21+00:00,Include mappings nested super types metadata (#1123),10,10,100.0,0,0.0,5,50.0
+17,daaa5b86207d3e077ce672e661f54127b7a9ae34,2024-03-18T17:00:04+00:00,Do not fail with inline map value in mapping (#1135),8,4,50.0,0,0.0,0,0.0
+27,2327fb83a88aa59854eb189fb99ef21c2e184377,2024-04-19T20:15:54+01:00,Always include super properties of mappings (#1148),9,9,100.0,5,55.556,5,55.556
+30,3edebd4b38f85aaaf3c1872845a2add89b6374ad,2024-04-22T22:47:00+01:00,Generate mapping names and defaults (#1146),281,244,86.833,0,0.0,1,0.356
+35,f1a7d076bedc6973d868a48e2efe015ee70d8add,2024-04-23T23:36:16+01:00,Change getSuperTypes to public (#1154),1,1,100.0,0,0.0,0,0.0
+36,67837e422d50ceb5fe7293e68be68e8047a5d1a6,2024-04-24T13:06:46+01:00,Override super members defaults (#1156),8,8,100.0,0,0.0,0,0.0
+38,c3fcadb5408db6e4b6a356c0bbc88f28af269106,2024-04-24T18:10:50+01:00,Keep all mapping names (#1158),2,2,100.0,0,0.0,0,0.0
+46,ba34b443d2f65748bfb3716886373872a551fa03,2024-05-14T10:08:17+01:00,add method to exception (#1168),2,0,0.0,2,100.0,0,0.0
+58,6399d0ad470a83fe91377ef17695e8fb4bcba2bc,2024-06-13T11:36:48+01:00,Improve message on mapping generation failure (#1175),3,1,33.333,0,0.0,0,0.0
+94,cb623465fb2e915a85293a23920a1a14d52cf00f,2024-08-26T11:25:28+01:00,Avoid using string concatenation to forge impl name (#1211),7,7,100.0,5,71.429,5,71.429
+111,18ea9165cea3c22faf12971a9c7bd178db9e7691,2024-09-19T22:31:39+01:00,Support a fixed list of Map keys statically @WithKeys (#1220),74,59,79.73,1,1.351,1,1.351
+114,3bb973af5d2f535ec80f0dd8df27006f6bda08e4,2024-09-23T23:07:35+01:00,Move local classes to inner to reduce the number of classes in the main package (#1226),23,21,91.304,0,0.0,6,26.087
+123,d06184c9e819270ea11000cee08de10ca6f22c24,2024-10-04T21:19:04+01:00,Rename ConfigClassWithPrefix to ConfigClass and use it in SmallRyeConfigBuilder (#1236),14,10,71.429,0,0.0,0,0.0
+124,ef495861c3b021925a2e248469a804a3eb3f994b,2024-10-15T12:05:04+01:00,Fix NPE on ConfigValue#getSourceName,1,1,100.0,0,0.0,0,0.0
+130,bedbff5ef6662124c178ad4a2e14f060df2894cc,2024-10-15T17:24:33+01:00,Add @ConfigMapping beanStyleGetter to enable / disable bean style getter names matching with configuration names (#1239),22,17,77.273,1,4.545,0,0.0
+158,95881f00a09fdae86437e4f4aad94e1511185d9e,2024-12-03T17:52:46+00:00,Improve reportUnknown allocations (#1263),24,24,100.0,0,0.0,0,0.0
+160,a78a1660bddbc6000f6b95138aefd82e3d9d2de1,2024-12-11T14:56:58+00:00,Match most specific mapping prefix when matching environment variables (#1267),19,19,100.0,0,0.0,0,0.0
+163,d2b77872436bed7ad85e9dd97538579f4e9d197b,2024-12-19T15:10:05+00:00,Generate properties names with defaults in mapping class (#1273),71,61,85.915,0,0.0,0,0.0
+164,f49a5908f6cd60416bd4390186e0bf4fde8d37ff,2024-12-19T16:23:42+00:00,Validate mappings on creation instead of on lookup (#1264),22,20,90.909,0,0.0,0,0.0
+168,8ac2f931ebcb120845098ff7013d0a96e011e133,2025-01-02T10:25:25+00:00,Use `invokeExact` when creating a ConfigMapping object (#1275),3,3,100.0,0,0.0,0,0.0
+178,cd2e20d8da93781c6604391ef1cdfcd97ceef7b5,2025-01-10T20:52:48+00:00,Use static method to create object for leaf properties (#1286),97,85,87.629,0,0.0,0,0.0
+199,6af612770a1f59af24a0bfef62ab040b5524eaef,2025-02-06T20:25:46+00:00,Ignore default methods inherited from super classes in mappings (#1304),15,14,93.333,7,46.667,11,73.333
+200,d05636f5e1adbe72b6588dc37206c5cecb04cf1d,2025-02-06T20:44:19+00:00,Add a way for ConfigClass to also carry and load defaults from a config mapping class (#1306),42,33,78.571,0,0.0,0,0.0
+202,60923e71855c9f129132aab305a7dd168f219ed6,2025-02-08T19:35:04+00:00,Cache MethodHandles to construct and get defaults from the mapping implementation (#1309),23,15,65.217,1,4.348,0,0.0
+203,ed715cdd664e1f2b6836f613bd69b2a183aead4e,2025-02-08T22:52:08+00:00,Add API in the builder to register a mapping instance (#1310),18,12,66.667,0,0.0,0,0.0
+206,292865791bf2ad33d902b95135e7907160d4357b,2025-02-13T12:39:17+00:00,Keep properties from ConfigMapping implementation (#1313),18,17,94.444,0,0.0,0,0.0
+224,b0383e1f3b17d431d077806692a562e612653978,2025-02-27T12:17:55+00:00,Correctly match Env names when mapping contains empty names (#1331),1,1,100.0,0,0.0,0,0.0
+237,fa1d90a10cbf02652feca8cb6c901c7320be2081,2025-04-17T23:55:47+01:00,Move mapping Env matching to ConfigSource initialization (#1346),1,1,100.0,0,0.0,0,0.0
+276,df4a60fd3e8752af42e9920db53f063d2af0a3c3,2025-07-22T17:19:39+01:00,Make order of Config elements more deterministic,9,7,77.778,5,55.556,5,55.556
+277,dadfe78221e6dddab88a90b2ec6050f25895131c,2025-07-22T17:19:39+01:00,Reduce allocations when collecting properties from superTypes,8,8,100.0,8,100.0,8,100.0
+281,22e0315a8e8ccff386d984fef8ff5b830063165b,2025-07-23T14:49:37+01:00,Keep only a single array of properties for ConfigMappingInterface,2,2,100.0,2,100.0,0,0.0
+312,2013a99218658c08fadf758c856be7389eddec80,2025-09-18T17:51:35+01:00,Secret type to represent secrets and integrate with the Secret Keys handling (#1232),55,23,41.818,2,3.636,0,0.0
+316,0cfeee7c6cc88bd6c4b408e981888c01485ae4ba,2025-09-25T16:08:40+01:00,Improve ConfigMapping generation error (#1411),1,0,0.0,0,0.0,0,0.0
+318,18f43d2ac569d59546e3f93287678fdc8970ae0a,2025-10-01T18:59:12+01:00,Keep all the @ConfigMapping path and names operations to resolve the final property name in ConfigMappingContext (#1413),88,61,69.318,0,0.0,0,0.0
+326,439977721c26a599e85ebae5416f8b54e4219c3f,2025-10-13T18:12:37+01:00,"Introduce exact methods to get values from String, int and boolean (#1419)",6,6,100.0,0,0.0,0,0.0
+334,19c80288619ada46b6fdfe0712b5c12b1e371e60,2025-11-17T17:46:26+00:00,Throw IllegalArgumentException when using self-reference types (#1428),16,12,75.0,3,18.75,0,0.0
+346,f89575036384710456b95d9db8a9725837b689e0,2025-12-11T18:18:20+00:00,"Support `Map<String, Optional<String>>` in `@ConfigMapping` (#1438)",1,1,100.0,0,0.0,0,0.0
+351,74e6c4b56553292ed502c6fe8eff0d476b8da357,2025-12-19T11:34:50+00:00,Ensure modular access when reflecting (#1444),3,3,100.0,1,33.333,0,0.0
+353,8642c13c9095ca0b898485e19c8414720908809d,2025-12-20T00:23:23+00:00,Matcher for property names (#1446),15,0,0.0,0,0.0,0,0.0
+399,df67ce4d56b02d6c4acdf01e96a9c4f841ff985a,2026-03-17T18:29:26+00:00,Optimize reportUnknown() to avoid PropertyName HashSet collisions (#1490),14,13,92.857,0,0.0,0,0.0
+400,e9f26f019c14074c2bcf3c254b244ae03d57d282,2026-03-18T12:18:42+00:00,Add withMappingIgnorePrefix() API for optimized prefix filtering (#1491),5,4,80.0,0,0.0,0,0.0
+402,cc2753bc3daa4bfa94fa15888abc1d2d408c4ad4,2026-04-02T15:44:47+01:00,Improve PropertyNamesMatcher and use it instead of structures that use PropertyName as a key (#1496),5,2,40.0,0,0.0,0,0.0
+403,8c60df60fbdaf08e433aa9e5e879047107bad077,2026-04-02T15:45:02+01:00,Generate direct ctor call for ConfigMapping nested elements (#1497),56,43,76.786,0,0.0,24,42.857
+409,f1550114660b2840b136dbb8df36957ab6d787bf,2026-04-13T20:38:29+01:00,Use PropertyNamesMatcher to report unknowns (#1502),2,2,100.0,0,0.0,0,0.0
+417,977c01e0dc61cfc0f6678e51a63aac64b5dd4880,2026-04-18T00:20:25+01:00,Apply BeanStyleGetters to defaults (#1508),12,12,100.0,5,41.667,4,33.333
+435,05dc803be6b00fbb2c85c7d033e8710cfa8478a9,2026-05-29T16:39:08+01:00,Stabilize hashCode of ConfigClass (#1527),1,1,100.0,0,0.0,0,0.0
+446,38216aaafde679f7ba77cd3ddad6fdcf58a045d7,2026-06-22T17:43:40+01:00,Add SPI ConfigMappingHandler to split handling of @ConfigMapping and @ConfigProperties (#1532),3,2,66.667,0,0.0,0,0.0
+447,31ba1326177dbc54f3c02f3484f162c0982dbf5b,2026-06-22T19:21:33+01:00,Support nested config classes in class-based mappings (#1538),24,20,83.333,9,37.5,12,50.0
+456,0daa482f24d8e8cd1fc791f30979ff5e10a8a191,2026-07-03T16:05:12+01:00,Reproduce issue with `@WithUnnamedKey` config group considered present even if unconfigured (#1534),25,25,100.0,0,0.0,0,0.0
+462,8a86d44d8c24277d616c9a0007864f3e7801fb2d,2026-07-15T17:45:10+01:00,@WithUnnamedKey#eager to control if default keys are present in the mapping Map (#1546),32,14,43.75,0,0.0,6,18.75
+467,9458d406995ba0eceb989acb805e90d68a12e388,2026-07-22T19:01:42+01:00,Ignore @WithDefault on Map and Collection with nested group values (#1550),3,3,100.0,0,0.0,2,66.667
+468,8a8abf701f1f4901c35fc70ff9896fbc1d37bfa9,2026-07-22T19:21:38+01:00,Collect nested ConfigMappingClass entries in getConfigMappingsMetadata (#1551),20,0,0.0,0,0.0,0,0.0
+478,e86f2076dcf949c24d48a7cb93ad789b87234890,2026-08-21T14:23:46+01:00,"Refactor ConfigMappings to unify metadata model and clearly separate introspection, generation and loading (#1556)",219,156,71.233,0,0.0,0,0.0
+485,15a307adaac6eda1bf8a5ed104da134429261f72,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder implementation: - Builder class generation - Simple leaf types and primitives - Simple optionals - @WithDefault,19,14,73.684,0,0.0,0,0.0
+496,de41146ed4cc59b13116bfb9c11933fcde9f4fb0,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder use Converters to load,7,4,57.143,0,0.0,0,0.0
+498,4d45b6cafe3064f8521bd9cace2dab53591e86ac,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder Converters per interface Classloader,3,0,0.0,0,0.0,0,0.0
+514,dcb1e14c490cff41f82b6306000a6f3155ee4a11,2026-09-10T15:48:57+01:00,Warn on mapping ambiguous single segment quoted / unquoted Map keys (#1580),40,39,97.5,0,0.0,0,0.0
+525,19e23e57b53c3085dc2b9e7022bd6ba76eb775f1,2026-09-15T23:39:16+01:00,Use ClassValue to cache ConfigMappingInterface and ConfigMappingClass (#1589),44,30,68.182,0,0.0,0,0.0
+529,179e175d0b8cdb51d58d120bec7e5deb5fe4c86a,2026-09-17T10:26:27+01:00,Prefer AtomicReference instead of a Holder object (#1592),6,6,100.0,0,0.0,0,0.0
+552,203d412d18a2a0a8380ee1585673b62b781191c8,2026-10-26T17:30:08+00:00,Support ConfigMapping template instances (#1613),8,5,62.5,0,0.0,0,0.0
+556,0d99782df2f616b5755e269e371e07683b644b1d,2026-10-27T17:47:13+00:00,Fix Bean Validation property names with beanStyleGetters (#1616),1,1,100.0,0,0.0,0,0.0
+559,4c64c5a290468cfe51b87a24d4760dafef884b76,2026-10-27T21:59:31+00:00,Fix lazy groups with inherited beanStyleGetters (#1618),2,2,100.0,0,0.0,0,0.0
+560,cde51aeb3eefb15c7cf8f40be62b8007927ef049,2026-10-29T09:54:06+00:00,Avoid scanning linearly all the property names (#1621),21,21,100.0,4,19.048,0,0.0
+564,e8e8c220eef779149fd504956c5b53df838be2bc,2026-10-30T12:53:46+00:00,Apply the naming strategy without composing a Function per property (#1628),3,3,100.0,0,0.0,0,0.0
+566,88964bd5258a44285a042ecfdc5a07d0f6577c47,2026-10-30T12:54:52+00:00,Use invokeExact instead of invokeWithArguments to call mapping handles (#1625),18,3,16.667,0,0.0,0,0.0
+571,01d9e7fcfbd7865a79a4420f02e7482a080d5adb,2026-11-01T11:00:49+00:00,Discover generated config classes for transitive super interfaces (#1631),6,0,0.0,0,0.0,0,0.0
+574,0d5360e1b073c0a3f6fa177aa7a896bcde4913a1,2026-11-02T14:25:35+00:00,Fix lazy group creation for nested groups with their own naming strategy (#1634),4,4,100.0,0,0.0,0,0.0
+581,433e428cbde6a065a2118f097fd00bfa896d048a,2026-11-05T11:55:36+00:00,Discover transitive super interfaces of nested groups (#1638),6,6,100.0,0,0.0,0,0.0

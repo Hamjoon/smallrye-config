@@ -1,0 +1,349 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+import static io.smallrye.config.ConfigMapping.NamingStrategy.*;
+
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.function.Function;
+
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Comprehensive JUnit‑4 test suite for {@link ConfigMappingContext}.
+ *
+ * <p>The tests cover:
+ * <ul>
+ *   <li>All public methods (basic happy‑path tests)</li>
+ *   <li>Edge‑case handling (null arguments, empty strings, caching, etc.)</li>
+ *   <li>Exception paths for {@code getConverterInstance}</li>
+ *   <li>Private utility methods {@code indexOfDashes} and {@code isPropertyInRoot}
+ *       accessed via reflection.</li>
+ * </ul>
+ *
+ * <p>Only APIs that appear in the supplied source code or in the
+ * allowed dependency signatures are used – no external mocking frameworks.
+ */
+public class ConfigMappingContextTest {
+
+    private ConfigMappingContext context;
+    private SmallRyeConfig config; // the real implementation (assumed to have a public no‑arg ctor)
+
+    @Before
+    public void setUp() {
+        // SmallRyeConfig has a public no‑arg constructor in the reference implementation.
+        // It returns empty collections for the methods we rely on, which is sufficient
+        // for the tests that do not need real configuration data.
+        config = new SmallRyeConfig();
+        // an empty mappings map – the constructor will simply store nothing.
+        context = new ConfigMappingContext(config, Collections.emptyMap());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  1.  Public method list (extracted from the source)                     */
+    /* ---------------------------------------------------------------------- */
+    // Constructor
+    // <T> T constructGroup(Class<T> interfaceType)
+    // <T> ObjectCreator<T> constructObject(String path)
+    // <T> Converter<T> getConverterInstance(Class<? extends Converter<? extends T>> converterType)
+    // void applyPrefix(String prefix)
+    // void applyNamingStrategy(NamingStrategy namingStrategy)
+    // void applyBeanStyleGetters(Boolean beanStyleGetters)
+    // Function<String,String> propertyName()
+    // StringBuilder getNameBuilder()
+    // void reportProblem(RuntimeException problem)
+    // List<Problem> getProblems()
+    // Map<Class<?>, Map<String, Object>> getMappings()
+    // void reportUnknown(Set<String> ignoredPaths)
+
+    /* ---------------------------------------------------------------------- */
+    /*  2.  Basic (happy‑path) tests for each public method                  */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testApplyPrefix() {
+        context.applyPrefix("my.prefix");
+        assertEquals("my.prefix", context.getNameBuilder().toString());
+
+        // applying another prefix should replace the previous content
+        context.applyPrefix("new");
+        assertEquals("new", context.getNameBuilder().toString());
+
+        // empty prefix should clear the builder
+        context.applyPrefix("");
+        assertEquals("", context.getNameBuilder().toString());
+    }
+
+    @Test
+    public void testApplyNamingStrategy() {
+        // default is KEBAB_CASE
+        context.applyNamingStrategy(null); // should keep default
+        assertSame(KEBAB_CASE, getInternalNamingStrategy());
+
+        // change to VERBATIM
+        context.applyNamingStrategy(VERBATIM);
+        assertSame(VERBATIM, getInternalNamingStrategy());
+
+        // null again must not revert to default
+        context.applyNamingStrategy(null);
+        assertSame(VERBATIM, getInternalNamingStrategy());
+    }
+
+    @Test
+    public void testApplyBeanStyleGetters() {
+        // default is false
+        assertFalse(getInternalBeanStyleFlag());
+
+        // set true
+        context.applyBeanStyleGetters(Boolean.TRUE);
+        assertTrue(getInternalBeanStyleFlag());
+
+        // set false
+        context.applyBeanStyleGetters(Boolean.FALSE);
+        assertFalse(getInternalBeanStyleFlag());
+
+        // null should leave the current value unchanged (still false)
+        context.applyBeanStyleGetters(null);
+        assertFalse(getInternalBeanStyleFlag());
+    }
+
+    @Test
+    public void testPropertyNameFunction() {
+        // beanStyleGetters = false -> function is just the naming strategy
+        context.applyBeanStyleGetters(Boolean.FALSE);
+        context.applyNamingStrategy(VERBATIM);
+        Function<String, String> fn = context.propertyName();
+        assertEquals("my-value", fn.apply("my-value")); // verbatim does nothing
+
+        // beanStyleGetters = true -> bean‑style conversion first
+        context.applyBeanStyleGetters(Boolean.TRUE);
+        context.applyNamingStrategy(KEBAB_CASE);
+        fn = context.propertyName();
+        // "getMyValue" -> "my-value" after bean‑style then kebab
+        assertEquals("my-value", fn.apply("getMyValue"));
+        // "isEnabled" -> "enabled"
+        assertEquals("enabled", fn.apply("isEnabled"));
+        // non‑getter stays unchanged except kebab conversion
+        assertEquals("some-value", fn.apply("someValue"));
+    }
+
+    @Test
+    public void testGetNameBuilder() {
+        StringBuilder sb = context.getNameBuilder();
+        sb.append("builder-test");
+        assertEquals("builder-test", sb.toString());
+        // verify that the same builder instance is returned each time
+        assertSame(sb, context.getNameBuilder());
+    }
+
+    @Test
+    public void testReportProblemAndGetProblems() {
+        RuntimeException ex = new IllegalArgumentException("bad");
+        context.reportProblem(ex);
+        List<ConfigValidationException.Problem> probs = context.getProblems();
+        assertEquals(1, probs.size());
+        assertEquals("java.lang.IllegalArgumentException: bad", probs.get(0).getMessage());
+    }
+
+    @Test
+    public void testGetMappingsInitiallyEmpty() {
+        Map<Class<?>, Map<String, Object>> mappings = context.getMappings();
+        assertNotNull(mappings);
+        assertTrue(mappings.isEmpty());
+    }
+
+    @Test
+    public void testConstructObjectCreatesCreator() {
+        ConfigMappingContext.ObjectCreator<String> creator = context.constructObject("my.path");
+        assertNotNull(creator);
+        // simple usage – the creator should return the root object after get()
+        // (no mapping logic is executed because we have no config, so root stays null)
+        assertNull(creator.get());
+    }
+
+    @Test
+    public void testConstructGroupCreatesMappingObject() {
+        // Use a trivial mapping interface (empty) to ensure ConfigMappingLoader can create a proxy.
+        // The reference implementation of ConfigMappingLoader will return a dynamic proxy for any
+        // interface that extends ConfigMapping. We define one here.
+        interface EmptyMapping {}
+        EmptyMapping mapping = context.constructGroup(EmptyMapping.class);
+        assertNotNull(mapping);
+        // The mapping object should be of a proxy class, not the interface itself.
+        assertTrue(Proxy.isProxyClass(mapping.getClass()));
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  3.  Edge‑case and exception tests                                    */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetConverterInstanceCaching() {
+        // Dummy converter with a public no‑arg constructor
+        class DummyConverter implements Converter<String> {
+            @Override public String convert(String value) { return value; }
+        }
+
+        Converter<String> first = context.getConverterInstance(DummyConverter.class);
+        assertNotNull(first);
+        // second call returns the same instance (cached)
+        Converter<String> second = context.getConverterInstance(DummyConverter.class);
+        assertSame(first, second);
+    }
+
+    @Test(expected = NoSuchMethodError.class)
+    public void testGetConverterInstanceNoPublicNoArgConstructor() {
+        // Converter without a public no‑arg constructor – should trigger NoSuchMethodError
+        class NoPublicCtorConverter implements Converter<String> {
+            private NoPublicCtorConverter() {}
+            @Override public String convert(String value) { return value; }
+        }
+        // The call is expected to throw
+        context.getConverterInstance(NoPublicCtorConverter.class);
+    }
+
+    @Test(expected = InstantiationError.class)
+    public void testGetConverterInstanceInstantiatesAbstractClass() {
+        // Abstract converter – newInstance() throws InstantiationException → InstantiationError
+        abstract class AbstractConverter implements Converter<String> {}
+        context.getConverterInstance(AbstractConverter.class);
+    }
+
+    @Test
+    public void testReportUnknownIgnoresKnownProperties() {
+        // Prepare a context with a dummy config that reports a known property.
+        // We use reflection to inject a property name into the private usedProperties set.
+        Set<String> used = getInternalUsedProperties();
+        used.add("known.prop");
+
+        // No ignored paths, no prefixes – therefore no problems should be reported.
+        context.reportUnknown(Collections.emptySet());
+        assertTrue(context.getProblems().isEmpty());
+    }
+
+    @Test
+    public void testReportUnknownAddsProblemForUnmappedProperty() {
+        // Simulate a configuration that contains a single property "unmapped.prop".
+        // We achieve this by creating a minimal SmallRyeConfig subclass that returns the property.
+        SmallRyeConfig cfg = new SmallRyeConfig() {
+            @Override public Iterable<String> getPropertyNames() {
+                return Collections.singleton("unmapped.prop");
+            }
+
+            @Override public ConfigValue getConfigValue(String name) {
+                // Minimal ConfigValue implementation (only source name needed for the test)
+                return new ConfigValue() {
+                    @Override public String getName() { return name; }
+                    @Override public String getValue() { return "value"; }
+                    @Override public String getSourceName() { return "my-source"; }
+                    @Override public int getSourceOrdinal() { return 100; }
+                    @Override public String getLocation() { return "location"; }
+                };
+            }
+        };
+        ConfigMappingContext ctx = new ConfigMappingContext(cfg, Collections.emptyMap());
+
+        // No mappings => the property is considered unmapped and should generate a problem.
+        ctx.reportUnknown(Collections.emptySet());
+        List<ConfigValidationException.Problem> probs = ctx.getProblems();
+        assertEquals(1, probs.size());
+        assertTrue(probs.get(0).getMessage().contains("unmapped.prop"));
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  4.  Private utility method tests (via reflection)                    */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testIndexOfDashesSimpleMatch() throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod("indexOfDashes", String.class, String.class);
+        m.setAccessible(true);
+
+        // mapped: "foo.bar", env: "foo.bar" → no dashes to replace
+        List<Integer> result = (List<Integer>) m.invoke(null, "foo.bar", "foo.bar");
+        assertTrue(result.isEmpty());
+
+        // mapped: "foo-bar.baz", env: "foo.bar.baz" → dash at position 3 (0‑based)
+        result = (List<Integer>) m.invoke(null, "foo-bar.baz", "foo.bar.baz");
+        assertEquals(Collections.singletonList(3), result);
+    }
+
+    @Test
+    public void testIndexOfDashesWildcardAndCollection() throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod("indexOfDashes", String.class, String.class);
+        m.setAccessible(true);
+
+        // mapped: "foo.*.baz", env: "foo.bar.baz" → wildcard should match "bar"
+        List<Integer> result = (List<Integer>) m.invoke(null, "foo.*.baz", "foo.bar.baz");
+        assertTrue(result.isEmpty());
+
+        // mapped: "list[0].value", env: "list[0].value" → collection index, no dash
+        result = (List<Integer>) m.invoke(null, "list[0].value", "list[0].value");
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testIndexOfDashesNoMatchReturnsNull() throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod("indexOfDashes", String.class, String.class);
+        m.setAccessible(true);
+
+        // mapped longer than env → null
+        assertNull(m.invoke(null, "longer.property", "short"));
+        // mismatching characters
+        assertNull(m.invoke(null, "foo.bar", "foo.baz"));
+    }
+
+    @Test
+    public void testIsPropertyInRoot() throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod("isPropertyInRoot", String.class, String.class);
+        m.setAccessible(true);
+
+        // exact match
+        assertTrue((Boolean) m.invoke(null, "my.prop", "my.prop"));
+        // property is a child (dot)
+        assertTrue((Boolean) m.invoke(null, "my.prop.sub", "my.prop"));
+        // property is a child (array)
+        assertTrue((Boolean) m.invoke(null, "my.prop[0]", "my.prop"));
+        // property shorter than root → false
+        assertFalse((Boolean) m.invoke(null, "my", "my.prop"));
+        // same length but different char after root
+        assertFalse((Boolean) m.invoke(null, "my.propX", "my.prop"));
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  5.  Helper methods to access private fields via reflection           */
+    /* ---------------------------------------------------------------------- */
+
+    private NamingStrategy getInternalNamingStrategy() {
+        try {
+            java.lang.reflect.Field f = ConfigMappingContext.class.getDeclaredField("namingStrategy");
+            f.setAccessible(true);
+            return (NamingStrategy) f.get(context);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean getInternalBeanStyleFlag() {
+        try {
+            java.lang.reflect.Field f = ConfigMappingContext.class.getDeclaredField("beanStyleGetters");
+            f.setAccessible(true);
+            return (Boolean) f.get(context);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<String> getInternalUsedProperties() {
+        try {
+            java.lang.reflect.Field f = ConfigMappingContext.class.getDeclaredField("usedProperties");
+            f.setAccessible(true);
+            return (Set<String>) f.get(context);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

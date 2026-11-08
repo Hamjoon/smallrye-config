@@ -1,0 +1,325 @@
+package io.smallrye.config;
+import io.smallrye.config.ConfigMappingInterface.Property;
+
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Test suite for {@link ConfigMappingInterface}.
+ *
+ * The tests cover:
+ * <ul>
+ *   <li>Public API methods and their basic contract.</li>
+ *   <li>Correct creation of the various {@link ConfigMappingInterface.Property}
+ *       subclasses (Primitive, Leaf, Optional, Group, Map, Collection, ToString, DefaultMethod).</li>
+ *   <li>Edge‑case handling such as null arguments, non‑interface types and inheritance.</li>
+ * </ul>
+ *
+ * The source class provides the following public methods (extracted for reference):
+ *
+ * <pre>
+ * public static ConfigMappingInterface getConfigurationInterface(Class<?> interfaceType)
+ * public Class<?> getInterfaceType()
+ * public ConfigMappingInterface[] getSuperTypes()
+ * public Property[] getProperties()
+ * public Property[] getProperties(boolean includeSuper)
+ * public boolean hasNamingStrategy()
+ * public NamingStrategy getNamingStrategy()
+ * public String getClassName()
+ * public byte[] getClassBytes()
+ * </pre>
+ *
+ * All tests are written using only the constructors and methods that are part of the
+ * {@code ConfigMappingInterface} source (no external mocking frameworks are used).
+ */
+public class ConfigMappingInterfaceTest {
+
+    /* --------------------------------------------------------------------- */
+    /*  Helper configuration interfaces used throughout the test suite      */
+    /* --------------------------------------------------------------------- */
+
+    /** Simple configuration interface with a variety of return types. */
+    public interface SimpleConfig {
+        String name();                         // leaf (String)
+        int count();                           // primitive (int)
+        Optional<String> optionalValue();     // optional leaf
+        List<String> names();                   // collection of leaf
+        Map<String, Integer> map();             // map of leaf values
+        Nested nested();                       // group property (nested interface)
+
+        /** Abstract toString method – should be recognised as a ToStringMethod. */
+        String toString();                     // special toString property
+    }
+
+    /** Nested configuration interface used as a group property. */
+    public interface Nested {
+        long id();                             // primitive leaf
+    }
+
+    /** Super interface used to test inheritance handling. */
+    public interface SuperConfig {
+        String superProp();                    // leaf property defined in super type
+    }
+
+    /** Sub interface that extends {@link SuperConfig}. */
+    public interface SubConfig extends SuperConfig {
+        int subProp();                         // leaf property defined in sub type
+    }
+
+    private ConfigMappingInterface simpleCmi;
+    private ConfigMappingInterface subCmi;
+
+    @Before
+    public void setUp() {
+        simpleCmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        assertNotNull("Configuration interface for SimpleConfig must not be null", simpleCmi);
+
+        subCmi = ConfigMappingInterface.getConfigurationInterface(SubConfig.class);
+        assertNotNull("Configuration interface for SubConfig must not be null", subCmi);
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  1. Basic public API contract tests                                    */
+    /* --------------------------------------------------------------------- */
+
+    @Test
+    public void testGetConfigurationInterface_NullArgument() {
+        try {
+            ConfigMappingInterface.getConfigurationInterface(null);
+            fail("Expected an exception when passing null to getConfigurationInterface");
+        } catch (Exception e) {
+            // The Assert.checkNotNullParam throws IllegalArgumentException
+            assertTrue(e instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void testGetConfigurationInterface_NonInterface() {
+        // Passing a concrete class should return null (the class is not an interface)
+        ConfigMappingInterface result = ConfigMappingInterface.getConfigurationInterface(String.class);
+        assertNull("Non‑interface types must yield null configuration interface", result);
+    }
+
+    @Test
+    public void testGetInterfaceType() {
+        assertEquals(SimpleConfig.class, simpleCmi.getInterfaceType());
+    }
+
+    @Test
+    public void testGetClassName() {
+        // The class name is generated as interface name + hashcode + "Impl"
+        String expectedPrefix = SimpleConfig.class.getName();
+        String className = simpleCmi.getClassName();
+        assertTrue("Class name should start with the interface name",
+                className.startsWith(expectedPrefix));
+        assertTrue("Class name should end with 'Impl'", className.endsWith("Impl"));
+    }
+
+    @Test
+    public void testHasNamingStrategy_DefaultsToFalse() {
+        // No @ConfigMapping annotation is present on the test interfaces
+        assertFalse(simpleCmi.hasNamingStrategy());
+        // The default naming strategy must be KEBAB_CASE when no annotation is present
+        assertEquals(NamingStrategy.KEBAB_CASE, simpleCmi.getNamingStrategy());
+    }
+
+    @Test
+    public void testSuperTypesAndInheritedProperties() {
+        // SubConfig extends SuperConfig – the super type should be present
+        ConfigMappingInterface[] superTypes = subCmi.getSuperTypes();
+        assertEquals(1, superTypes.length);
+        assertEquals(SuperConfig.class, superTypes[0].getInterfaceType());
+
+        // getProperties(false) returns only properties declared in SubConfig
+        Property[] ownProps = subCmi.getProperties();
+        assertEquals(1, ownProps.length);
+        assertEquals("subProp", ownProps[0].getMemberName());
+
+        // getProperties(true) includes both super and own properties
+        Property[] allProps = subCmi.getProperties(true);
+        assertEquals(2, allProps.length);
+        // order is not guaranteed – verify presence of both names
+        boolean foundSuper = false, foundSub = false;
+        for (Property p : allProps) {
+            if (p.getMemberName().equals("superProp")) foundSuper = true;
+            if (p.getMemberName().equals("subProp")) foundSub = true;
+        }
+        assertTrue("Super property must be present", foundSuper);
+        assertTrue("Sub property must be present", foundSub);
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  2. Property type detection tests                                      */
+    /* --------------------------------------------------------------------- */
+
+    @Test
+    public void testDetectPrimitiveProperty() {
+        Property[] props = simpleCmi.getProperties();
+        Property primitiveProp = findByMemberName(props, "count");
+        assertNotNull("Primitive property 'count' should be present", primitiveProp);
+        assertTrue(primitiveProp.isPrimitive());
+        ConfigMappingInterface.PrimitiveProperty pp = primitiveProp.asPrimitive();
+        assertEquals(int.class, pp.getPrimitiveType());
+        assertEquals(Integer.class, pp.getBoxType());
+        // No converter and no default value for this test method
+        assertFalse(pp.hasConvertWith());
+        assertFalse(pp.hasDefaultValue());
+    }
+
+    @Test
+    public void testDetectLeafProperty() {
+        Property leaf = findByMemberName(simpleCmi.getProperties(), "name");
+        assertNotNull(leaf);
+        assertTrue(leaf.isLeaf());
+        ConfigMappingInterface.LeafProperty lp = leaf.asLeaf();
+        assertEquals(String.class, lp.getValueRawType());
+        assertFalse(lp.hasConvertWith());
+        assertFalse(lp.hasDefaultValue());
+    }
+
+    @Test
+    public void testDetectOptionalProperty() {
+        Property opt = findByMemberName(simpleCmi.getProperties(), "optionalValue");
+        assertNotNull(opt);
+        assertTrue(opt.isOptional());
+        ConfigMappingInterface.OptionalProperty op = opt.asOptional();
+        // The nested property should be a leaf (String)
+        ConfigMappingInterface.MayBeOptionalProperty nested = op.getNestedProperty();
+        assertTrue(nested.isLeaf());
+        ConfigMappingInterface.LeafProperty leaf = nested.asLeaf();
+        assertEquals(String.class, leaf.getValueRawType());
+    }
+
+    @Test
+    public void testDetectCollectionProperty() {
+        Property coll = findByMemberName(simpleCmi.getProperties(), "names");
+        assertNotNull(coll);
+        assertTrue(coll.isCollection());
+        ConfigMappingInterface.CollectionProperty cp = coll.asCollection();
+        // The collection raw type should be List (as declared)
+        assertEquals(List.class, cp.getCollectionRawType());
+        // Its element should be a leaf (String)
+        Property element = cp.getElement();
+        assertTrue(element.isLeaf());
+        assertEquals(String.class, element.asLeaf().getValueRawType());
+    }
+
+    @Test
+    public void testDetectMapProperty() {
+        Property mapProp = findByMemberName(simpleCmi.getProperties(), "map");
+        assertNotNull(mapProp);
+        assertTrue(mapProp.isMap());
+        ConfigMappingInterface.MapProperty mp = mapProp.asMap();
+        // Key type is String, value type is Integer (leaf)
+        assertEquals(String.class, mp.getKeyRawType());
+        assertTrue(mp.getValueProperty().isLeaf());
+        assertEquals(Integer.class, mp.getValueProperty().asLeaf().getValueRawType());
+        // No default value for this method
+        assertFalse(mp.hasDefaultValue());
+    }
+
+    @Test
+    public void testDetectGroupProperty() {
+        Property group = findByMemberName(simpleCmi.getProperties(), "nested");
+        assertNotNull(group);
+        assertTrue(group.isGroup());
+        ConfigMappingInterface.GroupProperty gp = group.asGroup();
+        ConfigMappingInterface nestedCmi = gp.getGroupType();
+        assertEquals(Nested.class, nestedCmi.getInterfaceType());
+
+        // Verify nested group's own property (id) is primitive
+        Property nestedId = findByMemberName(nestedCmi.getProperties(), "id");
+        assertNotNull(nestedId);
+        assertTrue(nestedId.isPrimitive());
+    }
+
+    @Test
+    public void testDetectToStringMethod() {
+        // The abstract toString method should be represented by a ToStringMethod instance
+        Property[] props = simpleCmi.getProperties();
+        // toString is excluded from getProperties() – it is stored in the CMI itself
+        ConfigMappingInterface.ToStringMethod tsm = simpleCmi.getToStringMethod();
+        assertNotNull(tsm);
+        assertTrue(tsm.isToStringMethod());
+        // The generated flag is true because the method is present
+        assertTrue(tsm.generate());
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  3. Edge‑case tests for property helper methods                       */
+    /* --------------------------------------------------------------------- */
+
+    @Test
+    public void testPropertyEqualsAndHashCode() throws NoSuchMethodException {
+        Method m1 = SimpleConfig.class.getMethod("name");
+        Method m2 = SimpleConfig.class.getMethod("name");
+        ConfigMappingInterface.LeafProperty p1 = new ConfigMappingInterface.LeafProperty(m1, null, String.class, null, null);
+        ConfigMappingInterface.LeafProperty p2 = new ConfigMappingInterface.LeafProperty(m2, null, String.class, null, null);
+        assertEquals(p1, p2);
+        assertEquals(p1.hashCode(), p2.hashCode());
+
+        // Different method – should not be equal
+        Method other = SimpleConfig.class.getMethod("count");
+        ConfigMappingInterface.PrimitiveProperty p3 = new ConfigMappingInterface.PrimitiveProperty(other, null, int.class, null, null);
+        assertNotEquals(p1, p3);
+    }
+
+    @Test
+    public void testPrimitivePropertyUnboxHelpers() {
+        // Obtain the primitive property for 'count' again
+        Property primitive = findByMemberName(simpleCmi.getProperties(), "count");
+        ConfigMappingInterface.PrimitiveProperty pp = primitive.asPrimitive();
+
+        assertEquals("intValue", pp.getUnboxMethodName());
+        assertEquals("()I", pp.getUnboxMethodDescriptor());
+    }
+
+    @Test
+    public void testMapPropertyUnnamedKeyHandling() throws Exception {
+        // Create a Map property with an @WithUnnamedKey annotation via reflection.
+        // Since we cannot use the annotation class directly, we simulate the scenario
+        // by manually constructing the MapProperty instance.
+        Method dummyMethod = SimpleConfig.class.getMethod("map");
+        ConfigMappingInterface.MapProperty mapProp = new ConfigMappingInterface.MapProperty(
+                dummyMethod,
+                null,
+                String.class,               // key type
+                "myKey",                    // unnamed key value
+                null,                       // no key converter
+                new ConfigMappingInterface.LeafProperty(dummyMethod, null, Integer.class, null, null),
+                false,
+                null);
+
+        assertTrue(mapProp.hasKeyUnnamed());
+        assertEquals("myKey", mapProp.getKeyUnnamed());
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  Helper utilities                                                   */
+    /* --------------------------------------------------------------------- */
+
+    /**
+     * Finds a property in the supplied array by its member (method) name.
+     *
+     * @param properties array of {@link Property}
+     * @param memberName the method name to look for
+     * @return the matching {@link Property} or {@code null} if not found
+     */
+    private Property findByMemberName(Property[] properties, String memberName) {
+        for (Property p : properties) {
+            if (memberName.equals(p.getMemberName())) {
+                return p;
+            }
+        }
+        return null;
+    }
+}

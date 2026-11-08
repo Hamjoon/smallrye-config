@@ -1,0 +1,208 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.microprofile.config.inject.ConfigMapping;
+import org.eclipse.microprofile.config.inject.ConfigProperties;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Comprehensive JUnit‑4 test suite for {@link ConfigMappings}.
+ *
+ * <p>The tests are organised as follows:</p>
+ *
+ * <ul>
+ *   <li>Verification of the public API signatures (extracted manually).</li>
+ *   <li>Basic “happy‑path” tests for each public method.</li>
+ *   <li>Edge‑case and exception handling tests (empty collections, empty strings, special characters, etc.).</li>
+ *   <li>Tests for the nested {@link ConfigMappings.ConfigClass} utility class.</li>
+ * </ul>
+ *
+ * <p>All objects are created via their public constructors or factory methods – no mocking frameworks are used,
+ * as required by the exercise.</p>
+ */
+public class ConfigMappingsTest {
+
+    private SmallRyeConfig config;
+
+    @Before
+    public void setUp() {
+        // SmallRyeConfig has a public no‑arg constructor in the library.
+        config = new SmallRyeConfig();
+    }
+
+    /* -----------------------------------------------------------------------
+     *  Tests for ConfigMappings.prefix(...)
+     * ----------------------------------------------------------------------- */
+
+    @Test
+    public void testPrefix_BothNonEmpty() {
+        assertEquals("my.prefix.prop", ConfigMappings.prefix("my.prefix", "prop"));
+    }
+
+    @Test
+    public void testPrefix_EmptyPrefix() {
+        assertEquals("prop", ConfigMappings.prefix("", "prop"));
+    }
+
+    @Test
+    public void testPrefix_EmptyPath() {
+        assertEquals("my.prefix", ConfigMappings.prefix("my.prefix", ""));
+    }
+
+    @Test
+    public void testPrefix_PathStartsWithBracket() {
+        assertEquals("my.prefix[0].value", ConfigMappings.prefix("my.prefix", "[0].value"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testPrefix_NullPrefix() {
+        ConfigMappings.prefix(null, "prop");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testPrefix_NullPath() {
+        ConfigMappings.prefix("my.prefix", null);
+    }
+
+    /* -----------------------------------------------------------------------
+     *  Tests for registerConfigMappings(...)
+     * ----------------------------------------------------------------------- */
+
+    @Test
+    public void testRegisterConfigMappings_EmptySetDoesNothing() throws Exception {
+        Set<ConfigMappings.ConfigClass> empty = Collections.emptySet();
+        // Should simply return without throwing.
+        ConfigMappings.registerConfigMappings(config, empty);
+    }
+
+    @Test
+    public void testRegisterConfigMappings_NonEmptySet() throws Exception {
+        Set<ConfigMappings.ConfigClass> set = new HashSet<>();
+        set.add(ConfigMappings.ConfigClass.configClass(TestMapping.class));
+        // No exception means the method successfully delegated to the private mapConfiguration().
+        ConfigMappings.registerConfigMappings(config, set);
+    }
+
+    /* -----------------------------------------------------------------------
+     *  Tests for registerConfigProperties(...)
+     * ----------------------------------------------------------------------- */
+
+    @Test
+    public void testRegisterConfigProperties_EmptySetDoesNothing() throws Exception {
+        Set<ConfigMappings.ConfigClass> empty = Collections.emptySet();
+        ConfigMappings.registerConfigProperties(config, empty);
+    }
+
+    @Test
+    public void testRegisterConfigProperties_NonEmptySet() throws Exception {
+        Set<ConfigMappings.ConfigClass> set = new HashSet<>();
+        set.add(ConfigMappings.ConfigClass.configClass(TestProperties.class));
+        ConfigMappings.registerConfigProperties(config, set);
+    }
+
+    /* -----------------------------------------------------------------------
+     *  Tests for getProperties(...)
+     * ----------------------------------------------------------------------- */
+
+    @Test
+    public void testGetProperties_EmptyMappingReturnsEmptyMap() {
+        ConfigMappings.ConfigClass cc = ConfigMappings.ConfigClass.configClass(EmptyMapping.class);
+        Map<String, ConfigMappingInterface.Property> props = ConfigMappings.getProperties(cc);
+        assertNotNull(props);
+        assertTrue(props.isEmpty());
+    }
+
+    @Test
+    public void testGetProperties_SimpleMapping() {
+        ConfigMappings.ConfigClass cc = ConfigMappings.ConfigClass.configClass(TestMapping.class);
+        Map<String, ConfigMappingInterface.Property> props = ConfigMappings.getProperties(cc);
+        // The interface defines a single property “value”.
+        assertEquals(1, props.size());
+        ConfigMappingInterface.Property p = props.get("test.prefix.value");
+        assertNotNull(p);
+        assertEquals("value", p.getPropertyName());
+    }
+
+    /* -----------------------------------------------------------------------
+     *  Tests for ConfigMappings.ConfigClass
+     * ----------------------------------------------------------------------- */
+
+    @Test
+    public void testConfigClass_ConstructorAndGetters() {
+        Class<?> klass = String.class;
+        String prefix = "my.prefix";
+        ConfigMappings.ConfigClass cc = new ConfigMappings.ConfigClass(klass, prefix);
+        assertEquals(klass, cc.getKlass());
+        assertEquals(prefix, cc.getPrefix());
+    }
+
+    @Test
+    public void testConfigClass_factoryWithPrefix() {
+        ConfigMappings.ConfigClass cc = ConfigMappings.ConfigClass.configClass(Integer.class, "int.prefix");
+        assertEquals(Integer.class, cc.getKlass());
+        assertEquals("int.prefix", cc.getPrefix());
+    }
+
+    @Test
+    public void testConfigClass_factoryFromInterfaceWithConfigMappingAnnotation() {
+        ConfigMappings.ConfigClass cc = ConfigMappings.ConfigClass.configClass(TestMapping.class);
+        assertEquals(TestMapping.class, cc.getKlass());
+        // The @ConfigMapping on TestMapping defines prefix = "test.prefix"
+        assertEquals("test.prefix", cc.getPrefix());
+    }
+
+    @Test
+    public void testConfigClass_factoryFromClassWithConfigPropertiesAnnotation() {
+        ConfigMappings.ConfigClass cc = ConfigMappings.ConfigClass.configClass(TestProperties.class);
+        assertEquals(TestProperties.class, cc.getKlass());
+        // The @ConfigProperties on TestProperties defines prefix = "props.prefix"
+        assertEquals("props.prefix", cc.getPrefix());
+    }
+
+    @Test
+    public void testConfigClass_equalsAndHashCode() {
+        ConfigMappings.ConfigClass a = ConfigMappings.ConfigClass.configClass(String.class, "p");
+        ConfigMappings.ConfigClass b = ConfigMappings.ConfigClass.configClass(String.class, "p");
+        ConfigMappings.ConfigClass c = ConfigMappings.ConfigClass.configClass(Integer.class, "p");
+
+        assertTrue(a.equals(b));
+        assertEquals(a.hashCode(), b.hashCode());
+
+        assertFalse(a.equals(c));
+        assertNotEquals(a.hashCode(), c.hashCode());
+    }
+
+    @Test
+    public void testConfigClass_equalsWithNullAndOtherType() {
+        ConfigMappings.ConfigClass cc = ConfigMappings.ConfigClass.configClass(Long.class, "l");
+        assertFalse(cc.equals(null));
+        assertFalse(cc.equals("some string"));
+    }
+
+    /* -----------------------------------------------------------------------
+     *  Helper classes used in the tests
+     * ----------------------------------------------------------------------- */
+
+    @ConfigMapping(prefix = "test.prefix")
+    public interface TestMapping {
+        // Single property – the method name becomes the property name.
+        String value();
+    }
+
+    @ConfigMapping(prefix = "empty")
+    public interface EmptyMapping {
+        // No methods – represents a mapping with zero properties.
+    }
+
+    @ConfigProperties(prefix = "props.prefix")
+    public static class TestProperties {
+        // A simple POJO – the class itself is enough for the factory method test.
+    }
+}

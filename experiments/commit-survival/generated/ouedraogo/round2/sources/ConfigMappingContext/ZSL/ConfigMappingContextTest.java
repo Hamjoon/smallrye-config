@@ -1,0 +1,374 @@
+package io.smallrye.config;
+import io.smallrye.config.ConfigMapping.NamingStrategy;
+import io.smallrye.config.ConfigValidationException.Problem;
+
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import org.eclipse.microprofile.config.spi.Converter;
+import org.eclipse.microprofile.config.ConfigValue;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Comprehensive tests for {@link ConfigMappingContext}.
+ * <p>
+ * The tests use a lightweight concrete implementation of {@link SmallRyeConfig}
+ * that stores configuration values in memory. This avoids the need for any
+ * external configuration sources or mocking frameworks while exercising the
+ * behaviour of {@code ConfigMappingContext} and its inner {@code ObjectCreator}
+ * class.
+ */
+public class ConfigMappingContextTest {
+
+    private TestConfig config;
+    private ConfigMappingContext context;
+
+    @Before
+    public void setUp() {
+        config = new TestConfig();
+        // Empty roots and names maps – we do not need any registered roots for the tests.
+        context = new ConfigMappingContext(config, Collections.emptyMap(), Collections.emptyMap());
+    }
+
+    /* --------------------------------------------------------------------- */
+    /* Helper classes used only by the tests                                */
+    /* --------------------------------------------------------------------- */
+
+    /**
+     * Minimal in‑memory {@link SmallRyeConfig} implementation that satisfies
+     * the methods used by {@link ConfigMappingContext}.
+     */
+    private static class TestConfig extends SmallRyeConfig {
+        private final Map<String, String> values = new HashMap<>();
+        private final Map<String, List<Integer>> indexedIndexes = new HashMap<>();
+        private final Map<String, List<String>> indexedProperties = new HashMap<>();
+
+        /** Store a simple property. */
+        void setValue(String name, String value) {
+            values.put(name, value);
+        }
+
+        /** Register indexed property names for a given base path. */
+        void setIndexed(String base, List<Integer> indexes, List<String> propertyNames) {
+            indexedIndexes.put(base, indexes);
+            indexedProperties.put(base, propertyNames);
+        }
+
+        @Override
+        public Iterable<String> getPropertyNames() {
+            return values.keySet();
+        }
+
+        @Override
+        public ConfigValue getConfigValue(String name) {
+            // Simple ConfigValue implementation – only sourceName & location are used.
+            return new SimpleConfigValue(name, values.get(name), "test-source", "test-location");
+        }
+
+        @Override
+        public <T> T getValue(String name, Converter<T> converter) {
+            String raw = values.get(name);
+            return raw == null ? null : converter.convert(raw);
+        }
+
+        @Override
+        public <T> Optional<T> getOptionalValue(String name, Converter<T> converter) {
+            return Optional.ofNullable(getValue(name, converter));
+        }
+
+        @Override
+        public List<Integer> getIndexedPropertiesIndexes(String property) {
+            return indexedIndexes.getOrDefault(property, Collections.emptyList());
+        }
+
+        @Override
+        public List<String> getIndexedProperties(String property) {
+            return indexedProperties.getOrDefault(property, Collections.emptyList());
+        }
+
+        @Override
+        public Map<String, String> getMapKeys(String name) {
+            // For the purposes of the tests we never need real map keys.
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public <T> Converter<T> requireConverter(Class<T> type) {
+            // Very simple converters for String and Integer.
+            if (type == String.class) {
+                @SuppressWarnings("unchecked")
+                Converter<T> c = (Converter<T>) (Converter<String>) value -> value;
+                return c;
+            }
+            if (type == Integer.class) {
+                @SuppressWarnings("unchecked")
+                Converter<T> c = (Converter<T>) (Converter<Integer>) Integer::valueOf;
+                return c;
+            }
+            throw new IllegalArgumentException("Unsupported converter type: " + type);
+        }
+
+        @Override
+        public <T> T convert(String value, Class<T> asType) {
+            if (asType == String.class) {
+                @SuppressWarnings("unchecked")
+                T t = (T) value;
+                return t;
+            }
+            if (asType == Integer.class) {
+                @SuppressWarnings("unchecked")
+                T t = (T) Integer.valueOf(value);
+                return t;
+            }
+            throw new IllegalArgumentException("Unsupported conversion");
+        }
+    }
+
+    /**
+     * Very small {@link ConfigValue} implementation – only the methods used
+     * inside {@code ConfigMappingContext.reportUnknown} are required.
+     */
+    private static class SimpleConfigValue implements ConfigValue {
+        private final String name;
+        private final String value;
+        private final String sourceName;
+        private final String location;
+
+        SimpleConfigValue(String name, String value, String sourceName, String location) {
+            this.name = name;
+            this.value = value;
+            this.sourceName = sourceName;
+            this.location = location;
+        }
+
+        @Override public String getName() { return name; }
+        @Override public String getValue() { return value; }
+        @Override public String getSourceName() { return sourceName; }
+        @Override public int getOrdinal() { return 0; }
+        @Override public String getConfigSourceName() { return sourceName; }
+        @Override public String getLocation() { return location; }
+    }
+
+    /* --------------------------------------------------------------------- */
+    /* Tests for public API                                                 */
+    /* --------------------------------------------------------------------- */
+
+    @Test
+    public void testApplyNamingStrategyDefault() {
+        // When no strategy is set, the default should be KEBAB_CASE.
+        NamingStrategy result = context.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.KEBAB_CASE, result);
+    }
+
+    @Test
+    public void testApplyNamingStrategyExplicit() {
+        NamingStrategy result = context.applyNamingStrategy(NamingStrategy.SNAKE_CASE);
+        assertEquals(NamingStrategy.SNAKE_CASE, result);
+        // Subsequent call with null must retain the previously set strategy.
+        NamingStrategy again = context.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.SNAKE_CASE, again);
+    }
+
+    @Test
+    public void testStringBuilderManipulation() {
+        StringBuilder sb = context.getStringBuilder();
+        sb.append("hello");
+        assertEquals("hello", sb.toString());
+        sb.setLength(0);
+        sb.append("world");
+        assertEquals("world", sb.toString());
+    }
+
+    @Test
+    public void testReportProblemAddsProblem() {
+        RuntimeException ex = new RuntimeException("boom");
+        context.reportProblem(ex);
+        List<Problem> problems = context.getProblems();
+        assertEquals(1, problems.size());
+        assertTrue(problems.get(0).getMessage().contains("boom"));
+    }
+
+    @Test
+    public void testGetRootsMapIsEmptyWhenNoRootsRegistered() {
+        assertTrue(context.getRootsMap().isEmpty());
+    }
+
+    @Test
+    public void testIsPropertyInRootLogic() throws Exception {
+        // Use reflection to access the private static method.
+        java.lang.reflect.Method m = ConfigMappingContext.class
+                .getDeclaredMethod("isPropertyInRoot", String.class, String.class);
+        m.setAccessible(true);
+
+        // Exact match
+        assertTrue((Boolean) m.invoke(null, "foo", "foo"));
+        // Property starts with root + '.' or '['
+        assertTrue((Boolean) m.invoke(null, "foo.bar", "foo"));
+        assertTrue((Boolean) m.invoke(null, "foo[0]", "foo"));
+        // Not a match – shorter than root
+        assertFalse((Boolean) m.invoke(null, "fo", "foo"));
+        // Not a match – different prefix
+        assertFalse((Boolean) m.invoke(null, "foobar", "foo"));
+        // Not a match – character after root is not '.' or '['
+        assertFalse((Boolean) m.invoke(null, "foobarbaz", "foo"));
+    }
+
+    @Test
+    public void testReportUnknownAddsProblemsForUnusedProperties() {
+        // Prepare configuration values.
+        config.setValue("known.prop", "value1");
+        config.setValue("unknown.prop", "value2");
+
+        // No properties are marked as used and no ignored paths.
+        context.reportUnknown(Collections.emptyList());
+
+        List<Problem> problems = context.getProblems();
+        // Both properties should be reported because there are no registered roots.
+        assertEquals(2, problems.size());
+        Set<String> msgs = new HashSet<>();
+        for (Problem p : problems) {
+            msgs.add(p.getMessage());
+        }
+        assertTrue(msgs.iterator().next().contains("known.prop"));
+        assertTrue(msgs.iterator().next().contains("unknown.prop"));
+    }
+
+    @Test
+    public void testCollectionCreatorBuildsList() throws Exception {
+        // Simulate a list with two indexed entries.
+        config.setValue("mylist[0]", "zero");
+        config.setValue("mylist[1]", "one");
+        config.setIndexed("mylist", List.of(0, 1), List.of("mylist[0]", "mylist[1]"));
+
+        ConfigMappingContext.ObjectCreator<List<String>> creator = context.constructObject("mylist")
+                .collection(List.class);
+
+        // Access the private 'creators' field to drive the mapping manually.
+        Field creatorsField = creator.getClass().getDeclaredField("creators");
+        creatorsField.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        List<Consumer<Function<String, Object>>> creators = (List<Consumer<Function<String, Object>>>) creatorsField.get(creator);
+
+        // Function that returns the stored value for a given path.
+        Function<String, Object> getter = path -> config.getValue(path, config.requireConverter(String.class));
+
+        // Execute each creator – this will populate the root collection.
+        for (Consumer<Function<String, Object>> c : creators) {
+            c.accept(getter);
+        }
+
+        List<String> result = creator.get();
+        assertNotNull(result);
+        assertEquals(List.of("zero", "one"), result);
+    }
+
+    @Test
+    public void testOptionalCollectionEmptyWhenNoIndexes() throws Exception {
+        // No indexed properties for "emptylist".
+        ConfigMappingContext.ObjectCreator<Optional<List<String>>> creator = context.constructObject("emptylist")
+                .optionalCollection(List.class);
+
+        // Drive the creators manually (there will be a single creator that sets the root).
+        Field creatorsField = creator.getClass().getDeclaredField("creators");
+        creatorsField.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        List<Consumer<Function<String, Object>>> creators = (List<Consumer<Function<String, Object>>>) creatorsField.get(creator);
+
+        Function<String, Object> getter = path -> null; // never called because there are no indexes.
+
+        for (Consumer<Function<String, Object>> c : creators) {
+            c.accept(getter);
+        }
+
+        Optional<List<String>> result = creator.get();
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testMapCreatorBuildsMap() throws Exception {
+        // Define map-like properties.
+        config.setValue("my.map.keyA", "valueA");
+        config.setValue("my.map.keyB", "valueB");
+        // Property names are needed for the map detection logic.
+        // (No special handling needed – they are already in the values map.)
+
+        ConfigMappingContext.ObjectCreator<Map<String, String>> creator = context.constructObject("my.map")
+                .map(String.class, null, null, null);
+
+        // Pull out the internal creators list.
+        Field creatorsField = creator.getClass().getDeclaredField("creators");
+        creatorsField.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        List<Consumer<Function<String, Object>>> creators = (List<Consumer<Function<String, Object>>>) creatorsField.get(creator);
+
+        // Function that retrieves the raw string value.
+        Function<String, Object> getter = path -> config.getValue(path, config.requireConverter(String.class));
+
+        // Execute every creator – the first creates the map, the rest fill it.
+        for (Consumer<Function<String, Object>> c : creators) {
+            c.accept(getter);
+        }
+
+        Map<String, String> result = creator.get();
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("valueA", result.get("keyA"));
+        assertEquals("valueB", result.get("keyB"));
+    }
+
+    @Test
+    public void testValueAndOptionalValueMarkPropertiesAsUsed() {
+        config.setValue("simple.prop", "hello");
+        ConfigMappingContext.ObjectCreator<String> creator = context.constructObject("simple.prop")
+                .value(String.class, null);
+        // Trigger the value extraction.
+        // The inner consumer expects a Function<String,Object> that returns the value.
+        // We'll invoke the creator's private creators list similarly to previous tests.
+        try {
+            Field creatorsField = creator.getClass().getDeclaredField("creators");
+            creatorsField.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            List<Consumer<Function<String, Object>>> creators = (List<Consumer<Function<String, Object>>>) creatorsField.get(creator);
+            Function<String, Object> getter = path -> config.getValue(path, config.requireConverter(String.class));
+            for (Consumer<Function<String, Object>> c : creators) {
+                c.accept(getter);
+            }
+        } catch (Exception e) {
+            fail("Reflection error: " + e);
+        }
+
+        // The property should now be recorded as used.
+        assertTrue(context.usedProperties.contains("simple.prop"));
+        assertEquals("hello", creator.get());
+    }
+
+    @Test
+    public void testOptionalValueReturnsEmptyWhenMissing() {
+        ConfigMappingContext.ObjectCreator<Optional<Integer>> creator = context.constructObject("missing.int")
+                .optionalValue(Integer.class, null);
+
+        try {
+            Field creatorsField = creator.getClass().getDeclaredField("creators");
+            creatorsField.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            List<Consumer<Function<String, Object>>> creators = (List<Consumer<Function<String, Object>>>) creatorsField.get(creator);
+            Function<String, Object> getter = path -> config.getOptionalValue(path, config.requireConverter(Integer.class)).orElse(null);
+            for (Consumer<Function<String, Object>> c : creators) {
+                c.accept(getter);
+            }
+        } catch (Exception e) {
+            fail("Reflection error: " + e);
+        }
+
+        Optional<Integer> result = creator.get();
+        assertTrue(result.isEmpty());
+        // Even though the property does not exist, it is still marked as used.
+        assertTrue(context.usedProperties.contains("missing.int"));
+    }
+}

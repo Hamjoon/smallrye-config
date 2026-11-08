@@ -1,0 +1,272 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.*;
+
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Comprehensive JUnit‑4 test suite for {@link ConfigMappingContext}.
+ *
+ * <p>The tests focus on the public behaviour and on the internal
+ * helpers that can be exercised without needing the full SmallRyeConfig
+ * implementation (which would require a running configuration source
+ * infrastructure).  Where a private method is needed we access it via
+ * reflection – this is acceptable for a unit‑test scenario because the
+ * method is deterministic and has no side‑effects.</p>
+ *
+ * <p>The suite covers:</p>
+ * <ul>
+ *   <li>Prefix handling – {@code applyPrefix} and {@code toPropertyName}</li>
+ *   <li>Naming strategy handling – {@code applyNamingStrategy},
+ *       {@code applyBeanStyleGetters} and the composed naming function.</li>
+ *   <li>Utility static method {@code isPropertyInRoot}</li>
+ *   <li>The {@link ConfigMappingContext.MapWithDefault} default‑value behaviour</li>
+ *   <li>Converter instance caching and error handling in {@code getConverterInstance}</li>
+ * </ul>
+ *
+ * <p>All tests use only the public API of the library and concrete
+ * classes that are part of the source file.  No mocking framework is
+ * used; a tiny {@code TestConfig} subclass of {@link SmallRyeConfig}
+ * supplies deterministic configuration values where required.</p>
+ */
+public class ConfigMappingContextTest {
+
+    private ConfigMappingContext context;
+    private TestConfig testConfig;
+    private MappingBuilder builder;
+
+    /** Simple concrete {@link SmallRyeConfig} that returns deterministic values. */
+    private static class TestConfig extends SmallRyeConfig {
+        private final Map<String, String> values = new HashMap<>();
+        private final Set<String> propertyNames = new LinkedHashSet<>();
+
+        void addProperty(String name, String value) {
+            values.put(name, value);
+            propertyNames.add(name);
+        }
+
+        @Override
+        public Iterable<String> getPropertyNames() {
+            return propertyNames;
+        }
+
+        @Override
+        public <T> T getValue(String name, Class<T> propertyType) {
+            String v = values.get(name);
+            if (v == null) {
+                throw new NoSuchElementException("No value for " + name);
+            }
+            // only support String and Integer for the tests
+            if (propertyType == String.class) {
+                return propertyType.cast(v);
+            }
+            if (propertyType == Integer.class) {
+                return propertyType.cast(Integer.valueOf(v));
+            }
+            throw new IllegalArgumentException("Unsupported type " + propertyType);
+        }
+
+        @Override
+        public <T> Optional<T> getOptionalValue(String name, Class<T> propertyType) {
+            if (!values.containsKey(name)) {
+                return Optional.empty();
+            }
+            return Optional.of(getValue(name, propertyType));
+        }
+
+        @Override
+        public ConfigValue getConfigValue(String name) {
+            // Minimal stub returning null source name – sufficient for the tests that call it.
+            return new ConfigValue() {
+                @Override public String getName() { return name; }
+                @Override public String getValue() { return values.get(name); }
+                @Override public String getRawValue() { return values.get(name); }
+                @Override public String getSourceName() { return null; }
+                @Override public ConfigSource getSource() { return null; }
+                @Override public ConfigSourceOrdinal getSourceOrdinal() { return null; }
+                @Override public ConfigSourceConfigValue getSourceConfigValue() { return null; }
+                @Override public ConfigValue getConfigValue() { return this; }
+                @Override public ConfigSourceConfigValue getSourceConfigValueOrNull() { return null; }
+                @Override public ConfigSourceConfigValue getSourceConfigValueOrDefault() { return null; }
+                @Override public ConfigSourceOrdinal getSourceOrdinalOrDefault() { return null; }
+                @Override public ConfigSource getSourceOrDefault() { return null; }
+                @Override public ConfigSource getSourceOrNull() { return null; }
+                @Override public String getLocation() { return "test-location"; }
+            };
+        }
+
+        @Override
+        public List<String> getIndexedProperties(String property) {
+            // Not used in our tests – return empty list.
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<Integer> getIndexedPropertiesIndexes(String property) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public <T> Converter<T> requireConverter(Class<T> asType) {
+            // For primitive wrappers we return a trivial converter.
+            return new Converter<T>() {
+                @Override public T convert(String value) {
+                    if (asType == String.class) {
+                        return asType.cast(value);
+                    }
+                    if (asType == Integer.class) {
+                        return asType.cast(Integer.valueOf(value));
+                    }
+                    throw new IllegalArgumentException("Unsupported conversion");
+                }
+            };
+        }
+
+        @Override
+        public ConfigValidator getConfigValidator() {
+            // No validation needed for the unit tests.
+            return new ConfigValidator() {
+                @Override public <T> void validateMapping(Class<T> type, String prefix, T instance) {}
+                @Override public void validate() {}
+                @Override public void validate(Class<?> type, String prefix) {}
+            };
+        }
+    }
+
+    @Before
+    public void setUp() {
+        testConfig = new TestConfig();
+        builder = new MappingBuilder(); // empty builder – no pre‑registered mappings
+        context = new ConfigMappingContext(testConfig, builder);
+    }
+
+    /** Helper to invoke the private {@code toPropertyName} method via reflection. */
+    private String toPropertyName(String name, boolean applyNamingStrategy) throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod("toPropertyName", String.class, boolean.class);
+        m.setAccessible(true);
+        return (String) m.invoke(context, name, applyNamingStrategy);
+    }
+
+    @Test
+    public void testApplyPrefixAndToPropertyName_withoutNaming() throws Exception {
+        // Apply a prefix and check the generated property name.
+        context.applyPrefix("my.prefix");
+        String prop = toPropertyName("value", false);
+        assertEquals("my.prefix.value", prop);
+    }
+
+    @Test
+    public void testApplyPrefixAndToPropertyName_withNamingStrategy() throws Exception {
+        // Use KEBAB_CASE (default) – the name "myValue" becomes "my-value".
+        context.applyPrefix("root");
+        String prop = toPropertyName("myValue", true);
+        assertEquals("root.my-value", prop);
+    }
+
+    @Test
+    public void testApplyNamingStrategyChangesBehaviour() throws Exception {
+        // Switch to SNAKE_CASE and verify conversion.
+        context.applyNamingStrategy(NamingStrategy.SNAKE_CASE);
+        context.applyPrefix("pfx");
+        String prop = toPropertyName("myValue", true);
+        assertEquals("pfx.my_value", prop);
+    }
+
+    @Test
+    public void testApplyBeanStyleGetters_composesWithNamingStrategy() throws Exception {
+        // Enable bean‑style getters – "getMyValue" becomes "my-value" with kebab case.
+        context.applyBeanStyleGetters(true);
+        context.applyPrefix(""); // empty prefix to focus on the name only
+        String prop = toPropertyName("getMyValue", true);
+        assertEquals("my-value", prop);
+
+        // With "isEnabled" the result should be "enabled".
+        prop = toPropertyName("isEnabled", true);
+        assertEquals("enabled", prop);
+    }
+
+    @Test
+    public void testIsPropertyInRoot_simpleMatches() {
+        // Exact match
+        assertTrue(ConfigMappingContext.isPropertyInRoot("foo.bar", "foo.bar"));
+        // Child property via dot
+        assertTrue(ConfigMappingContext.isPropertyInRoot("foo.bar.baz", "foo.bar"));
+        // Child property via index
+        assertTrue(ConfigMappingContext.isPropertyInRoot("foo.bar[0].baz", "foo.bar"));
+        // Not a child – different prefix
+        assertFalse(ConfigMappingContext.isPropertyInRoot("foo.baz", "foo.bar"));
+        // Property shorter than root cannot match
+        assertFalse(ConfigMappingContext.isPropertyInRoot("foo", "foo.bar"));
+        // Root empty string matches everything (by definition of the method)
+        assertTrue(ConfigMappingContext.isPropertyInRoot("any.property", ""));
+    }
+
+    @Test
+    public void testMapWithDefault_returnsDefaultWhenMissing() {
+        ConfigMappingContext.MapWithDefault<String, Integer> map = new ConfigMappingContext.MapWithDefault<>(42);
+        map.put("one", 1);
+        assertEquals(Integer.valueOf(1), map.get("one"));
+        // Missing key should return the default value supplied at construction time.
+        assertEquals(Integer.valueOf(42), map.get("missing"));
+    }
+
+    /** Dummy converter with a public no‑arg constructor – used to test caching. */
+    public static class DummyConverter implements Converter<String> {
+        @Override public String convert(String value) { return value; }
+    }
+
+    /** Converter without a public no‑arg constructor – should trigger InstantiationError. */
+    public static class NoDefaultConstructorConverter implements Converter<String> {
+        private final String dummy;
+        public NoDefaultConstructorConverter(String dummy) { this.dummy = dummy; }
+        @Override public String convert(String value) { return value; }
+    }
+
+    @Test
+    public void testGetConverterInstance_cachesInstances() {
+        Converter<String> first = context.getConverterInstance(DummyConverter.class);
+        Converter<String> second = context.getConverterInstance(DummyConverter.class);
+        // The same instance should be returned because of the IdentityHashMap cache.
+        assertSame(first, second);
+    }
+
+    @Test(expected = InstantiationError.class)
+    public void testGetConverterInstance_withoutNoArgConstructor_throwsInstantiationError() {
+        // The constructor requires an argument – the context should wrap the reflection
+        // failure into an InstantiationError.
+        context.getConverterInstance(NoDefaultConstructorConverter.class);
+    }
+
+    @Test(expected = IllegalAccessError.class)
+    public void testGetConverterInstance_privateConstructor_throwsIllegalAccessError() {
+        // Define a private no‑arg constructor converter.
+        class PrivateCtorConverter implements Converter<String> {
+            private PrivateCtorConverter() {}
+            @Override public String convert(String value) { return value; }
+        }
+        context.getConverterInstance(PrivateCtorConverter.class);
+    }
+
+    @Test
+    public void testObjectCreator_value_staticMethod_usesConverterAndMarksUsedProperty() {
+        // Prepare config with a known property.
+        testConfig.addProperty("my.prefix.number", "123");
+        context.applyPrefix("my.prefix");
+
+        // Use the static helper to retrieve an Integer.
+        Integer result = ConfigMappingContext.ObjectCreator.integerValue(context, true, "number");
+        assertEquals(Integer.valueOf(123), result);
+
+        // The property should now be recorded as used – we verify by calling
+        // reportUnknown with an empty ignored set and checking that no problem
+        // is added (the method would otherwise add a problem for an unused property).
+        context.reportUnknown(Collections.emptySet());
+        assertTrue("No problems should be reported when all properties are used",
+                context.getProblems().isEmpty());
+    }
+}

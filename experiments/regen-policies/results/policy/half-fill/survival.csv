@@ -1,0 +1,590 @@
+index,sha,date,subject,evaluated,event,dev-scope_segment,dev-scope_segment_denominator,dev-scope_alive,dev-scope_lost,dev-scope_carried_alive,dev-scope_new_alive,ktester_segment,ktester_segment_denominator,ktester_alive,ktester_lost,ktester_carried_alive,ktester_new_alive,ouedraogo_segment,ouedraogo_segment_denominator,ouedraogo_alive,ouedraogo_lost,ouedraogo_carried_alive,ouedraogo_new_alive
+0,838b091d55b277f31994531efedc0ba0ae69133a,2024-02-28T12:41:17+00:00,t = 3.6.0,yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+1,cb91e59be442b434d656a906dce627490f163c75,2024-02-28T12:41:18+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+2,17c02e676e3c24db0331ee5701d90f49cd25ebeb,2024-03-01T16:49:21+00:00,Include mappings nested super types metadata (#1123),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+3,5f361fc3616452f932510256d72c19bc4f502269,2024-03-01T23:51:11+00:00,Check for empty values in isPropertyPresent (#1124),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+4,024cacdd68d179e25a93a2b8175a850014c85536,2024-03-05T16:42:09+00:00,Remove unused imports,yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+5,b58465c93c8d9a724cb553ed881e9c8cd5eb9eda,2024-03-05T17:04:17+00:00,Rename logging,yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+6,55ac71ee61d93ca409070949aaeb9ca6d60fd6a6,2024-03-06T23:52:11+00:00,Re-introduce a no-args constructor for LoggingConfigSourceInterceptor so that loading the service as described on https://smallrye.io/smallrye-config/Main/extensions/logging/ is still/again possible (#1127),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+7,cce0c4ec87b069c97bdfd4d422a3a3b092b677e9,2024-03-09T11:56:50+00:00,Improve relocates and fallbacks (#1130),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+8,32a8ee719a2545c88cf9211e3a278deab0340b25,2024-03-09T12:04:54+00:00,Release 3.6.1 (#1131),no,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+9,f5a339060716fd9ae9f158533b6537df6e08f094,2024-03-09T12:07:12+00:00,[maven-release-plugin] prepare release 3.6.1,yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+10,5893b4d6d466ac3cae907af9a9d7d39ee616a273,2024-03-09T12:07:13+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+11,1a8bbc17a55150392e329a06dc2d9470113875a9,2024-03-12T13:02:59+00:00,Fallback to inline Map conversion instead of being the primary option (#1132),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+12,cf075f88cb8e2d841ef2691a8f4acbb9050f75f9,2024-03-12T13:04:42+00:00,"Allow interceptors to interpose between ""regular"" sources and default sources (#1128)",yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+13,cfcd095643589c5fd72a7185f561258c511f89e7,2024-03-12T13:06:30+00:00,Bump kotlin.version from 1.9.22 to 1.9.23 (#1129),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+14,69228fc7a5b6462a3aec664db84c0df36e97d36d,2024-03-14T15:08:16+00:00,Release 3.7.0 (#1134),no,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+15,d7503c01ed6cacf68c6c16b9243211409a24faa3,2024-03-14T15:10:27+00:00,[maven-release-plugin] prepare release 3.7.0,yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+16,cd0c4b9e4fcc98c9dc51dcd170b0173007e01fff,2024-03-14T15:10:27+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+17,daaa5b86207d3e077ce672e661f54127b7a9ae34,2024-03-18T17:00:04+00:00,Do not fail with inline map value in mapping (#1135),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+18,2945e03f58123452c420a6173268ab663b9961eb,2024-03-18T21:13:07+00:00,Avoid memory leak when thread is reused (#1136),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+19,4b566b6dd6c287eb0de40c664f0feabefa92ceaa,2024-03-18T21:44:04+00:00,Release 3.7.1 (#1140),no,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+20,a0424bcaacb6f8f473ce1d1c1797697d4e3abd87,2024-03-18T21:46:17+00:00,[maven-release-plugin] prepare release 3.7.1,yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+21,c84dfcefb117a14217ca9851fe50f372daf338ea,2024-03-18T21:46:17+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+22,d447b0c346e39a09c6d07c7d5ce8186bd4154037,2024-04-03T15:33:20+01:00,Support expression expansion with secret keys configuration values (#1143),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+23,584659a701761d8d4a2f18349407ae7903615ed3,2024-04-04T10:46:44+01:00,Bump io.smallrye:smallrye-parent from 42 to 43 (#1144),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+24,f995a6a96bac40503d8043db600c2c8a039907c5,2024-04-19T20:00:24+01:00,Bump org.ow2.asm:asm from 9.6 to 9.7 (#1142),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+25,d73f24f8e691e007fff80c7416ecc58f70cbab66,2024-04-19T20:00:41+01:00,Bump org.eclipse.parsson:parsson from 1.1.5 to 1.1.6 (#1145),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+26,bd40d1abcb93c3a3ada84cfb7a89e848646cba18,2024-04-19T20:00:54+01:00,PropertyName do not match star with empty (#1147),yes,evaluate,1,168,168,0,168,0,1,58,58,0,58,0,1,87,87,0,87,0
+27,2327fb83a88aa59854eb189fb99ef21c2e184377,2024-04-19T20:15:54+01:00,Always include super properties of mappings (#1148),yes,evaluate,1,168,168,0,168,0,1,58,52,6,52,0,1,87,51,36,51,0
+28,d86373137d61c136e95be7d26fc98aa2a76a27d7,2024-04-19T20:32:52+01:00,Consistent collection type for profiles (#1149),yes,evaluate,1,168,168,0,168,0,1,58,52,0,52,0,1,87,51,0,51,0
+29,a08305baee40d3489c41d0647deb9ef6d5febf42,2024-04-22T10:39:11+01:00,Update SR Commons to 2.4.0 (#1150),yes,evaluate,1,168,168,0,168,0,1,58,52,0,52,0,1,87,51,0,51,0
+30,3edebd4b38f85aaaf3c1872845a2add89b6374ad,2024-04-22T22:47:00+01:00,Generate mapping names and defaults (#1146),yes,evaluate,1,168,142,26,142,0,1,58,42,10,42,0,1,87,41,10,41,0
+30,3edebd4b38f85aaaf3c1872845a2add89b6374ad,2024-04-22T22:47:00+01:00,Generate mapping names and defaults (#1146),yes,regenerate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+31,7364458fc582b783a007dabecdba8358b6e8809b,2024-04-22T22:58:18+01:00,Fixed javadoc,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+32,20b0290658b448d99c264ed98915ce914980fd15,2024-04-23T14:35:04+01:00,Release 3.8.0 (#1153),no,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+33,4e6fcfdfb74760969f31a069a5e2d265841e685e,2024-04-23T13:37:09+00:00,[maven-release-plugin] prepare release 3.8.0,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+34,60cfcf25d20ec15432b6feebfbf9ceb16ab9c562,2024-04-23T13:37:09+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+35,f1a7d076bedc6973d868a48e2efe015ee70d8add,2024-04-23T23:36:16+01:00,Change getSuperTypes to public (#1154),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+36,67837e422d50ceb5fe7293e68be68e8047a5d1a6,2024-04-24T13:06:46+01:00,Override super members defaults (#1156),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+37,b841a1cf197d5ac19b7b05902fa5ae7a6d2b6c37,2024-04-24T13:27:24+01:00,Check invalid mapped properties (#1157),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+38,c3fcadb5408db6e4b6a356c0bbc88f28af269106,2024-04-24T18:10:50+01:00,Keep all mapping names (#1158),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+39,7506e285b9739e411cc9d47a9272fed63edf27b2,2024-04-24T18:19:36+01:00,Bump org.apache.maven.plugins:maven-shade-plugin from 3.5.2 to 3.5.3 (#1155),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+40,0eaa610529062283b27c720ed860f1ad6a228295,2024-04-24T18:45:09+01:00,Release 3.8.1 (#1159),no,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+41,04f6b13cc3d356b138361da87f2ad523f8c3f431,2024-04-24T17:56:24+00:00,[maven-release-plugin] prepare release 3.8.1,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+42,41d0e6024c95d13a803893583c1aff4697633162,2024-04-24T17:56:24+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+43,e3d0e4a639336ea8beb28cff5f3062a6125dbdd0,2024-05-07T14:17:18+01:00,Bump jinja2 from 3.1.3 to 3.1.4 in /documentation (#1162),no,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+44,16e34bfe24061c24b458cc67c13dca64a7a7c576,2024-05-07T14:17:33+01:00,Clarify when `smallrye.config.profile` must be set (#1164),no,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+45,8270d2931f6d36fb434a40c6c7b6a5b9e5246653,2024-05-07T14:21:48+01:00,Discover SecretKeyHandlers by default (#1165),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+46,ba34b443d2f65748bfb3716886373872a551fa03,2024-05-14T10:08:17+01:00,add method to exception (#1168),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+47,edef45bad6f8fa9363d0107f065573122edfdd66,2024-05-14T12:10:35+01:00,Add more tests for toLowerCaseAndDotted,no,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+48,724eab825bbf0f2f2141b50ba23761e82d0ae37d,2024-05-16T10:16:51+01:00,Fix Sonar coverage (#1169),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+49,989a56d67ff638ff5f39c6923a2642b1f2023775,2024-05-16T10:49:20+01:00,Remove jacoco argline,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+50,96c02909912e2bd282832d10585fb9f28c148f3b,2024-05-16T11:24:43+01:00,Sonar properties,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+51,a8e017b9de0ebdf83dc08a46ed15c11bbe977639,2024-05-22T21:02:54+01:00,Fix coverage reports,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+52,7daf801f7c0a73791932dcc67aaa3ea95cf45ecd,2024-05-23T10:08:42+01:00,Use Java GH actions for release,no,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+53,f503dd8c390e5eb10d9177742485be5c43f7ff61,2024-05-23T10:39:05+01:00,Release 3.8.2 (#1171),no,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+54,1383030bbfaec9283a68911d46ddd584f347700d,2024-05-23T09:57:17+00:00,[maven-release-plugin] prepare release 3.8.2,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+55,83bab43d93fa888aa9129a2c455065909f572479,2024-05-23T09:57:18+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+56,70fcb1765979c33e97f7822310b128267393b95b,2024-06-07T11:43:30+01:00,Bump io.smallrye:smallrye-parent from 43 to 44 (#1174),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+57,16f10dab3abaca43a8940451f6a19bf32dee7a1a,2024-06-07T11:44:55+01:00,Bump org.apache.maven.plugins:maven-shade-plugin from 3.5.3 to 3.6.0 (#1172),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+58,6399d0ad470a83fe91377ef17695e8fb4bcba2bc,2024-06-13T11:36:48+01:00,Improve message on mapping generation failure (#1175),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+59,4fa27d7391c57b7c2ddd733efd509695c435428d,2024-06-14T15:06:00+01:00,fix factory generic (#1176),no,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+60,fec57936be699d7d4487031180499e3d51cac6ce,2024-06-18T19:01:01+01:00,Remove TestNG (#1179),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+61,f47b5a19cbc22d81d143883a59f18f0af69ff290,2024-06-18T19:08:43+01:00,Bump version.curator from 5.6.0 to 5.7.0 (#1177),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+62,17873ffb0a67409a9f60b34b744086f41c391bdb,2024-06-19T19:06:57+01:00,Env matching names before mappings (#1180),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+63,a5dfc5b3d027b2867e9fa981c73599b640bce47f,2024-06-22T12:44:32+01:00,Release 3.8.3 (#1182),no,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+64,2fab8f7d43e9ab2b2f2b7681f0b30039afbb269a,2024-06-22T11:46:40+00:00,[maven-release-plugin] prepare release 3.8.3,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+65,fcebd841a9e221449a2967c41f193db4aca28d4b,2024-06-22T11:46:40+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+66,64295f6d4350d3b0922c69c093f1f106ba035b24,2024-06-27T21:34:44+01:00,Do not transform properties names coming from .env to underscores (#1183),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+67,f56ac097d6403ba564e5657f740fe971ffa8b9e0,2024-06-27T21:34:59+01:00,Generate equals and hashcode for @ConfigMapping implementations (#1181),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+68,3ccf7a973d826bca8b0fa922d9157ac31d82a2fc,2024-06-27T21:35:48+01:00,--- (#1170),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+69,906fb14b49bb7333e814a2118eb19d465ca472e8,2024-06-28T14:47:31+01:00,Remove Json Converters (#1184),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+70,b3b7792d75966a5c9d21721250f31f5f3d4c1653,2024-06-28T16:54:24+01:00,Move ConfigValue Map views to ConfigValueConfigSource (#1185),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+71,abc561ac35fed945342145517704830723ea9f6e,2024-07-01T16:56:11+01:00,Remove KeyMapBackedConfigSource (#1186),yes,evaluate,1,168,142,0,142,0,1,58,42,0,42,0,2,51,51,0,41,10
+72,60d60ab9ae03e60fbfc224f30d615bd289556f06,2024-07-01T19:49:57+01:00,PropertiesConfigSource implement ConfigValueConfigSource (#1187),yes,evaluate,1,168,141,1,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+73,2ca7837711d93183779ba7edecd6498914fde3c6,2024-07-04T12:33:56+01:00,Fix Sonar coverage,yes,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+74,e3c72a1f2cd33be6f711be933ed2b65c296fc29b,2024-07-04T12:39:54+01:00,Bump io.smallrye:smallrye-parent from 44 to 45 (#1189),yes,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+75,79de339d3afad4190c18c55a0b08062cbe4b63dd,2024-07-04T13:04:48+01:00,Support application configuration file by default (#1190),yes,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+76,d61a0d7430adbd919121437f34b93b05d2a56f85,2024-07-04T13:34:10+01:00,Support .env file by default (#1191),yes,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+77,7903a3c74ec1a8958e04969ed4d53dfb730e0596,2024-07-04T17:03:49+01:00,Test discover of application configuration (#1192),no,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+78,c093a53b09e8f5508fb29156751a3820b7ec4984,2024-07-04T17:25:25+01:00,Make jakarta.annotation-api compile scope so SmallRyeConfig can be used without any extra set up (#1193),yes,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+79,bffb98e14f422d4267612852eb38c96d9476145d,2024-07-15T14:04:29+01:00,Release 3.9.0 (#1196),no,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+80,730e4d33eab20680d3884db845018082bd967177,2024-07-15T13:06:31+00:00,[maven-release-plugin] prepare release 3.9.0,yes,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+81,7ef6aa6f85c7b4c9d76ba7abcfa2fbd66d92377b,2024-07-15T13:06:32+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+82,4863a60439566f877fe299f312db07fd731fa17a,2024-07-16T20:27:54+01:00,Add tests for Environment Variables with Maps and ConfigMappings,no,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+83,5d7cabefd17bb7aafba021c36fde990df17bfa40,2024-07-24T21:39:54+01:00,Add test for hidden map keys,no,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+84,5011840d3d863906ad8fdb68c2d74dc930e13e5a,2024-07-26T00:06:54+01:00,Update custom.md (#1198),no,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+85,727fad4c7ca3783e81e95623b5da595b6bbf23ce,2024-07-30T10:25:27+01:00,Drop support for full YAML content in parent property names (#1201),no,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+86,7c456fe49a245894f3d002654ccc545175b056e0,2024-07-30T14:00:18+01:00,Search for indexed property names before flattened comma separated value name when loading Collections (#1202),yes,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+87,529c72c108f11cd025a6b3eb31b822bd45c75550,2024-07-30T14:05:31+01:00,Remove the generation of a comma separated value name for Collections in the YamlConfigSource (#1203),no,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+88,1c3207743550a4c509670ec31cb3fa3567986e34,2024-07-30T14:05:57+01:00,Bump io.fabric8:docker-maven-plugin from 0.44.0 to 0.45.0 (#1200),yes,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+89,706dac9a5a079a7102c885cb6b3a51dca8ad8abc,2024-07-30T14:08:56+01:00,Bump zipp from 3.15.0 to 3.19.1 in /documentation (#1195),no,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+90,1550541817e717ffd13fca1ab34a4fa4e41b37cc,2024-07-30T16:10:56+01:00,Search for indexed property names before flattened comma separated value name when loading Collections for CDI injection (#1204),no,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+91,7b3f279f9a12d5f68e824263143f9a6e40ca477f,2024-07-31T23:23:55+01:00,Keep a reference to the full interceptor chain to call restart (#1205),yes,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+92,491069de2f644a5ec4cfdb5427f998741aa77804,2024-08-19T18:20:52+01:00,ConfigValue name consistent with PropertiesConfigSource (#1209),yes,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+93,effdaf7825a38851923315237514f4ba4160de48,2024-08-26T11:20:04+01:00,Test if missing expressions property names are included in `isPropertyPresent`,no,evaluate,1,168,141,0,141,0,1,58,42,0,42,0,2,51,51,0,41,10
+94,cb623465fb2e915a85293a23920a1a14d52cf00f,2024-08-26T11:25:28+01:00,Avoid using string concatenation to forge impl name (#1211),yes,evaluate,1,168,141,0,141,0,1,58,40,2,40,0,2,51,51,0,41,10
+95,fffd0da4052c78615bbc95f909889600e5513286,2024-08-28T14:11:23+01:00,Bump kotlin.version from 2.0.0 to 2.0.20 (#1210),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+96,9cc8776b0c51b69e94bb130f9e24cb0072d92010,2024-08-28T14:49:52+01:00,Improve mappings documentation (#1212),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+97,020130f6a7a238748fb34928eeec2147e59e10a9,2024-08-28T22:08:04+01:00,Internal cleanup of AbstractLocationConfigSourceLoader (#1214),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+98,036e7e067c9b6ebeff750d362eb7f1ed990e381c,2024-08-28T23:26:23+01:00,Check if profile file resources are in the location ClassLoader (#1215),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+99,30f478c52a0cc49c7899c013f74d69ee0fc06424,2024-08-29T14:07:03+01:00,Avoid expensive exception and log when getValues fails lookup for indexed properties and fallbacks to comma (#1216),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+100,3439e70664c0bbbb87c173f6483867eb95909f9a,2024-08-29T19:29:02+01:00,Cache profile prefixes (#1217),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+101,36685ff72efd41ceedf29ee8de42760059831108,2024-09-09T13:45:07+01:00,Tests quoted and unquoted keys with relocates and fallbacks,no,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+102,e768190eee50a3e0fe4efe28d39441086e08dffd,2024-09-09T13:45:22+01:00,Test nested maps with yaml,no,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+103,b39e11207cbc9ede976065395c9f2bb7b89031b9,2024-09-10T19:44:11+01:00,Fix equals and hashcode mapping documentation,no,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+104,ddd80ffbfa48fadcb8fd6e41b6e4eada0f74bfa1,2024-09-13T20:57:53+01:00,Bump io.smallrye:smallrye-parent from 45 to 46 (#1222),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+105,4885a0ef8592b9adf8211f8e9c5cfdc16f98a752,2024-09-13T20:58:57+01:00,Bump org.yaml:snakeyaml from 2.2 to 2.3 (#1218),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+106,a756c539ee1f6cb35a67b5b00a6ce7e4633defaf,2024-09-16T19:55:21+01:00,Clarify @WithDefaults documentation,yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+107,9e7c3e406962f7a3079a4afc705a6eb4d1da2b29,2024-09-18T11:43:10+01:00,Improve AbstractLocationConfigSourceLoader javadoc,yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+108,ecefcdc3e2a3dc31c95d4054915e51df909d3cd0,2024-09-18T12:37:45+01:00,Test MapWithDefault,no,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+109,5fa4c5d2415f68b5b81d331777452d5c34b60b04,2024-09-19T19:52:26+01:00,Remove constructor arguments from examples (#1224),no,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+110,cab2e57973525dfa97baec9bbf817626b4a1be31,2024-09-19T19:53:02+01:00,Fix docs of interceptor service registration (#1223),no,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+111,18ea9165cea3c22faf12971a9c7bd178db9e7691,2024-09-19T22:31:39+01:00,Support a fixed list of Map keys statically @WithKeys (#1220),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+112,646d2336d179b43689000b4b04ea715ec9f6c0ef,2024-09-19T23:18:48+01:00,Reduce allocations of iterateNames (#1213),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+113,b26ba8be0a01d8d219c6f43e777325fb4d054722,2024-09-20T11:10:21+01:00,Make ConfigValue comparator public,yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+114,3bb973af5d2f535ec80f0dd8df27006f6bda08e4,2024-09-23T23:07:35+01:00,Move local classes to inner to reduce the number of classes in the main package (#1226),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+115,f0a32ca3707a0b91b0092f1c03c84d00c5d80919,2024-09-30T21:50:51+01:00,Add test for mapping getter names in Kotlin,no,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+116,a00e97e5bd36c1dd05413abd4c359050e091e888,2024-10-01T18:19:41+01:00,Slight optimization when looking up System properties (#1231),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+117,5c88f7b352059c62a71089ae9f6c248b01fce097,2024-10-01T18:19:59+01:00,Bump io.fabric8:docker-maven-plugin from 0.45.0 to 0.45.1 (#1229),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+118,c61894aa1db651976bce1a373ff447980d01a087,2024-10-03T10:41:42+01:00,Split release into two workflows (#1233),no,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+119,fc131f1c56e30d56132fba6c4a0aca31c00fb612,2024-10-03T10:55:18+01:00,Revert to old release workflow name,no,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+120,71c6863d78b82e08611b5cd6cc37765a850ca4a7,2024-10-03T11:05:51+01:00,Consistent workflow file names,no,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+121,83a4e895229b33dca580b02cb8ea6e1e936b9ac2,2024-10-03T11:35:02+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.4.0 to 2.7.0 (#1234),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+122,0b793534589529fd851b9d2ab5e3ff93c10f47b4,2024-10-03T11:39:30+01:00,Bump version.smallrye.testing from 2.3.0 to 2.3.1 (#1235),yes,evaluate,1,168,141,0,141,0,1,58,40,0,40,0,2,51,51,0,41,10
+123,d06184c9e819270ea11000cee08de10ca6f22c24,2024-10-04T21:19:04+01:00,Rename ConfigClassWithPrefix to ConfigClass and use it in SmallRyeConfigBuilder (#1236),yes,evaluate,1,168,140,1,140,0,1,58,35,5,35,0,2,51,23,28,23,0
+124,ef495861c3b021925a2e248469a804a3eb3f994b,2024-10-15T12:05:04+01:00,Fix NPE on ConfigValue#getSourceName,yes,evaluate,1,168,140,0,140,0,1,58,35,0,35,0,2,51,23,0,23,0
+125,1e7134a5c903fb1dbaa95988ca7a19e52efd8679,2024-10-15T12:06:06+01:00,Boolean mapping getter name in Kotlin,no,evaluate,1,168,140,0,140,0,1,58,35,0,35,0,2,51,23,0,23,0
+126,4d235b690b84ca95aba8c7707f0cbf084354aedf,2024-10-15T12:08:43+01:00,Test for optional Map values,no,evaluate,1,168,140,0,140,0,1,58,35,0,35,0,2,51,23,0,23,0
+127,a03bcddc98134563e56eba6df3d1dc47cf2f5d64,2024-10-15T16:59:44+01:00,Bump org.ow2.asm:asm from 9.7 to 9.7.1 (#1237),yes,evaluate,1,168,140,0,140,0,1,58,35,0,35,0,2,51,23,0,23,0
+128,0e553befd479b78dfdd8fed337982b2142688320,2024-10-15T17:00:06+01:00,Bump kotlin.version from 2.0.20 to 2.0.21 (#1240),yes,evaluate,1,168,140,0,140,0,1,58,35,0,35,0,2,51,23,0,23,0
+129,ecadfebfa19a3ba67f78147a560be295f718727f,2024-10-15T17:00:31+01:00,Bump version.curator from 5.7.0 to 5.7.1 (#1242),yes,evaluate,1,168,140,0,140,0,1,58,35,0,35,0,2,51,23,0,23,0
+130,bedbff5ef6662124c178ad4a2e14f060df2894cc,2024-10-15T17:24:33+01:00,Add @ConfigMapping beanStyleGetter to enable / disable bean style getter names matching with configuration names (#1239),yes,evaluate,1,168,140,0,140,0,1,58,28,7,28,0,2,51,23,0,23,0
+130,bedbff5ef6662124c178ad4a2e14f060df2894cc,2024-10-15T17:24:33+01:00,Add @ConfigMapping beanStyleGetter to enable / disable bean style getter names matching with configuration names (#1239),yes,regenerate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,23,0,23,0
+131,1627e75059b8373ae3145fbf1b71a1b9e4b46501,2024-10-15T20:43:37+01:00,Do not release test and example modules,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,23,0,23,0
+132,1f6cf9d67be842ecda366ba191374bfeaca88429,2024-10-15T20:53:55+01:00,Release 3.10.0 (#1244),no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,23,0,23,0
+133,e2054cab23f4d70587ea4882f073e2d449f90598,2024-10-15T19:55:21+00:00,[maven-release-plugin] prepare release 3.10.0,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,23,0,23,0
+134,21ae965f5c71895a11b87a5a402b936294104f20,2024-10-15T19:55:21+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,23,0,23,0
+135,d2f61e902d36d816e5085c1f231b189eb09cc93e,2024-10-15T23:37:43+01:00,Update coverage version,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,23,0,23,0
+136,7585890c9422e0831824719bc9134ea1674ff0da,2024-10-18T06:24:40-05:00,Merge pull request #1245 from smallrye/dependabot/maven/io.smallrye.common-smallrye-common-bom-2.8.0,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,23,0,23,0
+137,098c5411e7ec567ea9a340f017587838dcd8e5c0,2024-11-11T15:27:47+00:00,Remove ConfigValuePropertiesConfigSource (#1247),no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,23,0,23,0
+138,ee0dbf90c1ba76050d8d38def56c850086a6cd35,2024-11-11T15:47:37+00:00,fix #1246: honor ConfigProperties.UNCONFIGURED_PREFIX again (#1248),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,23,0,23,0
+139,9e133939c49ee0871aedc552d8a127c0f655b29c,2024-11-11T23:28:03+00:00,Reduce allocations when generating default names (#1250),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,23,0,23,0
+140,84121f34d3805324a6c0295fefaa1b9b436d2fe9,2024-11-12T12:27:51+00:00,Validate mapping annotation only in SmallRyeConfigBuilder (#1251),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,23,0,0
+141,151796610a593b5e44e978c2226cb3de69bd86f7,2024-11-12T16:10:13+00:00,Consistent module name,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+142,83b91343966e617972c6f2bbf97e18f4c5b5537e,2024-11-12T16:29:14+00:00,Release 3.10.1 (#1252),no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+143,83229d0ec4146fd3d5179d0b245112489906b7dd,2024-11-12T16:31:15+00:00,[maven-release-plugin] prepare release 3.10.1,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+144,4d2670a48f61d9341f9b6854ba4a7c036eee4a87,2024-11-12T16:31:16+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+145,a13acb429fc0069656b5a52ae2b4a05aa5f16d42,2024-11-13T13:08:04+00:00,Update coverage version,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+146,029c88ea3f957417b04231748b6d2431caed2959,2024-11-26T00:00:31+00:00,Use module-friendly logger methods (#1253),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+147,ff3c4d376d682fd979076733f93d12b68bd7eba9,2024-11-27T23:54:39+00:00,Use module-friendly bundle methods (#1255),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+148,871478a8bfa5922cffd75edc8b7ea4bffb5b8d60,2024-11-29T12:24:07+00:00,Add coverage module to release to the version is also updated.,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+149,1841dbe20c00f21a7fbacc9632a8867c4cf4feb0,2024-11-29T12:41:48+00:00,"Revert ""Remove the generation of a comma separated value name for Collections in the YamlConfigSource (#1203)"" (#1257)",no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+150,e95749c1ed8f49534e20c62d4714708113a7ce6f,2024-11-29T12:52:59+00:00,Remove DumperOptions,no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+151,b350b16f277c0a88bd236c7c7152baad663e7b54,2024-11-29T19:46:53+00:00,Ensure coverage module is updated on release,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+152,50f2ecb1f720d9ffb955770b699acecbb2760d6e,2024-11-29T20:11:29+00:00,Release 3.10.2 (#1259),no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+153,a5d4dd96dd69f74fcfea7cc79ed6e0d21c76771e,2024-11-29T20:12:57+00:00,[maven-release-plugin] prepare release 3.10.2,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+154,40f5c290dfaeca3b579cef62f83dcfdca47ea6b3,2024-11-29T20:12:57+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+155,d5a6317f76adddea4df846b16db1a91085018140,2024-12-03T14:36:07+00:00,Remove deprecated ConfigMappings#mappedProperties (#1260),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+156,32191d6fbf0511fb8851f68b24ef8e97417dcc89,2024-12-03T14:44:38+00:00,Remove deprecated providers (#1261),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+157,4e2351af73be97dbcfdabb591307d044c86c56da,2024-12-03T16:17:11+00:00,Public getter for ConfigValue#problems (#1262),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+158,95881f00a09fdae86437e4f4aad94e1511185d9e,2024-12-03T17:52:46+00:00,Improve reportUnknown allocations (#1263),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+159,0859318965cf2f6805d58cdcaac7f6a7ec08cca0,2024-12-06T16:38:16+00:00,"Use config ordinal to determine which config style to use when populating list, between comma-separated and indexed (#1266)",yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+160,a78a1660bddbc6000f6b95138aefd82e3d9d2de1,2024-12-11T14:56:58+00:00,Match most specific mapping prefix when matching environment variables (#1267),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+161,1ee672abe1080f3ce212d6f9451f1a3b5a71585f,2024-12-11T15:29:23+00:00,Source names as constants (#1268),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+162,940c5a5ba7dee3a8c47eb825f4d20c8d7abe1b03,2024-12-16T11:18:35+00:00,Bump dependency.version.openwebbeans from 4.0.2 to 4.0.3 (#1271),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+163,d2b77872436bed7ad85e9dd97538579f4e9d197b,2024-12-19T15:10:05+00:00,Generate properties names with defaults in mapping class (#1273),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+164,f49a5908f6cd60416bd4390186e0bf4fde8d37ff,2024-12-19T16:23:42+00:00,Validate mappings on creation instead of on lookup (#1264),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+165,220be74e6c481166ff49c51f03e309e656d2851b,2024-12-20T11:11:27+00:00,Replace streams with for loop in customizers handling (#1274),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+166,7d66a3a0c802b424b32bec79ca8f523cfb79b8d5,2024-12-20T11:12:13+00:00,check duplicate keys (#1270),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+167,ab22555d80ce1b16c0ecea85756b3a1dd4c6c3fc,2025-01-02T10:24:46+00:00,fix: avoid out of range error with long profile names (#1272),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+168,8ac2f931ebcb120845098ff7013d0a96e011e133,2025-01-02T10:25:25+00:00,Use `invokeExact` when creating a ConfigMapping object (#1275),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+169,84378da1bb954a649bcf783de7864ff87de876ba,2025-01-05T11:30:06+00:00,Use Map.forEach for iterating over values (#1280),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+170,2bcff37855ce61a6b44bcacfc4128ce3601be094,2025-01-05T11:30:36+00:00,Avoid using lambda in PropertiesConfigSource (#1279),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+171,9ab5fbb1eb9d90e26db4b610c53f96026a4a43ce,2025-01-07T18:36:42+00:00,Cache hashCode of PropertyName (#1281),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+172,dbde4870049667b428f68ae4a28fed3bf421a9da,2025-01-07T18:37:31+00:00,Cache the profile converter (#1282),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+173,26751b93e2a00532e8f7d38cb08dcec44bc53b42,2025-01-07T18:37:55+00:00,Avoid new HashSet allocation if there are no secrets (#1283),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+174,652bc2e1dbdc2d97fdf00141b224a7a49f408ed2,2025-01-08T18:56:32+00:00,Add an equals by region to PropertyName (#1285),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+175,86410916157ceb93de182319c68dcc426c1c57cf,2025-01-10T17:24:08+00:00,Move to Java 17 (#1287),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+176,c6be99137d04350c51f57bf0144bed6193cc922f,2025-01-10T20:08:13+00:00,Bump io.smallrye.common:smallrye-common-bom from 2.8.0 to 2.9.0 (#1265),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+177,9526bf94c4f14580b54f2ae60ed7594d66cf211e,2025-01-10T20:47:57+00:00,Update Build Badge,no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+178,cd2e20d8da93781c6604391ef1cdfcd97ceef7b5,2025-01-10T20:52:48+00:00,Use static method to create object for leaf properties (#1286),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+179,2e4d51a8a00f68e21cb6d6ff8f2570b853ef433d,2025-01-10T21:40:08+00:00,Converters - Add some shortcuts for JDK classes (#1284),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+180,c08dec823c66ee2ee4c7c2d82a2447a174105ae9,2025-01-10T22:09:53+00:00,Release 3.11.0 (#1288),no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+181,f35008dbfc96dffbc016d5b7eb6ae5a7d12df66c,2025-01-10T22:11:17+00:00,[maven-release-plugin] prepare release 3.11.0,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+182,d0a447b91837f672111deab0280c9712212f4464,2025-01-10T22:11:17+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+183,fc6de876aa05fda8148fb6760c2c876ba047ec2e,2025-01-11T14:45:13+00:00,Proper priority comparator for SmallRyeConfigBuilderCustomizer (#1289),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+184,02ddcd4668781e16daaa0301f583a236c1d4854d,2025-01-11T14:52:11+00:00,Release 3.11.1 (#1290),no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+185,f84c084a3a8661134c23ffa4fceb8bb56bbbcb4d,2025-01-11T14:53:30+00:00,[maven-release-plugin] prepare release 3.11.1,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+186,680080480f7614dd574bf4be3e5d698f410a38fc,2025-01-11T14:53:31+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+187,3830fb838d484781c5749f8e9995ff0a86db1fa5,2025-01-16T17:22:08+00:00,Use StringBuilder instead of String concat for startup code (#1293),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+188,bd7388bb2ccf28aa2b7623336753286883d31633,2025-01-31T22:56:31+00:00,PropertyName equals match similar name if only first letter differs (#1298),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+189,a5718a8d0bbb60357b3a64afab6e8ac4978cea2c,2025-02-01T21:18:54+00:00,Propagate profiles in ConfigurableConfigSourceFactory (#1299),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+190,f7b26f712118a23747a6271317e08305841ca6b2,2025-02-01T22:00:18+00:00,Avoid creating a copy of SystemProperties just to look for the `config_ordinal` (#1300),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+191,2e5ca14444f7e8aa224fc5f5ab9c70d1c4452edc,2025-02-01T23:43:50+00:00,"Use config ordinal to determine which config style to use when injecting a list, between comma-separated and indexed (#1301)",no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+192,a52a149ce86fd85b831fea9065dd3f2a0371c0e5,2025-02-03T16:38:12+00:00,Remove System.out,no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+193,dd84b340ad2b95dc5d8161646813591c200cb5b9,2025-02-03T17:20:48+00:00,Release 3.11.2 (#1302),no,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+194,b7e4e8aa4d86ca5ddcc6a314425f0bb5bc5c98ea,2025-02-03T17:22:05+00:00,[maven-release-plugin] prepare release 3.11.2,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+195,f164140608ab39f7dc3340eb05639d7b9d737cdc,2025-02-03T17:22:05+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+196,680927aa0402bee4f59f7ff87824c6574b80081a,2025-02-05T22:40:22+00:00,Bump io.smallrye:smallrye-parent from 46 to 47 (#1297),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+197,45a0b219c8924adbc06ce3121056b51010e5ed5e,2025-02-05T22:41:06+00:00,"Skip profile lookup if System, Env, Properties and Default sources do not contain a profile property name (#1303)",yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+198,bd9b7774d5b0f9f1592655d4e974df00165642c7,2025-02-06T12:29:13+00:00,Update impsort plugin to support Java 17,yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+199,6af612770a1f59af24a0bfef62ab040b5524eaef,2025-02-06T20:25:46+00:00,Ignore default methods inherited from super classes in mappings (#1304),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+200,d05636f5e1adbe72b6588dc37206c5cecb04cf1d,2025-02-06T20:44:19+00:00,Add a way for ConfigClass to also carry and load defaults from a config mapping class (#1306),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+201,1c965f9395318e6167ec381160f5bff5a8e3dba9,2025-02-08T16:59:05+00:00,Slight optimization when populating the DefaultValuesConfigSource (#1308),yes,evaluate,1,168,140,0,140,0,2,30,30,0,28,2,2,51,0,0,0,0
+202,60923e71855c9f129132aab305a7dd168f219ed6,2025-02-08T19:35:04+00:00,Cache MethodHandles to construct and get defaults from the mapping implementation (#1309),yes,evaluate,1,168,128,12,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+203,ed715cdd664e1f2b6836f613bd69b2a183aead4e,2025-02-08T22:52:08+00:00,Add API in the builder to register a mapping instance (#1310),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+204,fc77388292e70be1cb71c12b5b20645c1db573b6,2025-02-09T20:37:25+00:00,Add new method isEnabled to ConfigSourceInterceptor (#1311),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+205,d11783e5ce51209364721a85a425a01cc9304484,2025-02-11T07:30:38-06:00,Merge pull request #1312 from smallrye/dependabot/maven/io.smallrye.common-smallrye-common-bom-2.10.0,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+206,292865791bf2ad33d902b95135e7907160d4357b,2025-02-13T12:39:17+00:00,Keep properties from ConfigMapping implementation (#1313),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+207,c279362ec868691c815e16a6d7bbf79b04ea8b60,2025-02-13T14:26:39+00:00,Compute indexed properties when building the list of PropertyNames (#1314),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+208,2bff603d749e9cc6b7aa3cc6974dea62a20da08c,2025-02-15T00:13:27+00:00,Try indexed names on injection when non indexed value is null (#1315),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+209,1b4cd3e56c24a841c6d6f56921b8c458eb01da01,2025-02-15T18:57:49+00:00,"Revert ""Add new method isEnabled to ConfigSourceInterceptor (#1311)"" (#1316)",yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+210,a6301e38b1d368b698d7b28405f34dd3fd20f709,2025-02-15T20:05:20+00:00,Add indexed order test,no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+211,e0b6cd90361f7ba8170b20ad04bd08d06489d75a,2025-02-15T20:46:55+00:00,Release 3.12.0 (#1317),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+212,c3a40e415e5d7d8cff78476937a0e4a74e474945,2025-02-15T20:48:10+00:00,[maven-release-plugin] prepare release 3.12.0,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+213,ed23c88f4786ed41eab54369116d1a9c3c2cbb83,2025-02-15T20:48:10+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+214,e15af82c7d2f913b40a44fa504075bbc4f28baf4,2025-02-17T17:18:54+00:00,check duplicate keys for yaml (snakeyaml.version update to 2.4) (#1318),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+215,3d92d8603cf85ecdf86753f80efcca2870c0f753,2025-02-18T19:56:56+00:00,Correct check of ConfigValue having a value with indexed APIs (#1320),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+216,e9c6eba707f5bef42cbf00394487fa02e416a76f,2025-02-18T20:05:38+00:00,Release 3.12.1 (#1321),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+217,cf6d6a48d4b54f31d60232054712cfe00dc81937,2025-02-18T20:06:52+00:00,[maven-release-plugin] prepare release 3.12.1,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+218,57b06aeadc8ada7e77f223aeab21f4463439f09e,2025-02-18T20:06:52+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+219,e81ec685fc9f68c447adaf6dce97b5aff8e5397f,2025-02-19T13:13:55+00:00,Revert skip profile optimization because Quarkus mutates the source (#1324),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+220,ea01cdd52cfb1de63a20d60f842c18e87a563b4c,2025-02-19T13:23:50+00:00,Release 3.12.2 (#1325),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+221,3cba590014cdb40b629a6de8a1a719e5af6c7f33,2025-02-19T13:25:07+00:00,[maven-release-plugin] prepare release 3.12.2,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+222,22dc4a3788296f359435b5ec7a8f2299c4166792,2025-02-19T13:25:07+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+223,fd12b46d10cf4174837f071b99f1dc1085ff5f65,2025-02-20T12:53:13+00:00,Do not match prefix Env if exists (#1327),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+224,b0383e1f3b17d431d077806692a562e612653978,2025-02-27T12:17:55+00:00,Correctly match Env names when mapping contains empty names (#1331),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+225,ec23f517c67e1508608d1f0e1c83ba340c04b3c3,2025-02-27T17:07:12+00:00,Branch-less alphanumeric underscore's replacement (#1294),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+226,a69f9a8e7afab0755725911491273e3467d1ba7d,2025-03-11T15:23:52+00:00,Bump version.curator from 5.7.1 to 5.8.0 (#1333),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+227,844eb9f79271c869a77884f1c7e63d9d8fb832e0,2025-03-11T15:25:29+00:00,Bump jinja2 from 3.1.4 to 3.1.6 in /documentation (#1332),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+228,534a95460ab04a3bb185b1cdbf64ea41d4971253,2025-03-11T15:49:11+00:00,Release 3.12.3 (#1334),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+229,3312af1035d72bf3370c2f6451db8ecb4aa23f64,2025-03-11T15:50:30+00:00,[maven-release-plugin] prepare release 3.12.3,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+230,ca7ed333503d235479e65aa086a803dde1654f15,2025-03-11T15:50:30+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+231,e91cbb332fc2335a024de5b55484680780e7325f,2025-03-26T17:57:15+00:00,Do not report as unmapped property names from ConfigMapping instances (#1336),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+232,2081cebd5d0b04c357c8c8427a1b9a53a79b21be,2025-03-27T16:34:02+00:00,Release 3.12.4 (#1337),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+233,bf641386d52901bf6682f4ea363f705ef08e4f9a,2025-03-27T16:35:18+00:00,[maven-release-plugin] prepare release 3.12.4,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+234,5a962c35160b26e1e113a6e174f0ac1130afddd3,2025-03-27T16:35:18+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+235,e61ef4bb9b9ff1056395b8f212aa2d1d0c968fdc,2025-04-14T10:10:42+01:00,Bump io.fabric8:docker-maven-plugin from 0.45.1 to 0.46.0 (#1342),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+236,1126c056ab8a27a458a24dd55984cd75a6cec89d,2025-04-14T10:11:01+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.10.0 to 2.12.0 (#1344),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+237,fa1d90a10cbf02652feca8cb6c901c7320be2081,2025-04-17T23:55:47+01:00,Move mapping Env matching to ConfigSource initialization (#1346),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+238,66c7979cb12e90c622c543bb98fbe321bf3a3751,2025-05-02T15:55:08+01:00,Add test that wraps SmallRyeConfig with profile,no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+239,4a840351676cb72b17ab281e12e7004183287227,2025-05-02T15:55:26+01:00,Add test YAML unnamed lists,no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+240,d63af2c4264813970a43c27b51e4bb5363c830c2,2025-05-02T16:11:24+01:00,Update Pipfile.lock,no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+241,b35dcf8cb70141681a0e7c17964aabd2ddc21b48,2025-05-02T16:28:23+01:00,SuppressWarnings,no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+242,6bd01ed3edb58dddc249fe80202d8b163ccf4aec,2025-05-02T19:06:39+01:00,Update documentation emoji extension,no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+243,e3fe5a7335d48466f0dc1c1d06a1c53e42eb9f35,2025-05-02T19:11:11+01:00,Bump kotlin.version from 2.0.21 to 2.1.20 (#1335),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+244,613ab5078e4bb301cce401573c98bdfe4f4fcbca,2025-05-02T19:11:41+01:00,Bump org.ow2.asm:asm from 9.7.1 to 9.8 (#1340),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+245,0fd92183c118292e58aade1a60b8fd28e5e8fa95,2025-05-13T11:20:11+01:00,Docs: link to the config-events and config-source-injection docs (#1348),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+246,0ed0628f96ba384e210fdc3094749b2c4ee0082b,2025-05-16T16:13:55+01:00,Generate a BOM (#1347),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+247,431eefc40b3ad45e1f9afaa122bfea4541b48fc3,2025-05-16T16:33:19+01:00,Generate dotted property from env correctly when ending with a numeric representation (#1352),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+248,abeb441e23cb335c20d102a373cc3ff9a3e57e47,2025-05-20T13:27:20+01:00,Bump io.sundr:sundr-maven-plugin from 0.200.3 to 0.200.4 (#1353),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+249,f9911963150af574ef618a017ade7482dab42a4c,2025-05-20T13:33:10+01:00,Bump kotlin.version from 2.1.20 to 2.1.21 (#1349),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+250,75466b22155c579ccb1e522bca2345bbba03beb9,2025-05-21T09:55:29+01:00,Release 3.13.0 (#1354),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+251,aeb78aae806a6ccbcbb3f2a1f64929af7864cd60,2025-05-21T08:56:44+00:00,[maven-release-plugin] prepare release 3.13.0,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+252,32c4c59f6e3751ad84cb9a1ac85eaa5a217a8579,2025-05-21T08:56:45+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+253,739b68c89a1fae7c5a1f3aa37a949a9dbc184494,2025-06-05T16:24:19+01:00,Reduce allocations of Environment variables matching (#1359),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+254,7f67c7abdf0d2597cae4e6d0132752f2cec3aa92,2025-06-05T16:47:47+01:00,Match Environment variables with uppercase Map keys (#1360),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+255,88c1c018b24bd3910dfad3616b976fad90a4042a,2025-06-06T12:02:37+01:00,Release 3.13.1 (#1361),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+256,53de1da33a8181119ec674665b2063ffded43bbe,2025-06-06T11:04:12+00:00,[maven-release-plugin] prepare release 3.13.1,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+257,a7a7582f74c9679a5b37d8457bb5a8dce93a9aa6,2025-06-06T11:04:12+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+258,0e1b533892ce32c7d18d4345eac9682dc479855e,2025-06-11T13:51:07+01:00,Generate dotted property from env correctly when ending with multiple digits (#1364),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+259,ade82e4aed89d277881332b9fb722f822216195e,2025-06-12T18:21:00+01:00,Remove and Add after matching Environment Variables (#1365),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+260,7afff127ee074d0726d69733f740426addc86db1,2025-06-12T19:09:10+01:00,Release 3.13.2 (#1366),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+261,0c74992de20b078bbc2e846437c112058f492872,2025-06-12T18:10:44+00:00,[maven-release-plugin] prepare release 3.13.2,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+262,169788b371d36c2f3b60bdec51c3cf9f8e1dca4d,2025-06-12T18:10:44+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+263,277f7b4c3199544665f26be70dbea61027542782,2025-06-20T17:20:07+01:00,Warn when converting a boolean value that does not map to false or equivalent (#1368),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+264,894ea78778f053340d5b0386899eafac640957bb,2025-06-30T12:18:47+01:00,Bump requests from 2.32.3 to 2.32.4 in /documentation (#1363),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+265,0235dc70fdc9d8f83a9fe8bccc61b95556916b10,2025-06-30T12:41:11+01:00,Bump urllib3 from 2.4.0 to 2.5.0 in /documentation (#1367),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+266,c9e7c0a8ae2e901bbcc18fa504274c770a27274e,2025-06-30T12:41:37+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.12.0 to 2.13.4 (#1373),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+267,526bfddf18d866561fb9b67ebbd2e69c8de2d5d0,2025-07-10T23:52:07+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.13.4 to 2.13.7 (#1376),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+268,68105aef9523cf810f6265a2138b4fe51d537889,2025-07-11T05:59:07-05:00,Merge pull request #1377 from smallrye/dependabot/maven/com.typesafe-config-1.4.4,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+269,01a0ee003c6756d335b1ddf43dd564b1c6cab36e,2025-07-11T16:31:17+01:00,Sort matching properties with Env to prioritize specific names first (#1378),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+270,0bd8fa21fbc6522771aac3dc394b2ee4a53c8aac,2025-07-11T16:33:57+01:00,Bump kotlin.version from 2.1.21 to 2.2.0 (#1369),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+271,ff433d6484034ccd507e88b3d4af36b5b36e8ed1,2025-07-14T12:12:13+01:00,Add test with Env vars for Jasypt handler,no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+272,ce1083cd99689487217a36a8fccff0100eaac55e,2025-07-17T19:31:35+01:00,Release 3.13.3 (#1379),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+273,73252c83d7279ad43fa0e8aaf1739f03e6a13c7b,2025-07-17T18:32:58+00:00,[maven-release-plugin] prepare release 3.13.3,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+274,70d50814bf06179e876469921dfe3e1493334c49,2025-07-17T18:32:58+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+275,23fb76c4e5e222d3ec4b79f4f14cfcded3ec1629,2025-07-22T17:00:40+01:00,Properly match Env indexed properties (#1382),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+276,df4a60fd3e8752af42e9920db53f063d2af0a3c3,2025-07-22T17:19:39+01:00,Make order of Config elements more deterministic,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+277,dadfe78221e6dddab88a90b2ec6050f25895131c,2025-07-22T17:19:39+01:00,Reduce allocations when collecting properties from superTypes,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+278,1a5f4aed756c289b0a2173d1cf7908bd4d1fcc82,2025-07-23T10:39:11+01:00,Release 3.13.4 (#1384),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+279,088842974cdcd6f0336764fef44802d59e9771ff,2025-07-23T09:40:28+00:00,[maven-release-plugin] prepare release 3.13.4,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+280,571895edf6be1b8ee185782dd2f293d22aa6a9d7,2025-07-23T09:40:28+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+281,22e0315a8e8ccff386d984fef8ff5b830063165b,2025-07-23T14:49:37+01:00,Keep only a single array of properties for ConfigMappingInterface,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+282,cc0f4dbca054a4fc35812af3d1a129b0a6c3ef74,2025-07-25T13:28:55+01:00,Added javadocs to getValues for Collections,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+283,8db58caf305bc6153f3c3ef269464e8f4f5da5b3,2025-07-25T13:28:55+01:00,Added javadocs to getValues for Maps,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+284,a94ed7f7fdb53df92497e016aa3cb65f610beee9,2025-07-25T13:28:55+01:00,Added javadocs to getValues for Maps with Collections,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+285,ff818cf7ae723986a9349a98eaa5d0275fd0ad9a,2025-07-25T13:28:55+01:00,Added javadocs to getValue,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+286,e866201e0642ad75bfbf84fc52a7aae8c111c2ff,2025-07-25T13:28:55+01:00,"Added javadocs to getMappings, getSources, getProfiles, getConfigValue",yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+287,e79d98a883ccadc26c11cc300eeb91f85d70da44,2025-07-25T13:28:55+01:00,Added javadocs to getConverters,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+288,1a6ccf5d8b62be30d4a9c081a4951e1e2d33b824,2025-07-25T13:28:55+01:00,Added javadocs to constants configuration names,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+289,f0c06d15c9af9cf6d0b54832e0554e4098083821,2025-07-25T13:28:55+01:00,Added javadocs to class definition,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+290,f71fd77ddc5b736fa2397f1471bf621291a712a3,2025-07-25T13:48:55+01:00,Add @Serial annotation (#1387),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+291,f5ded9aebacae2e12b728598bc03a25358894185,2025-08-10T13:18:58+01:00,Bump version.curator from 5.8.0 to 5.9.0 (#1385),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+292,0ebb13bd8f2dd36c89979587577a96242fee108e,2025-08-10T13:20:15+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.13.7 to 2.13.8 (#1389),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+293,d272693b5cc43c75b1a9b790a31915b94a9486da,2025-08-21T10:43:23+01:00,Bump actions/checkout from 4 to 5 (#1391),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+294,6ec5758964d4ddbac1bae8fb3b9858703b794c77,2025-08-21T10:44:05+01:00,Bump kotlin.version from 2.2.0 to 2.2.10 (#1392),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+295,04439bbc00f0e5602a463f4458251e936d2e4160,2025-08-21T10:48:28+01:00,Bump actions/setup-java from 4 to 5 (#1393),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+296,205e8a48ba38db8a38640c1a13059b9e34beacef,2025-08-21T15:37:56+01:00,Add test for ConfigMapping group defaults backed by a Map,no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+297,a5d8957d5309a9149dd6d1052ec3ac4461358b26,2025-08-21T15:37:56+01:00,Add test for environment variables of AESGCMNoPaddingSecretKeysHandler,no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+298,81d70d8e86254374e18441b89d35c917477a8072,2025-08-21T16:11:12+01:00,Replace deprecated usages of getRawValue (#1394),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+299,dc7eb767ae2f86a365e28ce59e76d0e1686a0514,2025-08-21T17:11:45+01:00,Fix javadoc typo,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+300,98fe01edffa26aef5415efe8f9a0fe0130f9a58a,2025-08-21T19:30:02+01:00,Added Converters for DateTimeFormatter and CharSequence (#1395),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+301,4e44332458ddfe191c184bdf2af346d1cf3013c7,2025-08-28T17:02:21+01:00,Bump io.sundr:sundr-maven-plugin from 0.200.4 to 0.200.13 (#1397),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+302,885b72591343a132b841b629415d745b8022d824,2025-09-01T16:32:47+01:00,Bump io.sundr:sundr-maven-plugin from 0.200.13 to 0.201.0 (#1398),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+303,2d8a396c5c6538ef3af65eaf14da90fa69d2a5e4,2025-09-01T16:33:08+01:00,Bump org.yaml:snakeyaml from 2.4 to 2.5 (#1399),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+304,db7471a7d6876a39a87debda8800292269882792,2025-09-12T15:50:04+01:00,Bump io.sundr:sundr-maven-plugin from 0.201.0 to 0.220.0 (#1403),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+305,0e887e2af1d277859f8beb1a9813efd32900b798,2025-09-12T15:50:26+01:00,Bump kotlin.version from 2.2.10 to 2.2.20 (#1404),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+306,35c1b5e3f1c84b4baff545e40994be6ff4d6cd0c,2025-09-12T15:56:07+01:00,Bump com.typesafe:config from 1.4.4 to 1.4.5 (#1405),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+307,759d31a8f5f7978bdb10f6ce2d7e15082d8be555,2025-09-15T11:18:14+01:00,Bump io.sundr:sundr-maven-plugin from 0.220.0 to 0.220.1 (#1406),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+308,7d465ee5f07bb64e1cf4d11a1218995483f93755,2025-09-15T11:18:35+01:00,Bump org.apache.maven.plugins:maven-shade-plugin from 3.6.0 to 3.6.1 (#1407),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+309,97e045b58399810ae524e281f5aa6f7a24f93dab,2025-09-15T18:05:49+01:00,Bump actions/setup-python from 5 to 6 (#1401),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+310,7eec7de541e909eeaaa9abfbf70a8a51d777b48f,2025-09-16T11:58:56+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.13.8 to 2.13.9 (#1409),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+311,9c3d0c9f0a2e3d83200df8cd1ea8b0c218d27977,2025-09-16T12:10:10+01:00,Bump version.smallrye.testing from 2.3.1 to 2.4.0 (#1408),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+312,2013a99218658c08fadf758c856be7389eddec80,2025-09-18T17:51:35+01:00,Secret type to represent secrets and integrate with the Secret Keys handling (#1232),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+313,9810eee7ce917536fb1679092311abd6da3fac12,2025-09-19T18:51:44+01:00,Release 3.14.0 (#1410),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+314,6b28643716c706f3bc81d3f1b5ca737830bc9c64,2025-09-19T17:53:17+00:00,[maven-release-plugin] prepare release 3.14.0,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+315,6dba0d02d89b2d8a46bde02689dcfa214dc8dda0,2025-09-19T17:53:17+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+316,0cfeee7c6cc88bd6c4b408e981888c01485ae4ba,2025-09-25T16:08:40+01:00,Improve ConfigMapping generation error (#1411),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+317,837e6936dab8e063383ee82e961bb0c45b80d073,2025-09-30T10:43:49+01:00,Return a pre-registered Converter if one exists when calling `getImplicitConverter` (#1412),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+318,18f43d2ac569d59546e3f93287678fdc8970ae0a,2025-10-01T18:59:12+01:00,Keep all the @ConfigMapping path and names operations to resolve the final property name in ConfigMappingContext (#1413),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+319,bc44e5f65a6e65c3fc80a72be60a7cfbbaba3054,2025-10-03T10:34:29+01:00,fix: typos (#1414),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+320,ee7ce611e8ddb64cd5a64c44239d8add88c296cd,2025-10-03T10:55:54+01:00,Release 3.14.1 (#1415),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+321,fb045e406410cdf13001019b4d1ed7e733ec9901,2025-10-03T09:57:32+00:00,[maven-release-plugin] prepare release 3.14.1,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+322,c44ddc0051c0eb274ced752912833d991a1aa559,2025-10-03T09:57:32+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+323,9e3d4fe41f049dacfaa8113f909070a0c8b598ee,2025-10-06T10:11:14+01:00,Bump io.sundr:sundr-maven-plugin from 0.220.1 to 0.230.0 (#1417),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+324,f7fc4e1a4d6661a0bd579bc41e7c0f7710bdf59a,2025-10-06T10:28:14+01:00,Bump org.ow2.asm:asm from 9.8 to 9.9 (#1416),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+325,eea60cef0a44a705df1ce29999668ec749393bd8,2025-10-09T04:27:56-05:00,Bump io.sundr:sundr-maven-plugin from 0.230.0 to 0.230.1 (#1418),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+326,439977721c26a599e85ebae5416f8b54e4219c3f,2025-10-13T18:12:37+01:00,"Introduce exact methods to get values from String, int and boolean (#1419)",yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+327,1c2aae3629549c671eadc4071efcc0dd99dc80ee,2025-10-27T17:57:45+00:00,Bump kotlin.version from 2.2.20 to 2.2.21 (#1420),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+328,c589c30a621e6f620896f90a5e888e2e1061ff7e,2025-10-27T17:58:03+00:00,Bump actions/upload-artifact from 4 to 5 (#1421),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+329,ed5d5f72999bf5938e84a593b418749bde88a89d,2025-11-05T10:49:26+00:00,Bump io.sundr:sundr-maven-plugin from 0.230.1 to 0.230.2 (#1422),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+330,807e81164dbffc745b2c02ac0216dd19a7f89d6c,2025-11-05T10:49:54+00:00,Bump io.fabric8:docker-maven-plugin from 0.46.0 to 0.47.0 (#1423),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+331,22635f24dc7634706867cc52e28d5bd82d15f54e,2025-11-05T10:50:21+00:00,Bump version.smallrye.testing from 2.4.0 to 2.4.1 (#1424),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+332,c8cec40ce5fe1f8133335aa2d88430d61a1860e6,2025-11-14T19:06:40+00:00,Bump io.smallrye.common:smallrye-common-bom from 2.13.9 to 2.14.0 (#1426),yes,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+333,d70ff531bfe08c02b9d70447aed5c2ead3e481c9,2025-11-14T19:07:27+00:00,docs: remove unexisting converters (#1425),no,evaluate,1,168,128,0,128,0,2,30,30,0,28,2,2,51,0,0,0,0
+334,19c80288619ada46b6fdfe0712b5c12b1e371e60,2025-11-17T17:46:26+00:00,Throw IllegalArgumentException when using self-reference types (#1428),yes,evaluate,1,168,128,0,128,0,2,30,19,11,17,2,2,51,0,0,0,0
+335,66c54a416c3f64ac35c9bf90140cdace8882e1f1,2025-11-17T19:30:33+00:00,Support single underscore to represent ending quote in property name environment variable matching (#1429),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+336,095bf953fd40e5f6cd234ebb6529910bcb7b2e54,2025-11-17T19:48:58+00:00,"Document that when using Map quoted key, they must be use the same quoted format (#1430)",no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+337,15980198c939edda740e4219eb758db477291515,2025-11-17T19:53:28+00:00,Remove Nexus Staging since it reached EOL,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+338,5bb2243b7efdb3371c59b3d03755061fa177379c,2025-11-17T20:46:23+00:00,Fix admonition title,no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+339,0decc3ddca66acfc46e3b046eae4a8f12f93d183,2025-11-17T20:47:02+00:00,Commands to build and run the documentation website,no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+340,80792fdc6b93d2e7cade42f127a4098cc94f4ed5,2025-11-17T21:52:55+00:00,Add build for Java 25,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+341,6155f9907fb05a4e99895fe4868086ddc2d5c24e,2025-11-18T08:33:20+00:00,Bump io.fabric8:docker-maven-plugin from 0.47.0 to 0.48.0 (#1431),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+342,fa8506c0ee75421cf49bdcbcacc8c819e45ed277,2025-11-24T10:40:01+00:00,Bump actions/checkout from 5 to 6 (#1432),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+343,8b622b1f36fef107925c6ceaa5f0000e4256a791,2025-11-26T22:30:14+00:00,Bump io.smallrye:smallrye-parent from 47 to 48 (#1433),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+344,3b2dd2b456262c87af01626de4d425ce928bca77,2025-12-04T00:59:40+00:00,Provide a way to enable / disable cache of property names when building the config (#1434),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+345,92ecd0d28c67a2d575d4056f93f048365a25d538,2025-12-10T17:10:08+00:00,Add a `isDefault` method to `ConfigValue` to check if the value is a default (#1437),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+346,f89575036384710456b95d9db8a9725837b689e0,2025-12-11T18:18:20+00:00,"Support `Map<String, Optional<String>>` in `@ConfigMapping` (#1438)",yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+347,14f102506e3d19ee5394a41d301ca1360071588e,2025-12-16T10:13:31+00:00,Bump actions/upload-artifact from 5 to 6 (#1439),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+348,18d64a681d91630c34292c637d8c587cdb3db855,2025-12-16T10:14:03+00:00,Bump org.ow2.asm:asm from 9.9 to 9.9.1 (#1440),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+349,d8f8041b88f85a38be171d66c5d6548e1954f8c9,2025-12-18T10:23:39+00:00,Bump urllib3 from 2.5.0 to 2.6.0 in /documentation (#1435),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+350,fb152476a4af944d160262c0dfa5f6ef2107e774,2025-12-18T10:30:26+00:00,Bump pymdown-extensions from 10.15 to 10.16.1 in /documentation (#1441),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+351,74e6c4b56553292ed502c6fe8eff0d476b8da357,2025-12-19T11:34:50+00:00,Ensure modular access when reflecting (#1444),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+352,96e60818d965966312e020ad271b427ae0451066,2025-12-19T23:55:04+00:00,Bump kotlin.version from 2.2.21 to 2.3.0 (#1442),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+353,8642c13c9095ca0b898485e19c8414720908809d,2025-12-20T00:23:23+00:00,Matcher for property names (#1446),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+354,a564204ec74d72a4b67d99c1ea192d3e34eab07a,2025-12-20T08:58:42+00:00,Release 3.15.0 (#1447),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+355,4dd7178754716f743e9a439855857fa34db4a460,2025-12-20T09:00:04+00:00,[maven-release-plugin] prepare release 3.15.0,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+356,7cb0165dfc10504d3b5365a23dccfe0aa6dfd441,2025-12-20T09:00:04+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+357,1ac46676c90393177d7455be244f04089af45664,2025-12-26T13:14:32+00:00,Correctly set the config source position in ConfigValue (#1448),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+358,c083f63df1f40e97809c99441b3de5156e257f50,2025-12-26T15:26:59+00:00,Update Sonar plugin,no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+359,d6575ec2a3f74c72bbdfec961b0855914ff07ac6,2026-01-02T22:08:20+00:00,Fix SimpleDateFormat test to be timezone independent (#1449),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+360,34085ccf73454cd3a5d549efe7443b9f4bf947c3,2026-01-07T18:11:18+00:00,Bump io.smallrye.common:smallrye-common-bom from 2.14.0 to 2.15.0 (#1450),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+361,a42fa42407bcf0f696cc2d154030a2fa0c6f1586,2026-01-09T16:32:59+00:00,Add a `getValueOrDefault` method to `ConfigValue` to avoid checking if a value exists when a default is required (#1452),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+362,cf5f85f3d2594810f2b36fea84b9c9fa4734fb2c,2026-01-09T22:40:29+00:00,Avoid using a lambda when releasing config (#1453),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+363,be6bd7500b960f44e29709365afd4b22bc0fdbf1,2026-01-09T22:41:05+00:00,Bump urllib3 from 2.6.0 to 2.6.3 in /documentation (#1451),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+364,ff33b158cc8cf9984f18f40b095e80e81ae51874,2026-01-13T10:51:05+00:00,Move Converters lambdas to static classes (#1455),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+365,cae47cec6cb9c99a6830e1d4e788b5a632e33f01,2026-01-16T16:51:05+00:00,Release 3.15.1 (#1458),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+366,07b97e033dbf4235895e228dd7992194e6223259,2026-01-16T16:52:32+00:00,[maven-release-plugin] prepare release 3.15.1,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+367,b2a2b2b57c891c375441faad07895ddab6671688,2026-01-16T16:52:32+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+368,86e83f087e7cb1b6d712362c708677d5f64b858f,2026-01-18T12:59:45+00:00,Move static variable that keeps the original order of ConfigSources to an instance variable (#1461),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+369,8ef0a7632cbbd2f0842ae7faacf1e5bdade3f7f1,2026-01-20T15:07:43+00:00,Modularize SmallRye Config (#1459),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+370,9d19cabe50570b2ad195af74dcfc94d63fcd1802,2026-01-20T20:22:14+00:00,Fix JavaDoc generation problem for Zookeeper source (#1464),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+371,5dc80698d3cd10cd716efc8e30ecda9b0b5ff0c9,2026-01-22T23:55:45+00:00,Restrict the candidates property names for Environment Variables matching (#1466),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+372,fde4c56fd0d3f3f398873c04e7a412734ae8247e,2026-01-26T15:22:00+00:00,Use custom comparator in `getConfigurableSources` (#1468),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+373,801b0c8b886998ac145d4975a0a899a4b505c6f5,2026-01-26T15:26:28+00:00,Enforce locale when initializing MessageLogger (#1469),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+374,ae5cca65f4a0e6e1923d380b1a39b4840a04993d,2026-01-26T15:31:07+00:00,Move comparator from `getConfigurableSources` into a field (#1470),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+375,8d728ba26afbdbbcd67b70165a8dcb28581d0713,2026-01-27T11:39:44+00:00,Generalize enforcing the locale in loggers (#1471),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+376,7b7a77cee877dc3ff54ccc7cb9b74f1a91ffd506,2026-01-28T16:14:10+00:00,Add get methods to retrieve SmallRyeConfig directly (#1454),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+377,7d9cc7853c28b42feef14be8f93aaedf6cf288f4,2026-01-28T16:16:04+00:00,Deprecate and throw an Exception when using Jasypt (#1472),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+378,67cc03f5a541ff6674ad7ad328f9666fa41a3f50,2026-01-28T18:25:14+00:00,Fixed javadoc,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+379,1fe7bf59ee48f15468f3a489b51a56c01d4a0d9d,2026-01-28T18:34:12+00:00,Fix JavaDoc generation problem for Jasypt,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+380,983c40617638adcfc41ebd235f405d3842223965,2026-01-28T19:11:24+00:00,Release 3.16.0 (#1473),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+381,02a86077596c5a77d626bf75386f4523c44695f9,2026-01-28T19:12:52+00:00,[maven-release-plugin] prepare release 3.16.0,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+382,10dd00578ccad4d5dcb97e814bf3da77466b5b51,2026-01-28T19:12:52+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+383,90c3da72d6fe1d03cb2bc1faf06a6ca0d1f0024a,2026-02-03T23:36:55+00:00,ASM dependency should be optional (#1475),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+384,b49fdd62c9726325e9af3f082a052620b87603bc,2026-02-06T16:01:25+00:00,Bump kotlin.version from 2.3.0 to 2.3.10 (#1477),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+385,0842b7810fc073aba8eedff850cf4c30f3e38e57,2026-02-06T16:01:37+00:00,Immutable profiles (#1476),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+386,79f7f7671a17eabfc21d912510506547101c0e2f,2026-02-09T10:38:49+00:00,Bump io.smallrye.common:smallrye-common-bom from 2.15.0 to 2.16.0 (#1478),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+387,f0ad96f1a34feaef262e4ae8876176d192e3f49a,2026-02-09T10:53:17+00:00,Bump io.fabric8:docker-maven-plugin from 0.48.0 to 0.48.1 (#1479),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+388,d2ddebaa80c7a9f3692449ee8300b03089dfc2c8,2026-02-27T15:53:24+00:00,Bump com.typesafe:config from 1.4.5 to 1.4.6 (#1480),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+389,ae305da79f030e1fcf76b4eb753caab05d6cb401,2026-02-27T15:53:47+00:00,Bump org.yaml:snakeyaml from 2.5 to 2.6 (#1481),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+390,8ed7a85befe5480abf6bf2bd3730943ca3143edf,2026-02-27T15:54:08+00:00,Bump actions/upload-artifact from 6 to 7 (#1482),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+391,c1ad5e40dd4cc4b5c4259f1739ac219801f0c6ed,2026-03-02T10:13:05+00:00,Test @WithKeys and Env names,no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+392,9feea67d140fc9543b0a9f4e5faaecf03a07a920,2026-03-03T21:43:30+00:00,Add NPE guard if profile value is null,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+393,a59321ddf2796b479cf59f02f0c744963c8e593e,2026-03-06T15:27:07+00:00,Bump org.apache.maven.plugins:maven-shade-plugin from 3.6.1 to 3.6.2 (#1484),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+394,5d119aa316dee839be58bd4b59633a204b7f1ef8,2026-03-06T15:27:35+00:00,Bump io.github.dmlloyd.maven:module-services-plugin from 1.2 to 1.3 (#1483),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+395,16c9139b6c51cb72fd4659bce625cde677656a8f,2026-03-11T09:11:55+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.16.0 to 2.17.0 (#1487),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+396,6004b3fda851050062ef7e8e5956029189c511a4,2026-03-11T09:13:15+01:00,Provide a fast path for StringUtil#split() (#1485),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+397,3eb8d1ecc9771ac72d6dccb348d5a55c7373cacc,2026-03-17T10:12:18+00:00,Bump kotlin.version from 2.3.10 to 2.3.20 (#1488),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+398,0002b43048e50fbe4211d4d56406528f0254755e,2026-03-17T18:28:10+00:00,Micro-optimizations in SmallRyeConfig property iteration (#1489),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+399,df67ce4d56b02d6c4acdf01e96a9c4f841ff985a,2026-03-17T18:29:26+00:00,Optimize reportUnknown() to avoid PropertyName HashSet collisions (#1490),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+400,e9f26f019c14074c2bcf3c254b244ae03d57d282,2026-03-18T12:18:42+00:00,Add withMappingIgnorePrefix() API for optimized prefix filtering (#1491),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+401,7d82fd7a5196083e488127b01d884aedadaf1d72,2026-03-31T15:26:46+01:00,Prevent greedy wildcard from consuming star segments in PropertyName equals (#1492),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+402,cc2753bc3daa4bfa94fa15888abc1d2d408c4ad4,2026-04-02T15:44:47+01:00,Improve PropertyNamesMatcher and use it instead of structures that use PropertyName as a key (#1496),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+403,8c60df60fbdaf08e433aa9e5e879047107bad077,2026-04-02T15:45:02+01:00,Generate direct ctor call for ConfigMapping nested elements (#1497),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+404,fd68665f84d87b803b10625e695d460dcf783a3a,2026-04-02T15:47:47+01:00,Some micro optimizations for EnvConfigSource (#1498),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+405,54c945840deb1dd7db63741880a1de57a3ef5c14,2026-04-13T15:48:00+01:00,Bump requests from 2.32.4 to 2.33.0 in /documentation (#1493),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+406,359eb7123cfac0d0330333344528b65b177d3fe5,2026-04-13T16:12:43+01:00,Update documentation dependencies (#1501),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+407,f07abc76aa906914e2271571fa843b0fb6f32799,2026-04-13T16:13:51+01:00,Bump io.sundr:sundr-maven-plugin from 0.230.2 to 0.240.1 (#1499),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+408,a5d2f81770c0f163c6e429bb53cfd07ae9d16cf6,2026-04-13T16:14:11+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.17.0 to 2.17.1 (#1500),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+409,f1550114660b2840b136dbb8df36957ab6d787bf,2026-04-13T20:38:29+01:00,Use PropertyNamesMatcher to report unknowns (#1502),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+410,b3612438e3c8f3d68d82b9b2e9e9ab25b63b4075,2026-04-13T20:39:20+01:00,Readd removed constructor and deprecate it,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+411,c96a248752844d7a9de91cd7d940630608cfb2ca,2026-04-13T20:46:54+01:00,Release 3.17.0 (#1503),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+412,9630e78a22c28ecac29813864ba38ec1cd1b6cc5,2026-04-13T19:48:19+00:00,[maven-release-plugin] prepare release 3.17.0,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+413,992dd237de1256039874393edfc64cc4edcc9f4b,2026-04-13T19:48:19+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+414,3c0b08626b6316340d562d3c33ca2eb686f1b549,2026-04-17T19:50:00+01:00,Fix PropertyNamesMatcher matching wildcard input segments against named children (#1505),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+415,d6f31c7888907a11b123875264479edb880bdfa5,2026-04-17T20:07:49+01:00,Fix PropertyNamesMatcher.get returning wrong value for null-valued pattern matches (#1506),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+416,207691f93870b2b39a7025f54d30a19173441fac,2026-04-17T20:12:37+01:00,Do not include wildcard names in the list of property names of the DefaultValuesConfigSource (#1507),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+417,977c01e0dc61cfc0f6678e51a63aac64b5dd4880,2026-04-18T00:20:25+01:00,Apply BeanStyleGetters to defaults (#1508),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+418,744742d76ce377f8933029b02fad2a8ce7f5ddb1,2026-04-18T00:25:37+01:00,Release 3.17.1 (#1509),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+419,503f67aecc56fc1443556895ccf25e96705b36a3,2026-04-17T23:27:07+00:00,[maven-release-plugin] prepare release 3.17.1,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+420,14725d60f6a5f45a81460963c9ddf123f1c4781f,2026-04-17T23:27:07+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+421,5cb30389b0e266577fe68cde517533a72e49cee1,2026-04-20T22:49:49+01:00,Fix PropertyNamesMatcher fallback to wildcards even if exact match exists as null (#1511),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+422,3321972d105704b2750daf2057b5d949c471dc63,2026-04-20T22:55:35+01:00,Release 3.17.2 (#1512),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+423,64e31128e5f6442a675e030276c1d6eff5b017d9,2026-04-20T21:56:55+00:00,[maven-release-plugin] prepare release 3.17.2,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+424,b1899c080d12311e757b5677eecacdc71b3a3a48,2026-04-20T21:56:56+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+425,46bdce1c634830ce956566a02588251eedb38abf,2026-04-24T18:58:01+01:00,Bump io.sundr:sundr-maven-plugin from 0.240.1 to 0.300.0 (#1510),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+426,f6402e8a7eb87693712e21e822243bdbf3ca3502,2026-04-24T18:58:21+01:00,Bump org.jboss.bridger:bridger from 1.6.Final to 1.8 (#1513),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+427,b76804a726d45d50b4c3f705d67b7795a8b9dd0e,2026-04-24T21:49:14+01:00,Bump kotlin.version from 2.3.20 to 2.3.21 (#1514),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+428,b8c66bd15dca55396d857ecb310809078aa73195,2026-04-28T18:22:01+01:00,Bump io.smallrye:smallrye-parent from 48 to 49 (#1515),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+429,46b9174c9afd30268c8bd137e04f9ca662668ad2,2026-05-01T13:29:18+01:00,Bump com.typesafe:config from 1.4.6 to 1.4.7 (#1516),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+430,b164c4f5cc1d987fb9f492670a024e4df9ea47e3,2026-05-05T18:39:57+01:00,Move @ConfigProperties tests to cdi module,no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+431,483a7b2a31439242d0e208b4a8e7efbbf6380143,2026-05-06T10:39:05+01:00,Bump com.typesafe:config from 1.4.7 to 1.4.8 (#1518),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+432,a3b49a863ed14664a82323ee66149bf5f223ef8f,2026-05-08T19:48:42+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.17.1 to 2.18.0 (#1519),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+433,7d31fd752e093b07276a9941b1ac687fbd6e6d9a,2026-05-14T10:19:41+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.18.0 to 2.18.1 (#1522),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+434,29edda73ced4709bcbf306bc91a80dc9ea4f85d3,2026-05-18T16:47:15+01:00,Bump org.ow2.asm:asm from 9.9.1 to 9.10 (#1523),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+435,05dc803be6b00fbb2c85c7d033e8710cfa8478a9,2026-05-29T16:39:08+01:00,Stabilize hashCode of ConfigClass (#1527),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+436,ac1c65049f6cca00537843142397e12bb5bc1719,2026-05-31T12:07:52+01:00,Bump org.ow2.asm:asm from 9.10 to 9.10.1 (#1526),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+437,03365fc23a9383dbea5a0f67a3633dd583a93a32,2026-06-01T14:59:49+01:00,Update MicroProfile Config to 3.1.1 (#1528),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+438,0a4ffc099cb91d0a27e9d4df180d676fe7c68f6a,2026-06-04T11:43:17+01:00,Bump com.typesafe:config from 1.4.8 to 1.4.9 (#1530),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+439,d805e0132bc9c17f7f7803cab9e5d3edd6c68844,2026-06-11T10:38:21+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.18.1 to 2.19.0 (#1531),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+440,f06ef44df4d1f8795c1aed4b39746f1dd92f9c5c,2026-06-11T10:38:48+01:00,Bump kotlin.version from 2.3.21 to 2.4.0 (#1529),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+441,4bb49c7788d2cfa8cf33145cf584aff2824405ec,2026-06-16T16:34:42+01:00,Bump io.smallrye:smallrye-parent from 49 to 50 (#1533),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+442,dfa8e752f0c7441c80294f71c3be7821a58b962c,2026-06-17T18:29:46+01:00,Lock pipenv dependencies for CI,no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+443,9a5e0110bf4ae2b44cf9699bc89c8329ebdb9959,2026-06-18T16:54:32+01:00,Configure Surefire to display parameterized test names in reports (#1536),yes,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+444,9c2e937a21239d30b08cf9a9ca49ae8b3705dad3,2026-06-18T17:14:49+01:00,Fix HOCON property name rendering (#1535),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+445,5190fb22eeb27e849d92e53e21f84c44d8705276,2026-06-19T13:56:07+01:00,Bump actions/checkout from 6 to 7 (#1537),no,evaluate,1,168,128,0,128,0,2,30,19,0,17,2,2,51,0,0,0,0
+446,38216aaafde679f7ba77cd3ddad6fdcf58a045d7,2026-06-22T17:43:40+01:00,Add SPI ConfigMappingHandler to split handling of @ConfigMapping and @ConfigProperties (#1532),yes,evaluate,1,168,126,2,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+447,31ba1326177dbc54f3c02f3484f162c0982dbf5b,2026-06-22T19:21:33+01:00,Support nested config classes in class-based mappings (#1538),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+448,c2f3869cfdb9f96e824be9f2ba0a5961239aa7f8,2026-06-22T19:43:06+01:00,Remove deprecated Jasypt support (#1539),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+449,075cadb235bacf4afc6671d55c0c1a36088c4b50,2026-06-22T23:34:10+01:00,Bump Python version from 3.9 to 3.12 in CI documentation workflows (#1540),no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+450,8e0931b033b93c53b8d90c0da267401caf6c7bef,2026-06-22T23:35:29+01:00,Bump urllib3 from 2.6.3 to 2.7.0 in /documentation (#1520),no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+451,885fc02c47ddf461d09783a67557f49074e71c4e,2026-06-22T23:40:27+01:00,Bump pymdown-extensions from 10.21.2 to 10.21.3 in /documentation (#1524),no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+452,4a711a841808ee8501f985d46cc93eec7e2d8904,2026-06-22T23:53:15+01:00,Bump idna from 3.11 to 3.15 in /documentation (#1525),no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+453,ee9ad05aec249d298f5e2853c0c5f353f6bb0199,2026-06-23T11:28:57+01:00,Fix ConfigMapping hashCode collision for Map properties with equal keys and values (#1541),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+454,3f13795e84c79cfc656d006c313170c2b2fbe275,2026-06-23T11:55:00+01:00,Fix test coverage,yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+455,3d6d5dcc08d92a94572847077c02e472d7506b7c,2026-07-02T10:12:24+01:00,Bump io.smallrye:smallrye-parent from 50 to 51 (#1543),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+456,0daa482f24d8e8cd1fc791f30979ff5e10a8a191,2026-07-03T16:05:12+01:00,Reproduce issue with `@WithUnnamedKey` config group considered present even if unconfigured (#1534),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+457,e93eddf8527a6bc3c99ca72e02468778da94bb80,2026-07-03T17:06:25+01:00,Release 3.18.0 (#1544),no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+458,c94a186811febdc090ce58b29d27208c84aabc11,2026-07-03T22:58:39-03:00,Add workflow_dispatch trigger to release workflow,no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+459,a7bafe6373ed25cf630cd241130458609ea8aee1,2026-07-03T23:01:42-03:00,Update release preparation condition in workflow,no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+460,21ceb7502937f340ae883702526a61deb5b1ce2a,2026-07-04T02:03:40+00:00,[maven-release-plugin] prepare release 3.18.0,yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+461,fb0c3bfb6d6363a286533cb209b5d458433ab6d4,2026-07-04T02:03:40+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+462,8a86d44d8c24277d616c9a0007864f3e7801fb2d,2026-07-15T17:45:10+01:00,@WithUnnamedKey#eager to control if default keys are present in the mapping Map (#1546),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+463,c6280131ff48ec260e32ef29f64ccfccf4938ad9,2026-07-15T18:00:19+01:00,Release 3.18.1 (#1547),no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+464,d576664af18b68ea8ebe780595c1b05c1e09a25d,2026-07-15T17:01:51+00:00,[maven-release-plugin] prepare release 3.18.1,yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+465,6c8c66ff62c6db971e500623ecc94de121670748,2026-07-15T17:01:51+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+466,63980bb3701176e5a4d9e8632492b283c4b0aee1,2026-07-20T16:59:23+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.19.0 to 2.20.0 (#1548),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+467,9458d406995ba0eceb989acb805e90d68a12e388,2026-07-22T19:01:42+01:00,Ignore @WithDefault on Map and Collection with nested group values (#1550),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+468,8a8abf701f1f4901c35fc70ff9896fbc1d37bfa9,2026-07-22T19:21:38+01:00,Collect nested ConfigMappingClass entries in getConfigMappingsMetadata (#1551),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+469,96de53bb2336b0ad7efeab164b918326f82270fe,2026-08-10T11:15:00+01:00,Bump kotlin.version from 2.4.0 to 2.4.10 (#1545),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+470,99e32ba8812a481a632dc85cb8103cf8c9facb83,2026-08-10T11:15:24+01:00,Bump actions/setup-python from 6 to 7 (#1549),no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+471,36e36e0265ca93d202d9cf2511f688ead9e1977d,2026-08-13T09:49:50+01:00,Bump io.fabric8:docker-maven-plugin from 0.48.1 to 0.49.0 (#1555),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+472,683f471731c9681f77a4e23b3c162e4d288e99d5,2026-08-20T16:30:07+01:00,Bump pymdown-extensions from 10.21.3 to 11.0.1 in /documentation (#1553),no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+473,4bd8290e87abd54c5a8e3ff9e0084568e0e84aa3,2026-08-20T17:02:10+01:00,Preserve multiline file content in FileSystemConfigSource (#1557),no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+474,8395ec8fd763373dbb7770ad97b87d3a8471f45c,2026-08-20T17:33:21+01:00,Release 3.18.2 (#1558),no,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+475,a83950b9f44037721e7dc211cb8b7deb402cd84e,2026-08-20T16:35:01+00:00,[maven-release-plugin] prepare release 3.18.2,yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+476,06d433d6764dbc80d9ffefa747dfc8498477fb2a,2026-08-20T16:35:02+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+477,cf5d1457b87dfbf10a89c6d34827c17f54e0edca,2026-08-21T12:49:17+01:00,Remove SecurityManager (#1194),yes,evaluate,1,168,126,0,126,0,2,30,19,0,17,2,2,51,0,0,0,0
+478,e86f2076dcf949c24d48a7cb93ad789b87234890,2026-08-21T14:23:46+01:00,"Refactor ConfigMappings to unify metadata model and clearly separate introspection, generation and loading (#1556)",yes,evaluate,1,168,126,0,126,0,2,30,6,13,6,0,2,51,0,0,0,0
+479,f53503f91ac908e8c52daf76ab3fb4199c11b3cd,2026-08-27T10:41:01+01:00,Bump actions/setup-java from 5 to 6 (#1561),no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+480,756d4b8153cc9d72214268065694d2b5742979e4,2026-08-27T10:41:18+01:00,Consolidate Converter management into Converters (#1560),yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+481,17d62064f6c55fe44bd33017f3ea85d19531bafe,2026-08-27T21:31:32+01:00,Fix documentations inaccuracies and missing features (#1562),no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+482,9d5ae45c80bbeb8675e36110e6b74c19ca5cae9a,2026-08-27T21:40:39+01:00,Remove deprecated methods (#1563),yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+483,783ac8f7821f188671301b8f412bb8b542e87427,2026-08-28T08:49:01+01:00,Remove CDI config-source-injection and config-events modules (#1564),yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+484,5ba469b07b924f4a247abd397a9094312b58c5f9,2026-08-28T09:02:30+01:00,[WIP] API and implementation for config instance builder,yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+485,15a307adaac6eda1bf8a5ed104da134429261f72,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder implementation: - Builder class generation - Simple leaf types and primitives - Simple optionals - @WithDefault,yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+486,9b4b3293ac88864bea35f868b5c2834120331f3a,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder implementation: - Builder class generation - Leaf types and primitives - Optionals - Maps - Collections - @WithDefault,no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+487,20ac0cc9af9c7e5970e614eb843965776b109b72,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder throw exception if a required value is not set,no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+488,073b6c505c1cdb377ace24725d3b6f30112465ec,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder missing default cases: - Optional Group - Map with Collections - Default methods,no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+489,1862c417de5c06f15ade6448a468f2ee2d97d938,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder support @WithConverter,no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+490,6532af0573580b5edb411e401f3af9ff0d92a302,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder cleanups: - Remove unused methods from ConfigInstanceBuilder - Share the same code between ConfigInstanceBuilder and ConfigMappingContext - Simplify ConfigMappingGenerator,no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+491,65e6db7e8f3acb86cff2fc8d4814c9a7fd8e1ea5,2026-08-28T09:02:30+01:00,Introduce BuilderMethodInvocation to simplify the bytecode generation,no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+492,d4570725f182ccd30608677c0275d839d8dc7f82,2026-08-28T09:02:30+01:00,Single ClassValue to compute config and builders,no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+493,588f1d069b6237e563b3f76894333050fa5f3c42,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder replace Builder with Map-based constructor,no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+494,6e33bb2aaae27d5314891b05075b75842a1d4c38,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder add documentation,no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+495,27edbbb568b53cfe230e09d9d68d0074b9d6f46c,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder move convert methods to Converters,yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+496,de41146ed4cc59b13116bfb9c11933fcde9f4fb0,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder use Converters to load,yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+497,8be5daf164d0320763015fa0b2783f9c05bf377d,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder bytecode generator Classloader,yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+498,4d45b6cafe3064f8521bd9cace2dab53591e86ac,2026-08-28T09:02:30+01:00,ConfigInstanceBuilder Converters per interface Classloader,yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+499,613adf9c84eaf1d5c674f1eaa0b907fda2cf122a,2026-08-28T11:19:20+01:00,Fix javadoc,yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+500,7ef690d08925d843ff218cc70f74cef945e69545,2026-08-31T18:23:44+01:00,Add ConfigSource for TOML format (#1542),yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+501,d3b7d1af687ff5e903186680b53465020b5addd3,2026-08-31T19:17:38+01:00,Remove the generation of a comma separated value name for Collections in the YamlConfigSource (#1565),no,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+502,51a16996a25044f3e0f15afebdc840ce735bc750,2026-09-01T00:08:56+01:00,Simplify CDI injection of Collections and Maps (#1566),yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+503,2bea05e8066c912482d1dd94c9f0e769f5f120c8,2026-09-01T16:59:38+01:00,Use backslash escaping for property expressions (#1568),yes,evaluate,1,168,126,0,126,0,2,30,6,0,6,0,2,51,0,0,0,0
+504,230de8ac5d9b65ff00a29eff47ee8d4fdd5e8b6b,2026-09-01T17:22:09+01:00,Remove deprecated `SmallRyeConfig#getRawValue` (#1569),yes,evaluate,1,168,33,93,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+505,165f3640b75318f940988507404b45141ef395e8,2026-09-02T11:14:04+01:00,Avoid extra StringBuilder allocations from Expression,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+506,9c8797743a61dd97bd43f561dd0e2cf160c579aa,2026-09-07T13:16:59+01:00,Update to Surefire 3.6.0 for the TCK (#1574),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+507,f99bee829d1dcf97639c1aa93f4012642831d466,2026-09-07T13:29:40+01:00,Bump io.sundr:sundr-maven-plugin from 0.300.0 to 0.400.0 (#1573),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+508,8edc966fecbe64a41a89d7aa40ea96ce3cf63af0,2026-09-07T13:29:59+01:00,Bump mkdocs-material from 9.7.6 to 9.7.7 in /documentation (#1571),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+509,051fb8ad478feab7198673617e5f2f0761a4a1de,2026-09-07T13:39:16+01:00,Bump org.yaml:snakeyaml from 2.6 to 2.7 (#1570),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+510,b8a6d431d9d4357976137d2a0637831532d9e91f,2026-09-07T13:52:35+01:00,Remove KeyMap (#1575),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+511,774b0a29232f597687f5be6f706f13f84b06845a,2026-09-09T12:51:06+01:00,Register profile names with SecretKeys (#1576),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+512,cd59addb50a2b8b47ed4a66c6f9ebf537682bd20,2026-09-09T14:53:10+01:00,Make FileSystemConfigSource take into account Win line endings (#1577),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+513,c2d2fa882e23784002ac007a11fa71d3eb44f189,2026-09-10T15:42:12+01:00,Rewrite PropertyName equals to a segment by segment matching engine and cover missing cases (#1579),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+514,dcb1e14c490cff41f82b6306000a6f3155ee4a11,2026-09-10T15:48:57+01:00,Warn on mapping ambiguous single segment quoted / unquoted Map keys (#1580),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+515,d8de6507aa6b7614d6a736d1c4b9bf2f573ce486,2026-09-10T16:01:45+01:00,Deprecate unused ConfigLogging messages,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+516,46ff898ed230f6f0081fa6097288c2d0adb9c9aa,2026-09-10T16:48:03+01:00,Add a Spring module to support Spring @ConfigurationProperties (#1581),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+517,c16ccdccc680eeaf3d852da2290225a785e29fe5,2026-09-10T17:12:33+01:00,Release 4.0.0.CR1 (#1582),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+518,d5cbad39886eeed3faf77a454ed6ea1a8062a145,2026-09-10T16:14:18+00:00,[maven-release-plugin] prepare release 4.0.0.CR1,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+519,cea8db075bd2135e37ffe66de03ecdfb5230a937,2026-09-10T16:14:18+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+520,80881e52c8981235ce20c67f044269deed02317c,2026-09-11T11:45:53+01:00,Bump version.smallrye.testing from 2.5.0 to 2.5.1 (#1583),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+521,dc50296f381b5db1dd595e60e239bc01a4ce4c08,2026-09-14T22:21:00+01:00,Remove cache of implicit Converters due to memory leaks (#1587),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+522,5f89881a1480dac4447b153653c473500710bf1f,2026-09-14T22:27:12+01:00,Release 4.0.0.CR2 (#1588),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+523,d28b1e2ee970aa2e6e7ed346cc91436fb7128bfb,2026-09-14T21:28:51+00:00,[maven-release-plugin] prepare release 4.0.0.CR2,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+524,b251e6dc668600d5f81d555dc1a978bf79335558,2026-09-14T21:28:51+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+525,19e23e57b53c3085dc2b9e7022bd6ba76eb775f1,2026-09-15T23:39:16+01:00,Use ClassValue to cache ConfigMappingInterface and ConfigMappingClass (#1589),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+526,6d923f413ff00a3317c75fdd12ced26b9dd71cac,2026-09-15T23:45:49+01:00,Release 4.0.0.CR3 (#1591),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+527,83fbdf40cb43aacb8b4274b2c718f85175022139,2026-09-15T22:47:23+00:00,[maven-release-plugin] prepare release 4.0.0.CR3,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+528,11ac4025a3741a8ebea0c925ca2bb5eaefaf46e2,2026-09-15T22:47:23+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+529,179e175d0b8cdb51d58d120bec7e5deb5fe4c86a,2026-09-17T10:26:27+01:00,Prefer AtomicReference instead of a Holder object (#1592),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+530,bcfab879cc0c3b144f6489ae80c5e7ba847ce4e5,2026-09-17T10:40:24+01:00,Update to SmallRye Parent 52 (#1593),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+531,dcf37d27251e7b9cfc48568b75ef30eab94b2a11,2026-09-17T10:55:17+01:00,Release 4.0.0 (#1594),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+532,fa21e03fe5d0fadf288ac9bc75dcd109e678ec1a,2026-09-17T09:56:39+00:00,[maven-release-plugin] prepare release 4.0.0,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+533,08644d2f1da95d4dd883dbf142a17c2ae691ad2e,2026-09-17T09:56:39+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+534,60775eadd8593c77a785d57fbe463bdc76be13b1,2026-09-18T17:51:57+01:00,Bump org.tomlj:tomlj from 1.1.1 to 1.2.0 (#1595),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+535,93b966379ba4554ddbec593eec849767beb55565,2026-09-18T17:52:25+01:00,Bump org.springframework.boot:spring-boot from 4.1.0 to 4.1.1 (#1585),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+536,af483103b6d81aaa40e7543b55f157ffcd2f9f52,2026-09-18T17:52:41+01:00,Bump kotlin.version from 2.4.10 to 2.4.20 (#1584),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+537,35c460a1bab37f58548177ba531be3e5510a9a5d,2026-09-21T13:55:09+01:00,Bump org.tomlj:tomlj from 1.2.0 to 1.3.0 (#1596),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+538,37db0818fe3485e3e2ff43ea41139f30fdd56c0c,2026-09-23T13:43:16+01:00,Bump io.sundr:sundr-maven-plugin from 0.400.0 to 0.400.1 (#1597),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+539,64fb5b8b94da6f86cd2adc5d93b8135d449cb7da,2026-09-28T11:06:32+01:00,Bump io.smallrye.common:smallrye-common-bom from 2.20.0 to 2.21.1 (#1598),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+540,f401f9fb51c6e42f503e4eb0f85cb4bc35885767,2026-10-12T16:50:34+01:00,Bump org.tomlj:tomlj from 1.3.0 to 1.3.1 (#1599),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+541,90134772b6d2ee0dd8ae23e8787072138f273d40,2026-10-12T16:50:56+01:00,Bump urllib3 from 2.7.0 to 2.8.0 in /documentation (#1600),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+542,94231cf5e9c5e96080a7ae8d46e81b76ffd2848f,2026-10-13T10:01:33+01:00,Bump kotlin.version from 2.4.20 to 2.4.21 (#1601),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+543,b496eece429e850170b5ca009a80d063aba21474,2026-10-13T10:01:57+01:00,Bump org.ow2.asm:asm from 9.10.1 to 9.11 (#1602),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+544,89fd3490db95843551fcf2c6d6bbc39e70c2a3d9,2026-10-15T11:49:41+01:00,Improve Secret handling (#1604),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+545,4692a00af41619840ba206744af1f8a0e5222458,2026-10-16T12:08:23+01:00,Override Surefire version form Parent in TCK module to fix exclusion (#1606),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+546,808761f753562f9539d4724de0c8ce32f511e636,2026-10-19T11:26:03+01:00,Bump io.smallrye:smallrye-parent from 52 to 53 (#1607),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+547,a7d3d877e669e2de560a5a690dc1b53f6a27b858,2026-10-21T16:11:08+02:00,Bump org.ow2.asm:asm from 9.11 to 9.11.1 (#1608),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+548,c75200864146d8e5dac90c46cd3b35abe474ab9d,2026-10-23T17:00:51+01:00,Do not lookup annotation prefix if there is only one ConfigMapping type registered (#1609),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+549,b8f1f98a745780a4185efa96ac37fcd2fc55aac9,2026-10-26T11:33:32+00:00,Bump certifi from 2026.7.22 to 2026.10.19 in /documentation (#1610),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+550,d7135e8d41c913510f5d3e2962d4a01347b3b447,2026-10-26T11:33:52+00:00,Bump org.springframework.boot:spring-boot from 4.1.1 to 4.1.2 (#1611),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+551,8861f73e33f31fc1d995cff3f8d780bc56752d53,2026-10-26T11:34:20+00:00,Bump org.apache.maven.plugins:maven-surefire-plugin from 3.6.0 to 3.6.1 (#1612),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+552,203d412d18a2a0a8380ee1585673b62b781191c8,2026-10-26T17:30:08+00:00,Support ConfigMapping template instances (#1613),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+553,b70135507558d5ffbd57d795d8377171aae177a1,2026-10-26T17:39:16+00:00,Release 4.1.0 (#1614),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+554,d718e5a0416f5e4488547457eb1e3f44237fdfa4,2026-10-26T17:41:05+00:00,[maven-release-plugin] prepare release 4.1.0,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+555,21cd4d93cdf20bde3a4eff9a6d12d893def3ef3e,2026-10-26T17:41:05+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+556,0d99782df2f616b5755e269e371e07683b644b1d,2026-10-27T17:47:13+00:00,Fix Bean Validation property names with beanStyleGetters (#1616),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+557,28e4f072c88fbd6650835fa3fc1d143ecf1ac037,2026-10-27T18:26:05+00:00,Fix Sonar issues,no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+558,a14b88bd86f8656c48cb401a5ade3fe793f668d6,2026-10-27T21:58:43+00:00,Support naming strategy and ignoreUnknownFields in Spring ConfigurationProperties (#1617),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+559,4c64c5a290468cfe51b87a24d4760dafef884b76,2026-10-27T21:59:31+00:00,Fix lazy groups with inherited beanStyleGetters (#1618),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+560,cde51aeb3eefb15c7cf8f40be62b8007927ef049,2026-10-29T09:54:06+00:00,Avoid scanning linearly all the property names (#1621),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+561,293ec591f4a7262d074072661f98ac782a2adc98,2026-10-29T10:40:32+00:00,Mark expanded expressions and decoded secret handler values as secret (#1620),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+562,8966f53d7db8fb0e785b32a9f61c9173be877eb8,2026-10-29T12:52:52+00:00,Allow the property names Iterable to be iterated multiple times (#1623),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+563,154b09728f0db1c4d6ada287e7bdab47d917fc07,2026-10-30T11:56:35+00:00,Fewer allocations on the lookup path (#1624),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+564,e8e8c220eef779149fd504956c5b53df838be2bc,2026-10-30T12:53:46+00:00,Apply the naming strategy without composing a Function per property (#1628),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+565,6c51d9b4d9e31d5d6dad25bdbef94012343309bb,2026-10-30T12:54:18+00:00,Skip the copy in StringUtil.skewer() for names that are already skewered (#1629),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+566,88964bd5258a44285a042ecfdc5a07d0f6577c47,2026-10-30T12:54:52+00:00,Use invokeExact instead of invokeWithArguments to call mapping handles (#1625),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+567,2a9a8a4049697bfe32091d2cfcff3fe6f27d1c44,2026-10-30T12:56:58+00:00,Build the Env matching name lists lazily (#1626),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+568,600f5b757df25481e851c3c9785c6dd34b047abb,2026-10-30T13:30:40+00:00,Release 4.2.0 (#1630),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+569,233262d4bd2358f9940e519a39aec9f3ddfa7821,2026-10-30T13:32:06+00:00,[maven-release-plugin] prepare release 4.2.0,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+570,114497bb0eda2c0d26ae6428e4cae317c0a7feb0,2026-10-30T13:32:06+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+571,01d9e7fcfbd7865a79a4420f02e7482a080d5adb,2026-11-01T11:00:49+00:00,Discover generated config classes for transitive super interfaces (#1631),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+572,afaf58aa8a1e6bbbce5a93aaa5838c6da5ed54aa,2026-11-02T10:42:41+00:00,Look up config sources with an indexed loop (#1632),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+573,d8c7c3a6380278175ced826ab94a6d0c8fab6adc,2026-11-02T12:38:52+00:00,Probe a missing file only when the loader asks to fail on it (#1633),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+574,0d5360e1b073c0a3f6fa177aa7a896bcde4913a1,2026-11-02T14:25:35+00:00,Fix lazy group creation for nested groups with their own naming strategy (#1634),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+575,f59aefbedfc4d89a0a71376dee300f56fc561c44,2026-11-03T22:14:04+00:00,Update MicroProfile Config to 3.1.3 (#1635),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+576,ca0e2b5c1550198e35eeb778006314adb0ac54e3,2026-11-04T14:16:14+00:00,Do not match secret keys with wildcards to names mapped as non-secrets (#1622),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+577,f9b284aec0c6ffac46d17a3028498c5ef6297e06,2026-11-04T14:56:47+00:00,Match secret keys before the profile interceptor (#1636),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+578,2b680310768aa02aab4eb058be7ee56b0ab8534a,2026-11-04T15:33:28+00:00,Release 4.2.1 (#1637),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+579,c7323b65857c36e0a53a33dbd77799fdd6ab177e,2026-11-04T15:34:59+00:00,[maven-release-plugin] prepare release 4.2.1,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+580,177f2ff07cbb0b56b412d4108e297a8e9399c6d7,2026-11-04T15:34:59+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+581,433e428cbde6a065a2118f097fd00bfa896d048a,2026-11-05T11:55:36+00:00,Discover transitive super interfaces of nested groups (#1638),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+582,9b624e56674f609718696bd4eb94a2d789f54429,2026-11-05T11:56:22+00:00,Map the superclass fields of configuration classes (#1639),yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+583,721a5b3ddac04209ec90a5d6082c29df90925674,2026-11-05T13:01:07+00:00,Release 4.2.2 (#1640),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+584,2553b137543c604187b14475ec6d041b24f6489b,2026-11-05T13:02:38+00:00,[maven-release-plugin] prepare release 4.2.2,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+585,63ff29bdf203092e108530fd973cff1e0e94329d,2026-11-05T13:02:38+00:00,[maven-release-plugin] prepare for next development iteration,yes,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0
+586,72d32378c615664ff72630c9ba203d16448cac21,2026-11-06T20:05:22+00:00,Reject config producer lookups without @ConfigProperty (#1642),no,evaluate,1,168,33,0,33,0,2,30,6,0,6,0,2,51,0,0,0,0

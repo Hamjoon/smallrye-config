@@ -1,0 +1,318 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
+
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Comprehensive tests for {@link ConfigMappingContext}.
+ *
+ * <p>The tests use only the public constructors and methods that are part of the source file
+ * (or the minimal public API listed in the prompt). No external mocking frameworks are used;
+ * instead a tiny concrete {@link TestConfig} implementation of {@link SmallRyeConfig} is
+ * provided that returns deterministic values for the methods exercised by the tests.</p>
+ */
+public class ConfigMappingContextTest {
+
+    private ConfigMappingContext context;
+    private TestConfig testConfig;
+    private MappingBuilder mappingBuilder;
+
+    @Before
+    public void setUp() {
+        testConfig = new TestConfig();
+        mappingBuilder = new MappingBuilder(); // empty mappings – constructor is public
+        context = new ConfigMappingContext(testConfig, mappingBuilder);
+    }
+
+    /** Simple {@link Converter} that returns the input string unchanged. */
+    public static class IdentityStringConverter implements Converter<String> {
+        @Override
+        public String convert(String value) {
+            return value;
+        }
+    }
+
+    /** Dummy converter used to test {@link ConfigMappingContext#getConverterInstance(Class)} caching. */
+    public static class DummyConverter implements Converter<Integer> {
+        @Override
+        public Integer convert(String value) {
+            return Integer.valueOf(value);
+        }
+    }
+
+    /** Minimal {@link SmallRyeConfig} implementation required for the tests. */
+    public static class TestConfig extends SmallRyeConfig {
+        private final Map<String, String> values = new HashMap<>();
+        private final Set<String> propertyNames = new HashSet<>();
+
+        public TestConfig() {
+            // pre‑populate with a few properties used by the tests
+            values.put("my.prop", "hello");
+            values.put("list[0]", "a");
+            values.put("list[1]", "b");
+            values.put("opt[0]", "x");
+            values.put("opt[1]", "y");
+            propertyNames.addAll(values.keySet());
+            // also add the root property name used when a prefix is applied
+            propertyNames.add("my");
+        }
+
+        @Override
+        public <T> T getValue(String name, Class<T> propertyType) {
+            // simple conversion – only String is required for the tests
+            Object v = values.get(name);
+            return propertyType.cast(v);
+        }
+
+        @Override
+        public <T> Optional<T> getOptionalValue(String name, Class<T> propertyType) {
+            return Optional.ofNullable(getValue(name, propertyType));
+        }
+
+        @Override
+        public <T> Optional<T> getOptionalValue(String name, Converter<T> converter) {
+            String raw = values.get(name);
+            return raw == null ? Optional.empty() : Optional.of(converter.convert(raw));
+        }
+
+        @Override
+        public Iterable<String> getPropertyNames() {
+            return propertyNames;
+        }
+
+        @Override
+        public List<Integer> getIndexedPropertiesIndexes(String property) {
+            // Very small parser – looks for keys like "list[0]" and returns the index part
+            List<Integer> indexes = new ArrayList<>();
+            String prefix = property + "[";
+            for (String key : values.keySet()) {
+                if (key.startsWith(prefix) && key.endsWith("]")) {
+                    try {
+                        int idx = Integer.parseInt(key.substring(prefix.length(), key.length() - 1));
+                        indexes.add(idx);
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+            }
+            Collections.sort(indexes);
+            return indexes;
+        }
+
+        @Override
+        public Map<String, String> getMapKeys(String name) {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public Map<String, String> getMapIndexedKeys(String name) {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public <T> Converter<T> requireConverter(Class<T> asType) {
+            // Only String is needed for the tests – return an identity converter
+            if (asType == String.class) {
+                return (Converter<T>) new IdentityStringConverter();
+            }
+            throw new IllegalArgumentException("Unsupported converter type");
+        }
+
+        /** Dummy validator – does nothing. */
+        public Object getConfigValidator() {
+            return new Object() {
+                public void validateMapping(Class<?> type, String prefix, Object instance) {
+                    // No validation needed for the test suite
+                }
+            };
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Helper to invoke private methods via reflection
+    // -------------------------------------------------------------------------
+
+    private static Object invokePrivate(Method method, Object target, Object... args) throws Exception {
+        method.setAccessible(true);
+        return method.invoke(target, args);
+    }
+
+    // -------------------------------------------------------------------------
+    // Tests for prefix handling and property name creation
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testApplyPrefixAndToPropertyName() throws Exception {
+        // Apply a prefix and verify that the private toPropertyName method builds the expected name
+        context.applyPrefix("my.prefix");
+
+        Method toProp = ConfigMappingContext.class.getDeclaredMethod("toPropertyName", String.class, boolean.class);
+        String result = (String) invokePrivate(toProp, context, "name", false);
+        assertEquals("my.prefix.name", result);
+
+        // When the supplied name is empty, the current prefix should be returned unchanged
+        String onlyPrefix = (String) invokePrivate(toProp, context, "", false);
+        assertEquals("my.prefix", onlyPrefix);
+    }
+
+    @Test
+    public void testNamingStrategyAndBeanStyleGetters() throws Exception {
+        // Switch to bean‑style getters and keep the default KEBAB_CASE naming strategy
+        context.applyBeanStyleGetters(true);
+        context.applyPrefix("my");
+
+        Method toProp = ConfigMappingContext.class.getDeclaredMethod("toPropertyName", String.class, boolean.class);
+        // "getValue" -> bean style removes "get" and lower‑cases first char -> "value"
+        String result = (String) invokePrivate(toProp, context, "getValue", true);
+        assertEquals("my.value", result);
+    }
+
+    // -------------------------------------------------------------------------
+    // Tests for converter handling
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testGetConverterInstanceCaching() {
+        DummyConverter first = context.getConverterInstance(DummyConverter.class);
+        DummyConverter second = context.getConverterInstance(DummyConverter.class);
+        assertSame("Converter instances should be cached", first, second);
+    }
+
+    // -------------------------------------------------------------------------
+    // Tests for collection factory creation
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testCreateCollectionFactory() {
+        IntFunction<? extends Collection<String>> listFactory = ConfigMappingContext.ObjectCreator.createCollectionFactory(List.class);
+        Collection<String> list = listFactory.apply(0);
+        assertTrue(list instanceof ArrayList);
+
+        IntFunction<? extends Collection<String>> setFactory = ConfigMappingContext.ObjectCreator.createCollectionFactory(Set.class);
+        Collection<String> set = setFactory.apply(0);
+        assertTrue(set instanceof HashSet);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateCollectionFactoryUnsupported() {
+        ConfigMappingContext.ObjectCreator.createCollectionFactory(Map.class);
+    }
+
+    // -------------------------------------------------------------------------
+    // Tests for MapWithDefault behaviour
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testMapWithDefault() {
+        ConfigMappingContext.MapWithDefault<Integer, String> map = new ConfigMappingContext.MapWithDefault<>("default");
+        map.put(1, "one");
+        assertEquals("one", map.get(1));
+        assertEquals("default", map.get(2)); // missing key returns the default value
+    }
+
+    // -------------------------------------------------------------------------
+    // Tests for ObjectCreator value extraction
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testObjectCreatorSimpleValue() {
+        // Context has prefix "my" and the property "my.prop" = "hello"
+        context.applyPrefix("my");
+        ConfigMappingContext.ObjectCreator<String> creator = context.new ObjectCreator<>("prop");
+        creator.value(String.class, null);
+        assertEquals("hello", creator.get());
+    }
+
+    @Test
+    public void testObjectCreatorOptionalValuePresent() {
+        context.applyPrefix("my");
+        ConfigMappingContext.ObjectCreator<Optional<String>> creator = context.new ObjectCreator<>("prop");
+        creator.optionalValue(String.class, null);
+        Optional<String> opt = creator.get();
+        assertTrue(opt.isPresent());
+        assertEquals("hello", opt.get());
+    }
+
+    @Test
+    public void testObjectCreatorOptionalValueMissing() {
+        // No property "missing" exists – should produce Optional.empty()
+        ConfigMappingContext.ObjectCreator<Optional<String>> creator = context.new ObjectCreator<>("missing");
+        creator.optionalValue(String.class, null);
+        Optional<String> opt = creator.get();
+        assertFalse(opt.isPresent());
+    }
+
+    // -------------------------------------------------------------------------
+    // Tests for collection handling inside ObjectCreator
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testObjectCreatorCollection() {
+        ConfigMappingContext.ObjectCreator<List<String>> creator = context.new ObjectCreator<>("list");
+        creator.collection(List.class);
+        List<String> list = creator.get();
+        assertEquals(Arrays.asList("a", "b"), list);
+    }
+
+    @Test
+    public void testObjectCreatorOptionalCollectionPresent() {
+        ConfigMappingContext.ObjectCreator<Optional<List<String>>> creator = context.new ObjectCreator<>("list");
+        creator.optionalCollection(List.class);
+        Optional<List<String>> opt = creator.get();
+        assertTrue(opt.isPresent());
+        assertEquals(Arrays.asList("a", "b"), opt.get());
+    }
+
+    @Test
+    public void testObjectCreatorOptionalCollectionEmpty() {
+        // Use a path that has no indexed entries – the creator should return Optional.empty()
+        ConfigMappingContext.ObjectCreator<Optional<List<String>>> creator = context.new ObjectCreator<>("empty");
+        creator.optionalCollection(List.class);
+        Optional<List<String>> opt = creator.get();
+        assertFalse(opt.isPresent());
+    }
+
+    // -------------------------------------------------------------------------
+    // Tests for static value helpers in ObjectCreator
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testStaticValueHelpers() {
+        context.applyPrefix("my");
+        String s = ConfigMappingContext.ObjectCreator.stringValue(context, true, "prop");
+        assertEquals("hello", s);
+
+        Integer i = ConfigMappingContext.ObjectCreator.integerValue(context, false, "my.prop");
+        // The test config returns a String, not an Integer – conversion will fail, so we expect null
+        // (the SmallRyeConfig implementation we supplied does not perform conversion)
+        assertNull(i);
+    }
+
+    // -------------------------------------------------------------------------
+    // Tests for the private static helper isPropertyInRoot
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testIsPropertyInRoot() throws Exception {
+        Method isRoot = ConfigMappingContext.class.getDeclaredMethod("isPropertyInRoot", String.class, String.class);
+        // Exact match
+        assertTrue((Boolean) invokePrivate(isRoot, null, "foo", "foo"));
+        // Child with dot
+        assertTrue((Boolean) invokePrivate(isRoot, null, "foo.bar", "foo"));
+        // Child with index
+        assertTrue((Boolean) invokePrivate(isRoot, null, "foo[0]", "foo"));
+        // Not a child (different start)
+        assertFalse((Boolean) invokePrivate(isRoot, null, "foobar", "foo"));
+        // Property shorter than root
+        assertFalse((Boolean) invokePrivate(isRoot, null, "fo", "foo"));
+        // Same length but different
+        assertFalse((Boolean) invokePrivate(isRoot, null, "bar", "foo"));
+    }
+}

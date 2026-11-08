@@ -1,0 +1,221 @@
+package io.smallrye.config;
+import io.smallrye.config.ConfigMapping.NamingStrategy;
+import io.smallrye.config.ConfigValidationException.Problem;
+
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.*;
+
+import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Test;
+
+/**
+ * Tests for {@link ConfigMappingContext}.
+ */
+public class ConfigMappingContextTest {
+
+    /** Simple {@link Converter} implementation used for testing {@code getConverterInstance}. */
+    public static class StringIdentityConverter implements Converter<String> {
+        public StringIdentityConverter() {
+        }
+
+        @Override
+        public String convert(String value) {
+            return value;
+        }
+    }
+
+    /** Minimal concrete {@link SmallRyeConfig} that returns empty data for the methods used by the context. */
+    private static class DummyConfig extends SmallRyeConfig {
+        @Override
+        public Iterable<ConfigSource> getConfigSources(Class<?> type) {
+            // No EnvConfigSource instances – the matching logic will be skipped.
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<String> getProfiles() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Iterable<String> getPropertyNames() {
+            return Collections.emptyList();
+        }
+    }
+
+    /** Helper to invoke private static methods via reflection. */
+    @SuppressWarnings("unchecked")
+    private static <T> T invokePrivateStatic(String methodName, Class<?>[] paramTypes, Object... args) throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod(methodName, paramTypes);
+        m.setAccessible(true);
+        return (T) m.invoke(null, args);
+    }
+
+    @Test
+    public void testApplyNamingStrategyDefaultsAndOverride() {
+        DummyConfig config = new DummyConfig();
+        ConfigMappingContext ctx = new ConfigMappingContext(config, Collections.emptyMap());
+
+        // first call with null -> default KEBAB_CASE
+        NamingStrategy ns1 = ctx.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.KEBAB_CASE, ns1);
+
+        // call with a concrete strategy -> should replace the current one
+        NamingStrategy ns2 = ctx.applyNamingStrategy(NamingStrategy.VERBATIM);
+        assertEquals(NamingStrategy.VERBATIM, ns2);
+
+        // calling again with null must keep the previously set strategy (VERBATIM)
+        NamingStrategy ns3 = ctx.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.VERBATIM, ns3);
+    }
+
+    @Test
+    public void testApplyRootPathAndNameBuilder() {
+        DummyConfig config = new DummyConfig();
+        ConfigMappingContext ctx = new ConfigMappingContext(config, Collections.emptyMap());
+
+        String root = "my.root";
+        assertEquals(root, ctx.applyRootPath(root));
+
+        // nameBuilder should now contain the root path
+        StringBuilder sb = ctx.applyNameBuilder(root);
+        assertSame(sb, ctx.getNameBuilder());
+        assertEquals(root, sb.toString());
+
+        // replace again with a different root
+        ctx.applyNameBuilder("other");
+        assertEquals("other", ctx.getNameBuilder().toString());
+    }
+
+    @Test
+    public void testGetConverterInstanceCaching() {
+        DummyConfig config = new DummyConfig();
+        ConfigMappingContext ctx = new ConfigMappingContext(config, Collections.emptyMap());
+
+        // First instance creation
+        Converter<String> conv1 = ctx.getConverterInstance(StringIdentityConverter.class);
+        assertNotNull(conv1);
+        assertTrue(conv1 instanceof StringIdentityConverter);
+
+        // Second call must return the same cached instance
+        Converter<String> conv2 = ctx.getConverterInstance(StringIdentityConverter.class);
+        assertSame(conv1, conv2);
+    }
+
+    @Test
+    public void testReportProblemAndGetProblems() {
+        DummyConfig config = new DummyConfig();
+        ConfigMappingContext ctx = new ConfigMappingContext(config, Collections.emptyMap());
+
+        RuntimeException ex = new IllegalArgumentException("test problem");
+        ctx.reportProblem(ex);
+
+        List<Problem> problems = ctx.getProblems();
+        assertEquals(1, problems.size());
+        assertEquals(ex.toString(), problems.get(0).toString());
+    }
+
+    @Test
+    public void testGetRootsMapEmptyWhenNoRootsProvided() {
+        DummyConfig config = new DummyConfig();
+        ConfigMappingContext ctx = new ConfigMappingContext(config, Collections.emptyMap());
+
+        Map<Class<?>, Map<String, ConfigMappingObject>> rootsMap = ctx.getRootsMap();
+        assertTrue(rootsMap.isEmpty());
+    }
+
+    // ------------------------------------------------------------------------
+    // Private static helper methods – tested via reflection
+    // ------------------------------------------------------------------------
+
+    @Test
+    public void testIndexOfDashesSimpleCases() throws Exception {
+        // No dash required – returns null
+        List<Integer> none = invokePrivateStatic("indexOfDashes",
+                new Class<?>[] { String.class, String.class }, "foo.bar", "foo.bar");
+        assertNull(none);
+
+        // One dash in mapped name, env uses dot – position should be recorded
+        List<Integer> one = invokePrivateStatic("indexOfDashes",
+                new Class<?>[] { String.class, String.class }, "foo-bar", "foo.bar");
+        assertNotNull(one);
+        // Expected position is the index of the '.' in the env string (3)
+        assertEquals(Collections.singletonList(3), one);
+    }
+
+    @Test
+    public void testIndexOfDashesWithWildcardAndCollection() throws Exception {
+        // Wildcard '*' skips a segment – should still match
+        List<Integer> result = invokePrivateStatic("indexOfDashes",
+                new Class<?>[] { String.class, String.class }, "foo.*.baz", "foo.qux.baz");
+        assertNull(result); // No dash needed, matching succeeds
+
+        // Collection syntax with ']' – should skip correctly
+        List<Integer> coll = invokePrivateStatic("indexOfDashes",
+                new Class<?>[] { String.class, String.class }, "list[0].name", "list[0].name");
+        assertNull(coll);
+    }
+
+    @Test
+    public void testIndexOfDashesLengthMismatch() throws Exception {
+        // Mapped longer than env – cannot match
+        List<Integer> result = invokePrivateStatic("indexOfDashes",
+                new Class<?>[] { String.class, String.class }, "longer.prop", "short");
+        assertNull(result);
+    }
+
+    @Test
+    public void testFilterPropertiesInRootsVariousScenarios() throws Exception {
+        // Helper to invoke the private method
+        Method filterMethod = ConfigMappingContext.class.getDeclaredMethod(
+                "filterPropertiesInRoots", Iterable.class, Set.class);
+        filterMethod.setAccessible(true);
+
+        List<String> props = Arrays.asList("a.b.c", "a.b", "x.y", "a.b.d.e");
+        Set<String> rootsEmpty = Collections.emptySet();
+
+        // When roots empty, the original iterable is returned unchanged
+        Iterable<String> all = (Iterable<String>) filterMethod.invoke(null, props, rootsEmpty);
+        assertEquals(props, new ArrayList<>((Collection<?>) all));
+
+        // When root contains empty string, also returns all
+        Set<String> rootsAll = new HashSet<>(Collections.singletonList(""));
+        Iterable<String> all2 = (Iterable<String>) filterMethod.invoke(null, props, rootsAll);
+        assertEquals(props, new ArrayList<>((Collection<?>) all2));
+
+        // Specific root filtering
+        Set<String> roots = new HashSet<>(Collections.singletonList("a.b"));
+        Iterable<String> filtered = (Iterable<String>) filterMethod.invoke(null, props, roots);
+        List<String> filteredList = new ArrayList<>();
+        filtered.forEach(filteredList::add);
+        // Expected matches: "a.b", "a.b.c", "a.b.d.e"
+        assertTrue(filteredList.containsAll(Arrays.asList("a.b", "a.b.c", "a.b.d.e")));
+        assertFalse(filteredList.contains("x.y"));
+    }
+
+    @Test
+    public void testIsPropertyInRootEdgeCases() throws Exception {
+        Method isInRoot = ConfigMappingContext.class.getDeclaredMethod(
+                "isPropertyInRoot", String.class, String.class);
+        isInRoot.setAccessible(true);
+
+        // Exact match
+        assertTrue((Boolean) isInRoot.invoke(null, "foo", "foo"));
+
+        // Property is a sub‑property with dot
+        assertTrue((Boolean) isInRoot.invoke(null, "foo.bar", "foo"));
+
+        // Property is a sub‑property with '['
+        assertTrue((Boolean) isInRoot.invoke(null, "foo[0]", "foo"));
+
+        // Property shorter than root – must be false
+        assertFalse((Boolean) isInRoot.invoke(null, "f", "foo"));
+
+        // Property shares prefix but next char is not '.' or '[' – must be false
+        assertFalse((Boolean) isInRoot.invoke(null, "foobar", "foo"));
+    }
+}

@@ -1,0 +1,410 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * JUnit‑4 test suite for {@link ConfigMappingContext}.
+ * <p>
+ * The tests cover:
+ * <ul>
+ *   <li>Public API behaviour (applyPrefix, naming strategy handling, bean‑style getters, converter creation, etc.)</li>
+ *   <li>Edge‑case handling of {@code getConverterInstance}</li>
+ *   <li>Private utility methods {@code indexOfDashes} and {@code isPropertyInRoot} via reflection</li>
+ *   <li>Problem reporting utilities</li>
+ *   <li>Reporting of unknown properties</li>
+ * </ul>
+ * All objects are created using the constructors and factories that belong to the
+ * library – no external mocking frameworks are used.
+ */
+public class ConfigMappingContextTest {
+
+    /* --------------------------------------------------------------------- */
+    /* Helper classes used only by the tests                                */
+    /* --------------------------------------------------------------------- */
+
+    /** Simple {@link Converter} that returns the supplied string unchanged. */
+    public static class StringIdentityConverter implements Converter<String> {
+        public String convert(String value) {
+            return value;
+        }
+    }
+
+    /** Converter without a public no‑arg constructor – used to test error handling. */
+    public static class NoDefaultCtorConverter implements Converter<String> {
+        private final String prefix;
+
+        public NoDefaultCtorConverter(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public String convert(String value) {
+            return prefix + value;
+        }
+    }
+
+    /** Minimal {@link ConfigValue} implementation required for {@code reportUnknown}. */
+    static class SimpleConfigValue implements ConfigValue {
+        private final String name;
+        private final String value;
+        private final String sourceName;
+        private final String location;
+
+        SimpleConfigValue(String name, String value, String sourceName, String location) {
+            this.name = name;
+            this.value = value;
+            this.sourceName = sourceName;
+            this.location = location;
+        }
+
+        @Override public String getName() { return name; }
+        @Override public String getValue() { return value; }
+        @Override public String getSourceName() { return sourceName; }
+        @Override public int getOrdinal() { return 0; }
+        @Override public ConfigValue getConfigValue() { return this; }
+        @Override public ConfigValue getConfigValue(String name) { return this; }
+        @Override public ConfigValue getConfigValue(String name, String value) { return this; }
+        @Override public ConfigValue getConfigValue(String name, String value, String sourceName) { return this; }
+        @Override public ConfigValue getConfigValue(String name, String value, String sourceName, int ordinal) { return this; }
+        @Override public ConfigValue getConfigValue(String name, String value, String sourceName, int ordinal, String location) { return this; }
+        @Override public ConfigValue getConfigValue(String name, String value, String sourceName, int ordinal, ConfigValue.Location location) { return this; }
+        @Override public ConfigValue.Location getLocation() {
+            return () -> location;
+        }
+    }
+
+    /** Minimal {@link ConfigSource} used by the test {@link TestSmallRyeConfig}. */
+    static class SimpleConfigSource implements ConfigSource {
+        private final String name;
+        private final Map<String, String> properties;
+
+        SimpleConfigSource(String name, Map<String, String> properties) {
+            this.name = name;
+            this.properties = new HashMap<>(properties);
+        }
+
+        @Override public Map<String, String> getProperties() { return properties; }
+        @Override public String getValue(String propertyName) { return properties.get(propertyName); }
+        @Override public String getName() { return name; }
+        @Override public int getOrdinal() { return 100; }
+    }
+
+    /**
+     * A lightweight concrete subclass of {@link SmallRyeConfig} that returns deterministic
+     * data for the methods used by {@link ConfigMappingContext}.
+     */
+    static class TestSmallRyeConfig extends SmallRyeConfig {
+
+        private final Set<String> propertyNames = new LinkedHashSet<>();
+        private final Map<String, SimpleConfigValue> configValues = new HashMap<>();
+        private final List<ConfigSource> configSources = new ArrayList<>();
+
+        TestSmallRyeConfig() {
+            // a dummy config source (non‑environment) used by reportUnknown
+            configSources.add(new SimpleConfigSource("dummy", Collections.emptyMap()));
+        }
+
+        /** Add a property name together with a {@link ConfigValue}. */
+        void addProperty(String name, SimpleConfigValue value) {
+            propertyNames.add(name);
+            configValues.put(name, value);
+        }
+
+        @Override
+        public Iterable<String> getPropertyNames() {
+            return propertyNames;
+        }
+
+        @Override
+        public ConfigValue getConfigValue(String name) {
+            return configValues.get(name);
+        }
+
+        @Override
+        public List<String> getIndexedProperties(String property) {
+            // not needed for the current tests – return empty
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<Integer> getIndexedPropertiesIndexes(String property) {
+            // not needed – return empty
+            return Collections.emptyList();
+        }
+
+        @Override
+        public <T> T getValue(String name, Class<T> propertyType) {
+            Object v = configValues.get(name);
+            return propertyType.cast(v);
+        }
+
+        @Override
+        public <T> Optional<T> getOptionalValue(String name, Class<T> propertyType) {
+            return Optional.ofNullable(getValue(name, propertyType));
+        }
+
+        @Override
+        public Iterable<ConfigSource> getConfigSources(Class<?> type) {
+            // For the purpose of matchPropertiesWithEnv we only need EnvConfigSource.class,
+            // which will never be present in the test configuration, so we return empty.
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<String> getProfiles() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public ConfigValidator getConfigValidator() {
+            // Return a no‑op validator that never throws.
+            return (type, prefix, instance) -> { /* no‑op */ };
+        }
+    }
+
+    private TestSmallRyeConfig config;
+    private ConfigMappingContext context;
+
+    @Before
+    public void setUp() {
+        config = new TestSmallRyeConfig();
+        // Initialise the mapping context with an empty mapping map – we only test the
+        // API that does not depend on the generated mapping objects.
+        context = new ConfigMappingContext(config, Collections.emptyMap());
+    }
+
+    /* --------------------------------------------------------------------- */
+    /* 1.  Simple public API tests                                           */
+    /* --------------------------------------------------------------------- */
+
+    @Test
+    public void testApplyPrefix_ReplacesContent() {
+        context.applyPrefix("my.prefix");
+        assertEquals("my.prefix", context.getNameBuilder().toString());
+
+        // applying a second prefix should replace the previous content
+        context.applyPrefix("new");
+        assertEquals("new", context.getNameBuilder().toString());
+    }
+
+    @Test
+    public void testApplyNamingStrategy_NullIsIgnored() {
+        NamingStrategy original = NamingStrategy.KEBAB_CASE;
+        context.applyNamingStrategy(null);
+        assertEquals(original, getPrivateField(context, "namingStrategy"));
+    }
+
+    @Test
+    public void testApplyNamingStrategy_ChangesStrategy() {
+        context.applyNamingStrategy(NamingStrategy.SNAKE_CASE);
+        assertEquals(NamingStrategy.SNAKE_CASE, getPrivateField(context, "namingStrategy"));
+    }
+
+    @Test
+    public void testApplyBeanStyleGetters_NullIsIgnored() {
+        Boolean original = (Boolean) getPrivateField(context, "beanStyleGetters");
+        context.applyBeanStyleGetters(null);
+        assertEquals(original, getPrivateField(context, "beanStyleGetters"));
+    }
+
+    @Test
+    public void testApplyBeanStyleGetters_ChangesFlag() {
+        context.applyBeanStyleGetters(true);
+        assertTrue((Boolean) getPrivateField(context, "beanStyleGetters"));
+    }
+
+    @Test
+    public void testPropertyName_WithBeanStyle() {
+        context.applyBeanStyleGetters(true);
+        context.applyNamingStrategy(NamingStrategy.KEBAB_CASE);
+        Function<String, String> fn = context.propertyName();
+
+        // "getFooBar" -> bean style -> "fooBar" -> kebab case -> "foo-bar"
+        assertEquals("foo-bar", fn.apply("getFooBar"));
+        // "isEnabled" -> bean style -> "enabled" -> kebab case -> "enabled"
+        assertEquals("enabled", fn.apply("isEnabled"));
+        // name without bean prefix stays unchanged apart from kebab conversion
+        assertEquals("my-prop", fn.apply("myProp"));
+    }
+
+    @Test
+    public void testPropertyName_WithoutBeanStyle() {
+        context.applyBeanStyleGetters(false);
+        context.applyNamingStrategy(NamingStrategy.SNAKE_CASE);
+        Function<String, String> fn = context.propertyName();
+
+        assertEquals("my_prop", fn.apply("myProp"));
+        assertEquals("get_foo", fn.apply("getFoo"));
+    }
+
+    @Test
+    public void testGetConverterInstance_CreatesAndCaches() {
+        Converter<String> first = context.getConverterInstance(StringIdentityConverter.class);
+        assertNotNull(first);
+        assertTrue(first instanceof StringIdentityConverter);
+
+        // second call must return the *same* instance (caching)
+        Converter<String> second = context.getConverterInstance(StringIdentityConverter.class);
+        assertSame(first, second);
+    }
+
+    @Test(expected = InstantiationError.class)
+    public void testGetConverterInstance_NoDefaultConstructor_ThrowsInstantiationError() {
+        // The converter class lacks a public no‑arg constructor – the method must wrap the
+        // InstantiationException into InstantiationError.
+        context.getConverterInstance(NoDefaultCtorConverter.class);
+    }
+
+    @Test(expected = IllegalAccessError.class)
+    public void testGetConverterInstance_PrivateConstructor_ThrowsIllegalAccessError() {
+        class PrivateCtorConverter implements Converter<String> {
+            private PrivateCtorConverter() {}
+            public String convert(String value) { return value; }
+        }
+        context.getConverterInstance(PrivateCtorConverter.class);
+    }
+
+    @Test(expected = NoSuchMethodError.class)
+    public void testGetConverterInstance_NoZeroArgConstructor_ThrowsNoSuchMethodError() {
+        class NoZeroArgConverter implements Converter<String> {
+            public NoZeroArgConverter(String dummy) {}
+            public String convert(String value) { return value; }
+        }
+        context.getConverterInstance(NoZeroArgConverter.class);
+    }
+
+    @Test
+    public void testReportProblem_StoresProblem() {
+        RuntimeException ex = new RuntimeException("boom");
+        context.reportProblem(ex);
+        List<Problem> problems = context.getProblems();
+        assertEquals(1, problems.size());
+        assertTrue(problems.get(0).getMessage().contains("boom"));
+    }
+
+    /* --------------------------------------------------------------------- */
+    /* 2.  Private static utility methods (accessed via reflection)        */
+    /* --------------------------------------------------------------------- */
+
+    @Test
+    public void testIndexOfDashes_MatchingWithDashes() throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod("indexOfDashes", String.class, String.class);
+        m.setAccessible(true);
+
+        // mapped: "foo.bar", env: "foo-bar" -> dash at position 3
+        @SuppressWarnings("unchecked")
+        List<Integer> result = (List<Integer>) m.invoke(null, "foo.bar", "foo-bar");
+        assertEquals(Collections.singletonList(3), result);
+    }
+
+    @Test
+    public void testIndexOfDashes_NoMatch_ReturnsNull() throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod("indexOfDashes", String.class, String.class);
+        m.setAccessible(true);
+        assertNull(m.invoke(null, "foo.bar", "foobar"));
+    }
+
+    @Test
+    public void testIndexOfDashes_WithWildcardAndCollection() throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod("indexOfDashes", String.class, String.class);
+        m.setAccessible(true);
+        // pattern "foo.*.baz" matches "foo.bar.baz" – no dash positions
+        @SuppressWarnings("unchecked")
+        List<Integer> result = (List<Integer>) m.invoke(null, "foo.*.baz", "foo.bar.baz");
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testIsPropertyInRoot_RootMatch() throws Exception {
+        Method m = ConfigMappingContext.class.getDeclaredMethod("isPropertyInRoot", String.class, String.class);
+        m.setAccessible(true);
+        assertTrue((Boolean) m.invoke(null, "my.prop", "my.prop"));
+        assertTrue((Boolean) m.invoke(null, "my.prop[0]", "my.prop"));
+        assertTrue((Boolean) m.invoke(null, "my.prop.\"foo\"", "my.prop"));
+        assertFalse((Boolean) m.invoke(null, "my.propExtra", "my.prop"));
+    }
+
+    /* --------------------------------------------------------------------- */
+    /* 3.  reportUnknown – ensure unknown properties become problems         */
+    /* --------------------------------------------------------------------- */
+
+    @Test
+    public void testReportUnknown_RegistersProblemForUnusedProperty() {
+        // Prepare a mapping that uses prefix "app"
+        Map<Class<?>, Set<String>> mappings = new HashMap<>();
+        mappings.put(DummyMapping.class, Collections.singleton("app"));
+        // Re‑create the context with the mapping so that the internal 'mappings' map is populated
+        ConfigMappingContext ctx = new ConfigMappingContext(config, mappings);
+
+        // Add a property that belongs to the prefix but is not used by any mapping
+        config.addProperty("app.unused", new SimpleConfigValue("app.unused", "value", "my-source", "loc1"));
+        // Add a property that *is* used – we will simulate usage via the internal set
+        config.addProperty("app.used", new SimpleConfigValue("app.used", "value", "my-source", "loc2"));
+        ctx.usedProperties.add("app.used");
+
+        // No ignored paths
+        ctx.reportUnknown(Collections.emptySet());
+
+        // Verify that a problem was recorded for the unused property
+        List<Problem> problems = ctx.getProblems();
+        assertEquals(1, problems.size());
+        assertTrue(problems.get(0).getMessage().contains("app.unused"));
+    }
+
+    @Test
+    public void testReportUnknown_IgnoresExplicitlyIgnoredPaths() {
+        Map<Class<?>, Set<String>> mappings = new HashMap<>();
+        mappings.put(DummyMapping.class, Collections.singleton("app"));
+        ConfigMappingContext ctx = new ConfigMappingContext(config, mappings);
+
+        // Property that would otherwise be reported
+        config.addProperty("app.ignore.me", new SimpleConfigValue("app.ignore.me", "val", "my-source", "loc"));
+        // Ignored path (exact match)
+        Set<String> ignored = new HashSet<>(Collections.singleton("app.ignore.me"));
+
+        ctx.reportUnknown(ignored);
+        assertTrue(ctx.getProblems().isEmpty());
+    }
+
+    @Test
+    public void testReportUnknown_IgnoresPrefixPattern() {
+        Map<Class<?>, Set<String>> mappings = new HashMap<>();
+        mappings.put(DummyMapping.class, Collections.singleton("app"));
+        ConfigMappingContext ctx = new ConfigMappingContext(config, mappings);
+
+        config.addProperty("app.secret.password", new SimpleConfigValue("app.secret.password", "123", "my-source", "loc"));
+        // Ignored prefix pattern "app.secret.**"
+        Set<String> ignored = new HashSet<>(Collections.singleton("app.secret.**"));
+
+        ctx.reportUnknown(ignored);
+        assertTrue(ctx.getProblems().isEmpty());
+    }
+
+    /* --------------------------------------------------------------------- */
+    /* Helper utilities                                                     */
+    /* --------------------------------------------------------------------- */
+
+    /** Simple dummy interface used only to create a mapping entry in the test. */
+    interface DummyMapping { }
+
+    /** Reflection helper to read private fields (used for naming‑strategy checks). */
+    @SuppressWarnings("unchecked")
+    private static <T> T getPrivateField(Object target, String fieldName) {
+        try {
+            java.lang.reflect.Field f = target.getClass().getDeclaredField(fieldName);
+            f.setAccessible(true);
+            return (T) f.get(target);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

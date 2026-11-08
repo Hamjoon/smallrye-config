@@ -1,0 +1,449 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Test;
+
+/**
+ * Comprehensive JUnit‑4 test suite for {@link ConfigMappingInterface}.
+ *
+ * <p>The tests are written in the same package as the class under test so that
+ * package‑private members can be accessed directly (e.g. {@code getProperties},
+ * {@code getSuperTypes}, etc.).  No mocking frameworks are used – every object is
+ * instantiated through its public or package‑private constructor/factory
+ * method.</p>
+ *
+ * <p>Each public method of {@code ConfigMappingInterface} is exercised by at
+ * least one test case that covers the normal behaviour, edge cases and error
+ * scenarios.</p>
+ */
+public class ConfigMappingInterfaceTest {
+
+    /* ---------------------------------------------------------------------- */
+    /* Helper interfaces used throughout the test suite                        */
+    /* ---------------------------------------------------------------------- */
+
+    @ConfigMapping(prefix = "simple")
+    public interface SimpleConfig {
+        int timeout();                         // primitive
+        String name();                         // leaf
+        Optional<String> optionalName();       // optional leaf
+        List<String> names();                   // collection of leafs
+        Map<String, Integer> values();         // map of leafs
+        Nested nested();                       // group
+
+        // non‑default toString method – should be recognised as a ToStringMethod
+        String toString();
+
+        interface Nested {
+            String value();
+        }
+    }
+
+    @ConfigMapping(prefix = "invalid")
+    public interface InvalidConfig {
+        void badMethod();          // illegal: void return
+    }
+
+    @ConfigMapping(prefix = "defaultMethod")
+    public interface DefaultMethodConfig {
+        default String greet() { return "hi"; }   // default method, not a property
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 1. getImplementationClassName                                           */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetImplementationClassName() {
+        String implName = ConfigMappingInterface.getImplementationClassName(SimpleConfig.class);
+        assertTrue("Implementation name must end with $$CMImpl", implName.endsWith("$$CMImpl"));
+        assertTrue("Implementation name must start with the interface name",
+                implName.startsWith(SimpleConfig.class.getName()));
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 2. getConfigurationInterface (happy path)                                */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetConfigurationInterfaceHappyPath() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        assertNotNull("Configuration interface should be created", cmi);
+        assertEquals(SimpleConfig.class, cmi.getInterfaceType());
+        assertEquals(ConfigMappingInterface.getImplementationClassName(SimpleConfig.class), cmi.getClassName());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 3. getConfigurationInterface (error – non‑interface)                   */
+    /* ---------------------------------------------------------------------- */
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetConfigurationInterfaceWithInvalidMethodThrows() {
+        // The interface contains a void method – the creation process must throw
+        ConfigMappingInterface.getConfigurationInterface(InvalidConfig.class);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 4. getClassInternalName                                                  */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetClassInternalName() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        String internal = cmi.getClassInternalName();
+        assertEquals(cmi.getClassName().replace('.', '/'), internal);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 5. getSuperTypes – no super‑interfaces                                     */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetSuperTypesEmpty() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        assertNotNull(cmi.getSuperTypes());
+        assertEquals(0, cmi.getSuperTypes().length);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 6. getProperties – verify detection of each property type                */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetPropertiesDetectAllKinds() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        Property[] props = cmi.getProperties();
+
+        // there should be 7 properties: timeout, name, optionalName, names, values, nested, toString (as ToStringMethod)
+        assertEquals(7, props.length);
+
+        boolean hasTimeout = false, hasName = false, hasOptional = false,
+                hasNames = false, hasValues = false, hasNested = false, hasToString = false;
+
+        for (Property p : props) {
+            if (p.getMemberName().equals("timeout")) {
+                hasTimeout = true;
+                assertTrue(p.isPrimitive());
+                assertFalse(p.isGroup());
+                assertFalse(p.isMap());
+            } else if (p.getMemberName().equals("name")) {
+                hasName = true;
+                assertTrue(p.isLeaf());
+                assertFalse(p.isPrimitive());
+            } else if (p.getMemberName().equals("optionalName")) {
+                hasOptional = true;
+                assertTrue(p.isOptional());
+                // the nested property inside the Optional must be a leaf
+                OptionalProperty op = p.asOptional();
+                assertTrue(op.getNestedProperty().isLeaf());
+            } else if (p.getMemberName().equals("names")) {
+                hasNames = true;
+                assertTrue(p.isCollection());
+                CollectionProperty cp = p.asCollection();
+                assertTrue(cp.getElement().isLeaf());
+            } else if (p.getMemberName().equals("values")) {
+                hasValues = true;
+                assertTrue(p.isMap());
+                MapProperty mp = p.asMap();
+                assertTrue(mp.getValueProperty().isLeaf());
+            } else if (p.getMemberName().equals("nested")) {
+                hasNested = true;
+                assertTrue(p.isGroup());
+                GroupProperty gp = p.asGroup();
+                // nested group must have a leaf property called "value"
+                Property nestedProp = gp.getGroupType().getProperties()[0];
+                assertEquals("value", nestedProp.getMemberName());
+                assertTrue(nestedProp.isLeaf());
+            } else if (p.getMemberName().equals("toString")) {
+                hasToString = true;
+                assertTrue(p.isToStringMethod());
+                assertTrue(p.asDefaultMethod() instanceof ToStringMethod);
+                ToStringMethod tsm = (ToStringMethod) p;
+                assertTrue(tsm.generate());
+            }
+        }
+
+        assertTrue("timeout property missing", hasTimeout);
+        assertTrue("name property missing", hasName);
+        assertTrue("optionalName property missing", hasOptional);
+        assertTrue("names property missing", hasNames);
+        assertTrue("values property missing", hasValues);
+        assertTrue("nested property missing", hasNested);
+        assertTrue("toString method property missing", hasToString);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 7. getToStringMethod – when absent                                        */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetToStringMethodWhenAbsent() {
+        // Interface without a custom toString
+        @ConfigMapping(prefix = "noToString")
+        interface NoToString {
+            int foo();
+        }
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(NoToString.class);
+        assertNotNull(cmi);
+        assertEquals(ToStringMethod.NONE, cmi.getToStringMethod());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 8. PrimitiveProperty specific behaviours                                 */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testPrimitivePropertyBehaviour() throws NoSuchMethodException {
+        Method timeoutMethod = SimpleConfig.class.getMethod("timeout");
+        PrimitiveProperty pp = new ConfigMappingInterface.PrimitiveProperty(
+                timeoutMethod,
+                null,
+                int.class,
+                null,
+                null);
+
+        assertEquals(int.class, pp.getPrimitiveType());
+        assertEquals(Integer.class, pp.getBoxType());
+        assertFalse(pp.hasConvertWith());
+        assertFalse(pp.hasDefaultValue());
+        assertEquals("intValue", pp.getUnboxMethodName());
+        assertEquals("()I", pp.getUnboxMethodDescriptor());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 9. LeafProperty default value handling                                    */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testLeafPropertyWithDefault() throws NoSuchMethodException {
+        // Define a temporary interface with a @WithDefault annotation
+        @ConfigMapping(prefix = "leafDefault")
+        interface LeafDefault {
+            @WithDefault("42")
+            int number();
+        }
+
+        Method numberMethod = LeafDefault.class.getMethod("number");
+        // Simulate the creation path used by getPropertyDef
+        Property p = ConfigMappingInterface.getPropertyDef(numberMethod, numberMethod.getAnnotatedReturnType());
+
+        assertTrue(p.isLeaf());
+        LeafProperty lp = p.asLeaf();
+        assertTrue(lp.hasDefaultValue());
+        assertEquals("42", lp.getDefaultValue());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 10. MapProperty key handling (unnamed key & keys provider)               */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testMapPropertyKeyAnnotations() throws NoSuchMethodException {
+        @ConfigMapping(prefix = "mapKey")
+        interface MapKeyConfig {
+            @WithUnnamedKey("myKey")
+            @WithKeys(MyKeysProvider.class)
+            Map<String, Integer> myMap();
+        }
+
+        class MyKeysProvider implements Supplier<Iterable<String>> {
+            @Override
+            public Iterable<String> get() {
+                return List.of("a", "b");
+            }
+        }
+
+        Method mapMethod = MapKeyConfig.class.getMethod("myMap");
+        Property p = ConfigMappingInterface.getPropertyDef(mapMethod, mapMethod.getAnnotatedReturnType());
+        assertTrue(p.isMap());
+        MapProperty mp = p.asMap();
+
+        assertTrue(mp.hasKeyUnnamed());
+        assertEquals("myKey", mp.getKeyUnnamed());
+
+        assertTrue(mp.hasKeyProvider());
+        assertEquals(MyKeysProvider.class, mp.getKeysProvider());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 11. getNames – verify hierarchical name mapping                         */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetNamesStructure() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        Map<String, Map<String, Set<String>>> names = cmi.getNames();
+
+        // top‑level key is the fully qualified interface name
+        assertTrue(names.containsKey(SimpleConfig.class.getName()));
+        Map<String, Set<String>> groups = names.get(SimpleConfig.class.getName());
+
+        // root group (empty path) should contain all top‑level property names
+        Set<String> rootProps = groups.get("");
+        assertNotNull(rootProps);
+        assertTrue(rootProps.contains("timeout"));
+        assertTrue(rootProps.contains("name"));
+        assertTrue(rootProps.contains("optionalName"));
+        assertTrue(rootProps.contains("names"));
+        assertTrue(rootProps.contains("values"));
+        assertTrue(rootProps.contains("nested"));
+        assertTrue(rootProps.contains("toString"));
+
+        // nested group path should be present
+        Set<String> nestedProps = groups.get("nested");
+        assertNotNull(nestedProps);
+        assertTrue(nestedProps.contains("value"));
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 12. isBeanStyleGetters – default false (no annotation)                    */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testIsBeanStyleGettersDefault() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        assertFalse("Bean style getters should be false when not specified", cmi.isBeanStyleGetters());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 13. getNamingStrategy – default KEBAB_CASE when annotation missing     */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetNamingStrategyDefault() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        assertEquals(NamingStrategy.KEBAB_CASE, cmi.getNamingStrategy());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 14. hasConfigMapping – true when @ConfigMapping present                  */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testHasConfigMapping() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        assertTrue(cmi.hasConfigMapping());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 15. getClassBytes – successful generation (no exception)                */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetClassBytesGeneration() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        byte[] bytes = cmi.getClassBytes();
+        assertNotNull("Generated class bytes must not be null", bytes);
+        assertTrue("Generated class byte array should contain data", bytes.length > 0);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 16. getNested – ensure all nested group types are discovered              */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testGetNestedGroups() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        List<ConfigMappingInterface> nested = cmi.getNested();
+        // Should contain the nested group interface only
+        assertEquals(1, nested.size());
+        assertEquals(SimpleConfig.Nested.class, nested.get(0).getInterfaceType());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 17. Property equality – hierarchy handling                               */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testPropertyEqualityWithHierarchy() throws NoSuchMethodException {
+        // Interface A extends B, both declare method foo()
+        interface B {
+            int foo();
+        }
+        @ConfigMapping(prefix = "a")
+        interface A extends B {
+            // overrides foo()
+            int foo();
+        }
+
+        ConfigMappingInterface cmiB = ConfigMappingInterface.getConfigurationInterface(B.class);
+        ConfigMappingInterface cmiA = ConfigMappingInterface.getConfigurationInterface(A.class);
+
+        Property propB = cmiB.getProperties()[0];
+        Property propA = cmiA.getProperties()[0];
+
+        assertEquals(propB, propA);
+        assertEquals(propB.hashCode(), propA.hashCode());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 18. Error scenario – method with parameters should throw IllegalArgumentException */
+    /* ---------------------------------------------------------------------- */
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMethodWithParametersThrows() throws NoSuchMethodException {
+        @ConfigMapping(prefix = "bad")
+        interface BadConfig {
+            int bad(int param);
+        }
+
+        // Trigger property extraction which will encounter the illegal method
+        ConfigMappingInterface.getConfigurationInterface(BadConfig.class);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 19. Default method handling – should be wrapped in DefaultMethodProperty */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testDefaultMethodPropertyCreation() throws NoSuchMethodException {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(DefaultMethodConfig.class);
+        // DefaultMethodConfig has no abstract properties, only a default method
+        Property[] props = cmi.getProperties();
+        assertEquals(0, props.length);
+
+        // The default method is not part of getProperties, but we can verify that
+        // getPropertyDef identifies it as a DefaultMethodProperty
+        Method greetMethod = DefaultMethodConfig.class.getMethod("greet");
+        Property p = ConfigMappingInterface.getPropertyDef(greetMethod, greetMethod.getAnnotatedReturnType());
+        assertTrue(p.isDefaultMethod());
+        assertTrue(p instanceof ConfigMappingInterface.DefaultMethodProperty);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 20. validateConverter – ensure illegal converter causes exception        */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testValidateConverterWithIncompatibleReturnType() throws NoSuchMethodException {
+        class BadConverter implements Converter<Integer> {
+            @Override
+            public Integer convert(String value) {
+                return Integer.valueOf(value);
+            }
+        }
+
+        @ConfigMapping(prefix = "badconv")
+        interface BadConvConfig {
+            @WithConverter(BadConverter.class)
+            String notAnInt(); // converter returns Integer, but method expects String
+        }
+
+        Method method = BadConvConfig.class.getMethod("notAnInt");
+        // The validation is performed inside getPropertyDef; it should throw
+        try {
+            ConfigMappingInterface.getPropertyDef(method, method.getAnnotatedReturnType());
+            fail("Expected IllegalArgumentException due to incompatible converter");
+        } catch (IllegalArgumentException expected) {
+            // expected
+        }
+    }
+}

@@ -1,0 +1,493 @@
+package io.smallrye.config;
+import io.smallrye.config.ConfigMapping.NamingStrategy;
+import io.smallrye.config.ConfigValidationException.Problem;
+
+
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.*;
+import java.util.function.Supplier;
+
+import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Comprehensive JUnit‑4 test suite for {@link ConfigMappingContext}.
+ *
+ * <p>The tests cover:
+ * <ul>
+ *   <li>Construction of the context (both public and package‑private constructors).</li>
+ *   <li>Root‑path handling and name‑builder manipulation.</li>
+ *   <li>Naming‑strategy application.</li>
+ *   <li>Converter instance caching and error handling.</li>
+ *   <li>The static {@code indexOfDashes} utility.</li>
+ *   <li>Filtering of properties by root and the {@code isPropertyInRoot} helper.</li>
+ *   <li>Reporting of unknown properties via {@code reportUnknown}.</li>
+ *   <li>ObjectCreator basic flows (value, optionalValue, collection, map).</li>
+ *   <li>Problem collection retrieval.</li>
+ * </ul>
+ *
+ * <p>All objects are created using only the public API or the constructors that are visible in the
+ * source file – no mocking frameworks are employed as required.</p>
+ */
+public class ConfigMappingContextTest {
+
+    /** Simple {@link ConfigSource} implementation that mimics an environment source. */
+    private static final class TestEnvConfigSource implements ConfigSource, EnvConfigSource {
+        private final Map<String, String> properties = new HashMap<>();
+        private final String name = "TestEnv";
+
+        TestEnvConfigSource(Map<String, String> initial) {
+            properties.putAll(initial);
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return Collections.unmodifiableMap(properties);
+        }
+
+        @Override
+        public String getValue(String propertyName) {
+            return properties.get(propertyName);
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public int getOrdinal() {
+            return 400;
+        }
+
+        @Override
+        public Set<String> getPropertyNames() {
+            // expose mutable set so the context can modify it (as the real EnvConfigSource does)
+            return properties.keySet();
+        }
+    }
+
+    /** Minimal {@link SmallRyeConfig} implementation that delegates to a fixed set of sources. */
+    private static final class MinimalConfig extends SmallRyeConfig {
+        private final List<ConfigSource> sources;
+        private final Map<String, String> values = new HashMap<>();
+
+        MinimalConfig(List<ConfigSource> sources, Map<String, String> values) {
+            this.sources = sources;
+            this.values.putAll(values);
+        }
+
+        @Override
+        public Iterable<String> getPropertyNames() {
+            Set<String> names = new HashSet<>();
+            for (ConfigSource cs : sources) {
+                names.addAll(cs.getProperties().keySet());
+            }
+            names.addAll(values.keySet());
+            return names;
+        }
+
+        @Override
+        public Iterable<ConfigSource> getConfigSources() {
+            return sources;
+        }
+
+        @Override
+        public Iterable<ConfigSource> getConfigSources(Class<?> type) {
+            if (type == EnvConfigSource.class) {
+                List<ConfigSource> env = new ArrayList<>();
+                for (ConfigSource cs : sources) {
+                    if (cs instanceof EnvConfigSource) {
+                        env.add(cs);
+                    }
+                }
+                return env;
+            }
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<String> getIndexedProperties(String property) {
+            // Very simple implementation: treat "a[0]" as indexed property of "a"
+            List<String> indexed = new ArrayList<>();
+            for (String name : getPropertyNames()) {
+                if (name.startsWith(property + "[") && name.endsWith("]")) {
+                    indexed.add(name);
+                }
+            }
+            return indexed;
+        }
+
+        @Override
+        public List<Integer> getIndexedPropertiesIndexes(String property) {
+            List<Integer> indexes = new ArrayList<>();
+            for (String name : getIndexedProperties(property)) {
+                int start = name.indexOf('[') + 1;
+                int end = name.indexOf(']');
+                try {
+                    indexes.add(Integer.parseInt(name.substring(start, end)));
+                } catch (NumberFormatException ignored) {
+                }
+            }
+            return indexes;
+        }
+
+        @Override
+        public <T> Optional<T> getOptionalValue(String name, Class<T> aClass) {
+            String val = values.get(name);
+            if (val == null) {
+                return Optional.empty();
+            }
+            // Very naive conversion for primitives used in tests
+            Object converted = val;
+            if (aClass == Integer.class) {
+                converted = Integer.valueOf(val);
+            } else if (aClass == String.class) {
+                converted = val;
+            }
+            @SuppressWarnings("unchecked")
+            T result = (T) converted;
+            return Optional.of(result);
+        }
+
+        @Override
+        public <T> T getValue(String name, Class<T> aClass) {
+            return getOptionalValue(name, aClass).orElseThrow(() -> new NoSuchElementException(name));
+        }
+
+        @Override
+        public <T> Converter<T> requireConverter(Class<T> asType) {
+            // Return a trivial identity converter for String, Integer, Boolean
+            return new Converter<T>() {
+                @Override
+                public T convert(String value) {
+                    if (asType == String.class) {
+                        @SuppressWarnings("unchecked")
+                        T r = (T) value;
+                        return r;
+                    }
+                    if (asType == Integer.class) {
+                        @SuppressWarnings("unchecked")
+                        T r = (T) Integer.valueOf(value);
+                        return r;
+                    }
+                    if (asType == Boolean.class) {
+                        @SuppressWarnings("unchecked")
+                        T r = (T) Boolean.valueOf(value);
+                        return r;
+                    }
+                    throw new IllegalArgumentException("Unsupported type " + asType);
+                }
+            };
+        }
+
+        @Override
+        public List<String> getProfiles() {
+            // No active profiles for default tests
+            return Collections.emptyList();
+        }
+
+        @Override
+        public ConfigValue getConfigValue(String name) {
+            // Simplified ConfigValue implementation for the purpose of tests
+            return new ConfigValue() {
+                @Override public String getName() { return name; }
+                @Override public String getValue() { return values.get(name); }
+                @Override public String getRawValue() { return values.get(name); }
+                @Override public String getSourceName() { return "test"; }
+                @Override public int getSourceOrdinal() { return 100; }
+                @Override public String getLocation() { return "testLocation"; }
+            };
+        }
+    }
+
+    private SmallRyeConfig config;
+    private ConfigMappingContext context;
+
+    @Before
+    public void setUp() {
+        // Prepare a tiny environment source with a couple of properties
+        Map<String, String> envProps = new HashMap<>();
+        envProps.put("myapp.timeout", "30");
+        envProps.put("myapp.enabled", "true");
+        envProps.put("myapp.list[0]", "a");
+        envProps.put("myapp.list[1]", "b");
+        envProps.put("myapp.map.key1", "v1");
+        envProps.put("myapp.map.key2", "v2");
+
+        TestEnvConfigSource envSource = new TestEnvConfigSource(envProps);
+        config = new MinimalConfig(Arrays.asList(envSource), Collections.emptyMap());
+
+        // Create a dummy root mapping entry: interface MyRoot (empty) with root path "myapp"
+        Map<Class<?>, Set<String>> roots = new HashMap<>();
+        roots.put(MyRoot.class, new HashSet<>(Collections.singletonList("myapp")));
+
+        context = new ConfigMappingContext(config, roots);
+    }
+
+    /** Dummy mapping interface – the loader will never be invoked because we never call {@code constructGroup}. */
+    public interface MyRoot extends ConfigMappingObject {}
+
+    // ----------------------------------------------------------------------
+    //  Tests for basic context behaviour
+    // ----------------------------------------------------------------------
+
+    @Test
+    public void testApplyRootPathAndNameBuilder() {
+        String root = context.applyRootPath("myapp");
+        assertEquals("myapp", root);
+        StringBuilder sb = context.applyNameBuilder("myapp");
+        assertSame(sb, context.getNameBuilder());
+        assertEquals("myapp", sb.toString());
+
+        // modify builder and ensure it reflects back
+        sb.append(".extra");
+        assertEquals("myapp.extra", context.getNameBuilder().toString());
+    }
+
+    @Test
+    public void testApplyNamingStrategyDefaultsAndOverride() {
+        // default when none set
+        NamingStrategy def = context.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.KEBAB_CASE, def);
+
+        // set explicit strategy
+        NamingStrategy snake = context.applyNamingStrategy(NamingStrategy.SNAKE_CASE);
+        assertEquals(NamingStrategy.SNAKE_CASE, snake);
+
+        // subsequent null does not revert
+        NamingStrategy stillSnake = context.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.SNAKE_CASE, stillSnake);
+    }
+
+    @Test
+    public void testGetConverterInstanceCaching() {
+        // Use a simple converter class defined locally
+        class UpperCaseConverter implements Converter<String> {
+            @Override public String convert(String value) { return value.toUpperCase(); }
+        }
+
+        Converter<String> c1 = context.getConverterInstance(UpperCaseConverter.class);
+        Converter<String> c2 = context.getConverterInstance(UpperCaseConverter.class);
+        assertSame("Converter instances should be cached", c1, c2);
+    }
+
+    @Test(expected = InstantiationError.class)
+    public void testGetConverterInstanceInstantiationError() {
+        // Converter without no‑arg constructor
+        class NoDefaultCtor implements Converter<String> {
+            NoDefaultCtor(String dummy) {}
+            @Override public String convert(String value) { return value; }
+        }
+        context.getConverterInstance(NoDefaultCtor.class);
+    }
+
+    @Test(expected = NoSuchMethodError.class)
+    public void testGetConverterInstanceNoSuchMethodError() {
+        // Converter with private no‑arg ctor
+        class PrivateCtor implements Converter<String> {
+            private PrivateCtor() {}
+            @Override public String convert(String value) { return value; }
+        }
+        context.getConverterInstance(PrivateCtor.class);
+    }
+
+    // ----------------------------------------------------------------------
+    //  Tests for static utility indexOfDashes
+    // ----------------------------------------------------------------------
+
+    @Test
+    public void testIndexOfDashesSimpleMatch() {
+        // mapped: foo-bar.baz   env: foo.bar.baz  -> dash at position 3
+        List<Integer> idx = invokeIndexOfDashes("foo-bar.baz", "foo.bar.baz");
+        assertNotNull(idx);
+        assertEquals(Collections.singletonList(3), idx);
+    }
+
+    @Test
+    public void testIndexOfDashesNoMatchReturnsNull() {
+        assertNull(invokeIndexOfDashes("foo.bar", "foo_baz"));
+    }
+
+    @Test
+    public void testIndexOfDashesWildcardMapAndCollection() {
+        // mapped: foo.*.baz   env: foo.qux.baz   -> no dash needed -> null list
+        List<Integer> idx = invokeIndexOfDashes("foo.*.baz", "foo.qux.baz");
+        assertNull(idx);
+    }
+
+    // Helper to call the private static method via reflection
+    @SuppressWarnings("unchecked")
+    private static List<Integer> invokeIndexOfDashes(String mapped, String env) {
+        try {
+            java.lang.reflect.Method m = ConfigMappingContext.class
+                    .getDeclaredMethod("indexOfDashes", String.class, String.class);
+            m.setAccessible(true);
+            return (List<Integer>) m.invoke(null, mapped, env);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    //  Tests for property‑in‑root helpers
+    // ----------------------------------------------------------------------
+
+    @Test
+    public void testIsPropertyInRootExactMatch() {
+        assertTrue(invokeIsPropertyInRoot("myapp", "myapp"));
+    }
+
+    @Test
+    public void testIsPropertyInRootWithDot() {
+        assertTrue(invokeIsPropertyInRoot("myapp.timeout", "myapp"));
+    }
+
+    @Test
+    public void testIsPropertyInRootWithBracket() {
+        assertTrue(invokeIsPropertyInRoot("myapp.list[0]", "myapp"));
+    }
+
+    @Test
+    public void testIsPropertyInRootNegative() {
+        assertFalse(invokeIsPropertyInRoot("otherapp.timeout", "myapp"));
+    }
+
+    private static boolean invokeIsPropertyInRoot(String property, String root) {
+        try {
+            java.lang.reflect.Method m = ConfigMappingContext.class
+                    .getDeclaredMethod("isPropertyInRoot", String.class, String.class);
+            m.setAccessible(true);
+            return (boolean) m.invoke(null, property, root);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testFilterPropertiesInRoots() {
+        Set<String> roots = new HashSet<>(Arrays.asList("myapp"));
+        Iterable<String> filtered = invokeFilterPropertiesInRoots(config.getPropertyNames(), roots);
+        List<String> list = new ArrayList<>();
+        filtered.forEach(list::add);
+        // all env properties belong to the root
+        assertTrue(list.containsAll(Arrays.asList(
+                "myapp.timeout",
+                "myapp.enabled",
+                "myapp.list[0]",
+                "myapp.list[1]",
+                "myapp.map.key1",
+                "myapp.map.key2"
+        )));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Iterable<String> invokeFilterPropertiesInRoots(Iterable<String> props, Set<String> roots) {
+        try {
+            java.lang.reflect.Method m = ConfigMappingContext.class
+                    .getDeclaredMethod("filterPropertiesInRoots", Iterable.class, Set.class);
+            m.setAccessible(true);
+            return (Iterable<String>) m.invoke(null, props, roots);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    //  Tests for ObjectCreator basic flows
+    // ----------------------------------------------------------------------
+
+    @Test
+    public void testObjectCreatorValue() {
+        ConfigMappingContext.ObjectCreator<Integer> creator = context.constructObject("myapp.timeout");
+        creator.value(Integer.class, null);
+        Integer result = creator.get();
+        assertEquals(Integer.valueOf(30), result);
+    }
+
+    @Test
+    public void testObjectCreatorOptionalValuePresent() {
+        ConfigMappingContext.ObjectCreator<Boolean> creator = context.constructObject("myapp.enabled");
+        creator.optionalValue(Boolean.class, null);
+        Optional<Boolean> opt = creator.get();
+        assertTrue(opt.isPresent());
+        assertTrue(opt.get());
+    }
+
+    @Test
+    public void testObjectCreatorOptionalValueAbsent() {
+        ConfigMappingContext.ObjectCreator<String> creator = context.constructObject("myapp.missing");
+        creator.optionalValue(String.class, null);
+        Optional<String> opt = creator.get();
+        assertFalse(opt.isPresent());
+    }
+
+    @Test
+    public void testObjectCreatorCollection() {
+        ConfigMappingContext.ObjectCreator<List<String>> creator = context.constructObject("myapp.list");
+        creator.collection(List.class);
+        List<String> list = creator.get();
+        assertEquals(Arrays.asList("a", "b"), list);
+    }
+
+    @Test
+    public void testObjectCreatorMapWithDefault() {
+        // map with default class – we use String.class as default to keep it simple
+        ConfigMappingContext.ObjectCreator<Map<String, String>> creator = context.constructObject("myapp.map");
+        creator.map(String.class, null, null, String.class);
+        Map<String, String> map = creator.get();
+        assertEquals("v1", map.get("key1"));
+        assertEquals("v2", map.get("key2"));
+        // default class not used in this simple scenario, but ensure map works
+        assertTrue(map instanceof ConfigMappingContext.MapWithDefault);
+    }
+
+    // ----------------------------------------------------------------------
+    //  Tests for problem reporting and unknown‑property detection
+    // ----------------------------------------------------------------------
+
+    @Test
+    public void testReportProblemAddsProblem() {
+        RuntimeException ex = new RuntimeException("boom");
+        context.reportProblem(ex);
+        List<Problem> problems = context.getProblems();
+        assertEquals(1, problems.size());
+        assertEquals("java.lang.RuntimeException: boom", problems.get(0).getMessage());
+    }
+
+    @Test
+    public void testReportUnknownDetectsUnusedProperty() {
+        // Add an extra property that is not part of the root mapping
+        ((TestEnvConfigSource) config.getConfigSources(EnvConfigSource.class).iterator().next())
+                .getProperties().put("unrelated.prop", "value");
+
+        // Run reportUnknown with no ignored paths
+        context.reportUnknown(Collections.emptyList());
+
+        List<Problem> problems = context.getProblems();
+        assertEquals(1, problems.size());
+        assertTrue(problems.get(0).getMessage().contains("unrelated.prop"));
+    }
+
+    @Test
+    public void testReportUnknownIgnoresSpecifiedPath() {
+        // Add an extra property
+        ((TestEnvConfigSource) config.getConfigSources(EnvConfigSource.class).iterator().next())
+                .getProperties().put("ignored.prop", "value");
+
+        // Provide ignored path list
+        context.reportUnknown(Arrays.asList("ignored.prop"));
+        List<Problem> problems = context.getProblems();
+        // No problem should be reported for the ignored property
+        assertTrue(problems.isEmpty());
+    }
+
+    // ----------------------------------------------------------------------
+    //  Helper dummy interface for root mapping
+    // ----------------------------------------------------------------------
+    public interface DummyRoot extends ConfigMappingObject {}
+}

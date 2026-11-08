@@ -1,0 +1,618 @@
+package io.smallrye.config;
+import io.smallrye.config.ConfigMapping.NamingStrategy;
+
+
+import static org.junit.Assert.*;
+
+import java.util.*;
+import java.util.function.Supplier;
+
+import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Comprehensive JUnit‑4 test suite for {@link ConfigMappingContext}.
+ *
+ * <p>This test class covers:
+ * <ul>
+ *   <li>All public methods (including the inner {@link ConfigMappingContext.ObjectCreator} API)</li>
+ *   <li>Typical use‑cases</li>
+ *   <li>Edge‑cases and exception scenarios</li>
+ *   <li>Verification of internal state changes (roots map, used properties, problems list, etc.)</li>
+ * </ul>
+ *
+ * <p>Only the public API and the helper classes that appear in the supplied source are used.
+ * No mocking frameworks are employed – real objects are created via the constructors
+ * and factory methods that are part of the library.</p>
+ */
+public class ConfigMappingContextTest {
+
+    /** Simple {@link SmallRyeConfig} implementation used for all tests. */
+    private static class TestConfig implements SmallRyeConfig {
+        private final Map<String, String> values = new HashMap<>();
+        private final List<ConfigSource> sources = new ArrayList<>();
+        private final List<String> profiles = new ArrayList<>();
+
+        TestConfig addValue(String name, String value) {
+            values.put(name, value);
+            return this;
+        }
+
+        TestConfig addProfile(String profile) {
+            profiles.add(profile);
+            return this;
+        }
+
+        TestConfig addSource(ConfigSource source) {
+            sources.add(source);
+            return this;
+        }
+
+        @Override
+        public <T> List<T> getValues(String name, Class<T> propertyType) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T, C extends Collection<T>> C getValues(String name, Class<T> itemClass,
+                IntFunction<C> collectionFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T, C extends Collection<T>> C getValues(String name, Converter<T> converter,
+                IntFunction<C> collectionFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T, C extends Collection<T>> C getIndexedValues(String name, Converter<T> converter,
+                IntFunction<C> collectionFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<String> getIndexedProperties(String property) {
+            // Simple implementation for collection tests – assume indexes 0..n‑1
+            List<String> result = new ArrayList<>();
+            for (int i = 0; ; i++) {
+                String key = property + "[" + i + "]";
+                if (values.containsKey(key)) {
+                    result.add(key);
+                } else {
+                    break;
+                }
+            }
+            return result;
+        }
+
+        @Override
+        public List<Integer> getIndexedPropertiesIndexes(String property) {
+            List<Integer> idx = new ArrayList<>();
+            for (int i = 0; ; i++) {
+                if (values.containsKey(property + "[" + i + "]")) {
+                    idx.add(i);
+                } else {
+                    break;
+                }
+            }
+            return idx;
+        }
+
+        @Override
+        public <K, V> Map<K, V> getValues(String name, Class<K> keyClass, Class<V> valueClass) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <K, V> Map<K, V> getValues(String name, Converter<K> keyConverter,
+                Converter<V> valueConverter) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <K, V> Map<K, V> getValues(String name, Converter<K> keyConverter,
+                Converter<V> valueConverter, IntFunction<Map<K, V>> mapFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <K, V, C extends Collection<V>> Map<K, C> getValues(String name, Class<K> keyClass,
+                Class<V> valueClass, IntFunction<C> collectionFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <K, V, C extends Collection<V>> Map<K, C> getValues(String name,
+                Converter<K> keyConverter, Converter<V> valueConverter,
+                IntFunction<Map<K, C>> mapFactory, IntFunction<C> collectionFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Map<String, String> getMapKeys(String name) {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public Map<String, String> getMapIndexedKeys(String name) {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public <T> T getValue(String name, Class<T> aClass) {
+            String v = values.get(name);
+            if (v == null) {
+                throw new NoSuchElementException(name);
+            }
+            // Very simple conversion – only String is supported in our tests
+            if (aClass == String.class) {
+                return aClass.cast(v);
+            }
+            throw new IllegalArgumentException("Unsupported conversion");
+        }
+
+        @Override
+        public <T> T getValue(String name, Converter<T> converter) {
+            String v = values.get(name);
+            if (v == null) {
+                throw new NoSuchElementException(name);
+            }
+            return converter.convert(v);
+        }
+
+        @Override
+        public <T> T convertValue(ConfigValue configValue, Converter<T> converter) {
+            return converter.convert(configValue.getValue());
+        }
+
+        @Override
+        public ConfigValue getConfigValue(String name) {
+            String v = values.get(name);
+            if (v == null) {
+                throw new NoSuchElementException(name);
+            }
+            return new ConfigValue(name, v, "test-source", 0);
+        }
+
+        @Override
+        public String getRawValue(String name) {
+            return values.get(name);
+        }
+
+        @Override
+        public <T> Optional<T> getOptionalValue(String name, Class<T> aClass) {
+            try {
+                return Optional.ofNullable(getValue(name, aClass));
+            } catch (NoSuchElementException e) {
+                return Optional.empty();
+            }
+        }
+
+        @Override
+        public <T> Optional<T> getOptionalValue(String name, Converter<T> converter) {
+            try {
+                return Optional.ofNullable(getValue(name, converter));
+            } catch (NoSuchElementException e) {
+                return Optional.empty();
+            }
+        }
+
+        @Override
+        public <T> Optional<List<T>> getOptionalValues(String propertyName, Class<T> propertyType) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T, C extends Collection<T>> Optional<C> getOptionalValues(String name,
+                Class<T> itemClass, IntFunction<C> collectionFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T, C extends Collection<T>> Optional<C> getOptionalValues(String name,
+                Converter<T> converter, IntFunction<C> collectionFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T, C extends Collection<T>> Optional<C> getIndexedOptionalValues(String name,
+                Converter<T> converter, IntFunction<C> collectionFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <K, V> Optional<Map<K, V>> getOptionalValues(String name, Class<K> keyClass,
+                Class<V> valueClass) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <K, V> Optional<Map<K, V>> getOptionalValues(String name,
+                Converter<K> keyConverter, Converter<V> valueConverter) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <K, V> Optional<Map<K, V>> getOptionalValues(String name,
+                Converter<K> keyConverter, Converter<V> valueConverter,
+                IntFunction<Map<K, V>> mapFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <K, V, C extends Collection<V>> Optional<Map<K, C>> getOptionalValues(String name,
+                Class<K> keyClass, Class<V> valueClass, IntFunction<C> collectionFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <K, V, C extends Collection<V>> Optional<Map<K, C>> getOptionalValues(String name,
+                Converter<K> keyConverter, Converter<V> valueConverter,
+                IntFunction<Map<K, C>> mapFactory, IntFunction<C> collectionFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T> T getConfigMapping(Class<T> type) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T> T getConfigMapping(Class<T> type, String prefix) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Iterable<String> getPropertyNames() {
+            return values.keySet();
+        }
+
+        @Override
+        public Iterable<String> getLatestPropertyNames() {
+            return values.keySet();
+        }
+
+        @Override
+        public boolean isPropertyPresent(String name) {
+            return values.containsKey(name);
+        }
+
+        @Override
+        public Iterable<ConfigSource> getConfigSources() {
+            return sources;
+        }
+
+        @Override
+        public Iterable<ConfigSource> getConfigSources(Class<?> type) {
+            List<ConfigSource> result = new ArrayList<>();
+            for (ConfigSource cs : sources) {
+                if (type.isInstance(cs)) {
+                    result.add(cs);
+                }
+            }
+            return result;
+        }
+
+        @Override
+        public Optional<ConfigSource> getConfigSource(String name) {
+            for (ConfigSource cs : sources) {
+                if (cs.getName().equals(name)) {
+                    return Optional.of(cs);
+                }
+            }
+            return Optional.empty();
+        }
+
+        @Override
+        public <T> T convert(String value, Class<T> asType) {
+            if (asType == String.class) {
+                return asType.cast(value);
+            }
+            throw new IllegalArgumentException("Unsupported conversion");
+        }
+
+        @Override
+        public <T> Converter<T> getConverter$$bridge(Class<T> asType) {
+            return requireConverter(asType);
+        }
+
+        @Override
+        public <T> Optional<Converter<T>> getConverter(Class<T> asType) {
+            return Optional.of(requireConverter(asType));
+        }
+
+        @Override
+        public <T> Converter<T> requireConverter(Class<T> asType) {
+            // Very simple converter that only works for String → String
+            return new Converter<T>() {
+                @Override
+                public T convert(String value) {
+                    return asType.cast(value);
+                }
+            };
+        }
+
+        @Override
+        public <T> T unwrap(Class<T> type) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<String> getProfiles() {
+            return profiles;
+        }
+    }
+
+    /** Minimal {@link ConfigSource} that pretends to be an environment source. */
+    private static class EnvConfigSource implements ConfigSource {
+        static final String NAME = "EnvConfigSource";
+
+        private final Set<String> props = new HashSet<>();
+
+        EnvConfigSource add(String name) {
+            props.add(name);
+            return this;
+        }
+
+        @Override
+        public Set<String> getPropertyNames() {
+            return props;
+        }
+
+        @Override
+        public int getOrdinal() {
+            return 400;
+        }
+
+        @Override
+        public String getValue(String propertyName) {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+    }
+
+    /** Simple mapping interface required by ConfigMappingLoader (stubbed). */
+    public interface DummyMapping extends ConfigMappingObject {
+    }
+
+    private TestConfig config;
+    private ConfigMappingContext context;
+
+    @Before
+    public void setUp() {
+        config = new TestConfig()
+                .addValue("root.prop", "value")
+                .addValue("list[0]", "a")
+                .addValue("list[1]", "b")
+                .addProfile("%dev")
+                .addSource(new EnvConfigSource().add("ROOT_PROP"));
+        Map<Class<?>, Set<String>> roots = new HashMap<>();
+        roots.put(DummyMapping.class, new HashSet<>(Arrays.asList("root")));
+        context = new ConfigMappingContext(config, roots);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  Public API tests                                                      */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testConstructGroupReturnsMappingObject() {
+        DummyMapping root = context.constructGroup(DummyMapping.class);
+        assertNotNull(root);
+        // The internal roots map must contain the constructed object
+        assertTrue(context.getRootsMap().get(DummyMapping.class).containsKey("root"));
+    }
+
+    @Test
+    public void testApplyNamingStrategyDefaultsToKebabCase() {
+        // Initially null – call with null should set default
+        NamingStrategy ns = context.applyNamingStrategy(null);
+        assertEquals(NamingStrategy.KEBAB_CASE, ns);
+    }
+
+    @Test
+    public void testApplyNamingStrategyOverridesWhenNotNull() {
+        context.applyNamingStrategy(NamingStrategy.SNAKE_CASE);
+        assertEquals(NamingStrategy.SNAKE_CASE, context.applyNamingStrategy(NamingStrategy.SNAKE_CASE));
+    }
+
+    @Test
+    public void testRootPathAndNameBuilder() {
+        String path = "my.root";
+        assertEquals(path, context.applyRootPath(path));
+        assertEquals(path, context.applyNameBuilder(path).toString());
+        assertSame(context.getNameBuilder(), context.applyNameBuilder(path));
+    }
+
+    @Test
+    public void testGetConverterInstanceCreatesAndCaches() {
+        class StringConv implements Converter<String> {
+            @Override
+            public String convert(String value) {
+                return value.toUpperCase();
+            }
+        }
+        Converter<String> c1 = context.getConverterInstance(StringConv.class);
+        Converter<String> c2 = context.getConverterInstance(StringConv.class);
+        assertSame(c1, c2);
+        assertEquals("HELLO", c1.convert("hello"));
+    }
+
+    @Test(expected = InstantiationError.class)
+    public void testGetConverterInstanceInstantiationError() {
+        class NoDefaultCtor implements Converter<String> {
+            NoDefaultCtor(String arg) {}
+            @Override public String convert(String value) { return value; }
+        }
+        context.getConverterInstance(NoDefaultCtor.class);
+    }
+
+    @Test(expected = IllegalAccessError.class)
+    public void testGetConverterInstanceIllegalAccessError() {
+        class PrivateCtor implements Converter<String> {
+            private PrivateCtor() {}
+            @Override public String convert(String value) { return value; }
+        }
+        context.getConverterInstance(PrivateCtor.class);
+    }
+
+    @Test
+    public void testReportProblemAddsProblem() {
+        RuntimeException ex = new RuntimeException("boom");
+        context.reportProblem(ex);
+        assertEquals(1, context.getProblems().size());
+        assertTrue(context.getProblems().get(0).getMessage().contains("boom"));
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  ObjectCreator tests                                                   */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testObjectCreatorValue() {
+        ConfigMappingContext.ObjectCreator<String> creator = context.constructObject("root.prop");
+        creator.value(String.class, null);
+        String result = creator.get();
+        assertEquals("value", result);
+    }
+
+    @Test
+    public void testObjectCreatorOptionalValuePresent() {
+        ConfigMappingContext.ObjectCreator<String> creator = context.constructObject("root.prop");
+        creator.optionalValue(String.class, null);
+        Optional<String> opt = creator.get();
+        assertTrue(opt.isPresent());
+        assertEquals("value", opt.get());
+    }
+
+    @Test
+    public void testObjectCreatorOptionalValueAbsent() {
+        ConfigMappingContext.ObjectCreator<String> creator = context.constructObject("missing");
+        creator.optionalValue(String.class, null);
+        Optional<String> opt = creator.get();
+        assertFalse(opt.isPresent());
+    }
+
+    @Test
+    public void testObjectCreatorCollection() {
+        ConfigMappingContext.ObjectCreator<List<String>> creator = context.constructObject("list");
+        creator.collection(List.class);
+        List<String> list = creator.get();
+        assertEquals(Arrays.asList("a", "b"), list);
+    }
+
+    @Test
+    public void testObjectCreatorOptionalCollectionEmpty() {
+        ConfigMappingContext.ObjectCreator<List<String>> creator = context.constructObject("empty");
+        creator.optionalCollection(List.class);
+        Optional<List<String>> opt = creator.get();
+        assertFalse(opt.isPresent());
+    }
+
+    @Test
+    public void testObjectCreatorMapWithDefault() {
+        // Map with default value for missing keys
+        ConfigMappingContext.ObjectCreator<Map<String, String>> creator = context.constructObject("root");
+        creator.map(String.class, null, "defaultKey", String.class);
+        Map<String, String> map = creator.get();
+        // default key should be present with a ConfigMappingObject as default value (null in our simple case)
+        assertTrue(map.containsKey("defaultKey"));
+    }
+
+    @Test
+    public void testObjectCreatorGroupAndLazyGroup() {
+        // group – always created
+        ConfigMappingContext.ObjectCreator<DummyMapping> grpCreator = context.constructObject("root");
+        grpCreator.group(DummyMapping.class);
+        DummyMapping grp = grpCreator.get();
+        assertNotNull(grp);
+
+        // lazyGroup – created only if names match (our dummy mapping has a name, so it should be created)
+        ConfigMappingContext.ObjectCreator<DummyMapping> lazyCreator = context.constructObject("root");
+        lazyCreator.lazyGroup(DummyMapping.class);
+        DummyMapping lazy = lazyCreator.get();
+        assertNotNull(lazy);
+    }
+
+    @Test
+    public void testObjectCreatorOptionalGroupAbsent() {
+        // Simulate a path that does not match any name (empty roots map)
+        ConfigMappingContext emptyContext = new ConfigMappingContext(config, Collections.emptyMap());
+        ConfigMappingContext.ObjectCreator<DummyMapping> optCreator = emptyContext.constructObject("nosuch");
+        optCreator.optionalGroup(DummyMapping.class);
+        Optional<DummyMapping> opt = optCreator.get();
+        assertFalse(opt.isPresent());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  Edge‑case tests for private static helpers                           */
+    /* ---------------------------------------------------------------------- */
+
+    @Test
+    public void testIndexOfDashesSimpleMatch() {
+        // mapped: foo-bar.baz , env: foo.bar.baz  -> dash at position 3
+        List<Integer> dashes = invokeIndexOfDashes("foo-bar.baz", "foo.bar.baz");
+        assertNotNull(dashes);
+        assertEquals(Collections.singletonList(3), dashes);
+    }
+
+    @Test
+    public void testIndexOfDashesNoMatchReturnsNull() {
+        List<Integer> dashes = invokeIndexOfDashes("foo.bar", "fooXbar");
+        assertNull(dashes);
+    }
+
+    @Test
+    public void testIsPropertyInRootExactMatch() {
+        assertTrue(invokeIsPropertyInRoot("my.root", "my.root"));
+    }
+
+    @Test
+    public void testIsPropertyInRootWithDot() {
+        assertTrue(invokeIsPropertyInRoot("my.root.prop", "my.root"));
+    }
+
+    @Test
+    public void testIsPropertyInRootWithBracket() {
+        assertTrue(invokeIsPropertyInRoot("my.root[0]", "my.root"));
+    }
+
+    @Test
+    public void testIsPropertyInRootNegative() {
+        assertFalse(invokeIsPropertyInRoot("my.root2.prop", "my.root"));
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  Helper methods to access private static methods via reflection        */
+    /* ---------------------------------------------------------------------- */
+
+    @SuppressWarnings("unchecked")
+    private static List<Integer> invokeIndexOfDashes(String mapped, String env) {
+        try {
+            java.lang.reflect.Method m = ConfigMappingContext.class
+                    .getDeclaredMethod("indexOfDashes", String.class, String.class);
+            m.setAccessible(true);
+            return (List<Integer>) m.invoke(null, mapped, env);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static boolean invokeIsPropertyInRoot(String property, String root) {
+        try {
+            java.lang.reflect.Method m = ConfigMappingContext.class
+                    .getDeclaredMethod("isPropertyInRoot", String.class, String.class);
+            m.setAccessible(true);
+            return (boolean) m.invoke(null, property, root);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

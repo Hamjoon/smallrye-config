@@ -1,0 +1,295 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
+import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Unit tests for {@link ConfigMappingContext}. The tests focus on the public API and the
+ * private static helpers that can be exercised via reflection. No external mocking frameworks
+ * are used – a simple concrete {@link SmallRyeConfig} subclass provides the minimal behaviour
+ * required for the tests.
+ */
+public class ConfigMappingContextTest {
+
+    private TestSmallRyeConfig config;
+    private ConfigMappingContext context;
+
+    @Before
+    public void setUp() {
+        config = new TestSmallRyeConfig();
+        // an empty mappings map – the constructor will initialise an empty internal mapping store
+        Map<Class<?>, Set<String>> emptyMappings = Collections.emptyMap();
+        context = new ConfigMappingContext(config, emptyMappings);
+    }
+
+    /**
+     * Simple {@link Converter} implementation used to test {@link ConfigMappingContext#getConverterInstance(Class)}.
+     */
+    public static class UpperCaseConverter implements Converter<String> {
+        @Override
+        public String convert(String value) {
+            return value == null ? null : value.toUpperCase();
+        }
+    }
+
+    /**
+     * A {@link Converter} without a no‑arg constructor – used to verify that
+     * {@code getConverterInstance} throws an {@link InstantiationError}.
+     */
+    public static class NoDefaultCtorConverter implements Converter<String> {
+        public NoDefaultCtorConverter(String dummy) {
+        }
+
+        @Override
+        public String convert(String value) {
+            return value;
+        }
+    }
+
+    /**
+     * Minimal concrete subclass of {@link SmallRyeConfig} that returns empty collections
+     * for the methods exercised by the tests.
+     */
+    private static class TestSmallRyeConfig extends SmallRyeConfig {
+        @Override
+        public Iterable<String> getPropertyNames() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Iterable<ConfigSource> getConfigSources(Class<?> type) {
+            // No EnvConfigSource instances – matchPropertiesWithEnv will be a no‑op.
+            return Collections.emptyList();
+        }
+
+        // The remaining methods are not needed for the current test suite and therefore
+        // inherit the default behaviour (which for this stub is acceptable because they are
+        // never called).
+    }
+
+    @Test
+    public void testApplyPrefixAndGetNameBuilder() {
+        context.applyPrefix("my.prefix");
+        assertEquals("my.prefix", context.getNameBuilder().toString());
+
+        // Applying a second prefix should replace the previous content, not append.
+        context.applyPrefix("another");
+        assertEquals("another", context.getNameBuilder().toString());
+    }
+
+    @Test
+    public void testApplyNamingStrategyAndBeanStyleGetters() {
+        // default strategy is KEBAB_CASE – we replace it with VERBATIM for deterministic testing
+        context.applyNamingStrategy(NamingStrategy.VERBATIM);
+        Function<String, String> fn = context.propertyName();
+        assertEquals("my-value", fn.apply("my-value")); // VERBATIM returns the same string
+
+        // bean‑style getters are disabled by default – the function should be the naming strategy itself
+        assertSame(NamingStrategy.VERBATIM, fn);
+
+        // enable bean‑style getters and verify transformation
+        context.applyBeanStyleGetters(Boolean.TRUE);
+        Function<String, String> beanFn = context.propertyName();
+        assertEquals("value", beanFn.apply("getValue"));
+        assertEquals("active", beanFn.apply("isActive"));
+        // non‑getter names are left untouched
+        assertEquals("plain", beanFn.apply("plain"));
+    }
+
+    @Test
+    public void testApplyNullNamingStrategyAndBeanStyleDoesNotChangeState() {
+        // capture current state
+        NamingStrategy beforeStrategy = getPrivateField(context, "namingStrategy");
+        boolean beforeBean = getPrivateField(context, "beanStyleGetters");
+
+        context.applyNamingStrategy(null);
+        context.applyBeanStyleGetters(null);
+
+        // state must be unchanged
+        assertSame(beforeStrategy, getPrivateField(context, "namingStrategy"));
+        assertEquals(beforeBean, getPrivateField(context, "beanStyleGetters"));
+    }
+
+    @Test
+    public void testReportProblemAndGetProblems() {
+        RuntimeException ex = new RuntimeException("boom");
+        context.reportProblem(ex);
+        List<Problem> problems = context.getProblems();
+        assertEquals(1, problems.size());
+        assertTrue(problems.get(0).getMessage().contains("boom"));
+    }
+
+    @Test
+    public void testGetMappingsIsEmptyWhenNoMappingsProvided() {
+        assertTrue(context.getMappings().isEmpty());
+    }
+
+    @Test
+    public void testGetConverterInstanceCachesInstances() {
+        Converter<String> first = context.getConverterInstance(UpperCaseConverter.class);
+        Converter<String> second = context.getConverterInstance(UpperCaseConverter.class);
+        assertSame("Converter instances should be cached", first, second);
+    }
+
+    @Test(expected = InstantiationError.class)
+    public void testGetConverterInstanceFailsWhenNoDefaultConstructor() {
+        // The constructor will try to instantiate the class via reflection and should throw InstantiationError
+        context.getConverterInstance(NoDefaultCtorConverter.class);
+    }
+
+    @Test
+    public void testIndexOfDashesMatchesDashPositions() throws Exception {
+        Method method = ConfigMappingContext.class.getDeclaredMethod("indexOfDashes", String.class, String.class);
+        method.setAccessible(true);
+
+        // Case 1: identical strings – no dash positions
+        @SuppressWarnings("unchecked")
+        List<Integer> result1 = (List<Integer>) method.invoke(null, "foo.bar", "foo.bar");
+        assertTrue(result1.isEmpty());
+
+        // Case 2: dash in mapped property, dot in env property – should report the dot position (index 3)
+        @SuppressWarnings("unchecked")
+        List<Integer> result2 = (List<Integer>) method.invoke(null, "foo-bar", "foo.bar");
+        assertEquals(1, result2.size());
+        assertEquals(Integer.valueOf(3), result2.get(0));
+    }
+
+    @Test
+    public void testIndexOfDashesReturnsNullWhenNoMatch() throws Exception {
+        Method method = ConfigMappingContext.class.getDeclaredMethod("indexOfDashes", String.class, String.class);
+        method.setAccessible(true);
+
+        // Mismatch in characters should result in null
+        Object result = method.invoke(null, "foo.bar", "foo.baz");
+        assertNull(result);
+    }
+
+    @Test
+    public void testIsPropertyInRootLogic() throws Exception {
+        Method method = ConfigMappingContext.class.getDeclaredMethod("isPropertyInRoot", String.class, String.class);
+        method.setAccessible(true);
+
+        // Exact match
+        assertTrue((Boolean) method.invoke(null, "my.prop", "my.prop"));
+
+        // Property is a child of the root (dot separator)
+        assertTrue((Boolean) method.invoke(null, "my.prop.suffix", "my.prop"));
+
+        // Property is a child of the root (array index)
+        assertTrue((Boolean) method.invoke(null, "my.prop[0]", "my.prop"));
+
+        // Not a child – different character after the root
+        assertFalse((Boolean) method.invoke(null, "my.propX", "my.prop"));
+    }
+
+    @Test
+    public void testObjectCreatorValueAndOptionalValue() {
+        // Prepare a config that can return a known value for a property
+        TestSmallRyeConfig cfg = new TestSmallRyeConfig() {
+            @Override
+            public <T> T getValue(String name, Converter<T> converter) {
+                // Simulate a simple conversion of a string constant
+                return converter.convert("testValue");
+            }
+
+            @Override
+            public <T> Optional<T> getOptionalValue(String name, Converter<T> converter) {
+                return Optional.of(converter.convert("optionalValue"));
+            }
+
+            @Override
+            public Iterable<String> getPropertyNames() {
+                return List.of("my.prop");
+            }
+        };
+        ConfigMappingContext ctx = new ConfigMappingContext(cfg, Collections.emptyMap());
+
+        // Use the ObjectCreator to retrieve a value
+        ConfigMappingContext.ObjectCreator<String> creator = ctx.constructObject("my.prop");
+        creator.value(String.class, UpperCaseConverter.class);
+        String result = creator.get();
+        assertEquals("TESTVALUE", result); // UpperCaseConverter converts to upper case
+
+        // Optional value
+        ConfigMappingContext.ObjectCreator<String> optionalCreator = ctx.constructObject("my.prop");
+        optionalCreator.optionalValue(String.class, UpperCaseConverter.class);
+        Optional<String> optResult = optionalCreator.get();
+        assertTrue(optResult.isPresent());
+        assertEquals("OPTIONALVALUE", optResult.get());
+    }
+
+    @Test
+    public void testObjectCreatorCollectionAndOptionalCollection() {
+        TestSmallRyeConfig cfg = new TestSmallRyeConfig() {
+            @Override
+            public List<Integer> getIndexedPropertiesIndexes(String property) {
+                // Simulate two indexed entries for the given collection path
+                return List.of(0, 1);
+            }
+
+            @Override
+            public <T, C extends Collection<T>> C getValues(String name, Converter<T> converter,
+                                                             IntFunction<C> collectionFactory) {
+                C col = collectionFactory.apply(0);
+                // Populate the collection with dummy values
+                col.add((T) Integer.valueOf(42));
+                col.add((T) Integer.valueOf(43));
+                return col;
+            }
+
+            @Override
+            public <T, C extends Collection<T>> Optional<C> getOptionalValues(String name, Converter<T> converter,
+                                                                               IntFunction<C> collectionFactory) {
+                C col = collectionFactory.apply(0);
+                col.add((T) Integer.valueOf(99));
+                return Optional.of(col);
+            }
+
+            @Override
+            public Iterable<String> getPropertyNames() {
+                return List.of("my.list");
+            }
+        };
+        ConfigMappingContext ctx = new ConfigMappingContext(cfg, Collections.emptyMap());
+
+        // Collection
+        ConfigMappingContext.ObjectCreator<List<Integer>> collCreator = ctx.constructObject("my.list");
+        collCreator.collection(List.class);
+        List<Integer> list = collCreator.get();
+        assertEquals(List.of(42, 43), list);
+
+        // Optional collection
+        ConfigMappingContext.ObjectCreator<Optional<List<Integer>>> optCollCreator = ctx.constructObject("my.list");
+        optCollCreator.optionalCollection(List.class);
+        Optional<List<Integer>> optList = optCollCreator.get();
+        assertTrue(optList.isPresent());
+        assertEquals(List.of(99), optList.get());
+    }
+
+    /**
+     * Utility method to read a private field via reflection.
+     */
+    @SuppressWarnings("unchecked")
+    private static <T> T getPrivateField(Object target, String fieldName) {
+        try {
+            java.lang.reflect.Field f = target.getClass().getDeclaredField(fieldName);
+            f.setAccessible(true);
+            return (T) f.get(target);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

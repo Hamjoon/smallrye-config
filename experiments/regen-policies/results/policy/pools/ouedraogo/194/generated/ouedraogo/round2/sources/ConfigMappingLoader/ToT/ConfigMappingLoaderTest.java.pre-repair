@@ -1,0 +1,325 @@
+/*
+ * Comprehensive JUnit‑4 test suite for {@code io.smallrye.config.ConfigMappingLoader}.
+ *
+ * The tests focus on the *behaviour* of the private static utilities that can be exercised
+ * without needing the full MicroProfile Config runtime.  All objects are created using
+ * only the public constructors / factory methods that are present in the source code
+ * (or by using simple reflection to reach private static helpers).  No mocking frameworks
+ * or external byte‑code generators are used – the test suite builds only on the classes
+ * that are part of the supplied source.
+ *
+ * The suite is organised as if three independent experts had contributed one test
+ * case per public method, discussed the results and then merged the final set of
+ * test cases.
+ *
+ * The public API exercised:
+ *   • {@code ConfigMappingLoader.getConfigMappingsMetadata(Class)}
+ *   • {@code ConfigMappingLoader.getConfigMapping(Class)}
+ *
+ * The private helpers exercised (via reflection):
+ *   • {@code getClassLoaderLock(String)}
+ *   • {@code loadClass(Class, ConfigMappingMetadata)}
+ *   • {@code defineClass(Class, String, byte[])} – exercised indirectly through {@code loadClass}
+ *
+ * The tests cover normal operation, edge‑cases (null arguments, missing classes) and
+ * error‑scenarios (illegal arguments, class‑loader conflicts).
+ */
+
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.junit.Test;
+
+/**
+ * Test class for {@link ConfigMappingLoader}.
+ */
+public class ConfigMappingLoaderTest {
+
+    /* ----------------------------------------------------------------------
+     * Helper utilities to reach private static members via reflection.
+     * ---------------------------------------------------------------------- */
+
+    private static Method getPrivateStaticMethod(String name, Class<?>... paramTypes) throws Exception {
+        Method m = ConfigMappingLoader.class.getDeclaredMethod(name, paramTypes);
+        m.setAccessible(true);
+        return m;
+    }
+
+    private static Object invokeStatic(Method method, Object... args) throws Exception {
+        return method.invoke(null, args);
+    }
+
+    /* ----------------------------------------------------------------------
+     * 1. Tests contributed by Expert A – getConfigMappingsMetadata()
+     * ---------------------------------------------------------------------- */
+
+    /**
+     * The loader should return an empty list when the supplied class is not a
+     * configuration mapping (i.e. no {@code ConfigMappingInterface} or
+     * {@code ConfigMappingClass} is associated with it).
+     */
+    @Test
+    public void testGetConfigMappingsMetadata_NoMapping() {
+        // Plain POJO – no MicroProfile config annotations.
+        class PlainPojo {
+        }
+
+        List<ConfigMappingMetadata> result = ConfigMappingLoader.getConfigMappingsMetadata(PlainPojo.class);
+        assertNotNull("Result must never be null", result);
+        assertTrue("Plain POJO should produce an empty metadata list", result.isEmpty());
+    }
+
+    /**
+     * When a class implements {@code ConfigMappingObject} directly, the loader
+     * should treat it as a mapping class and return its metadata plus the
+     * metadata of the associated interface (if any).  We simulate this by
+     * creating a minimal concrete mapping class that implements the marker
+     * interface.
+     */
+    @Test
+    public void testGetConfigMappingsMetadata_WithMappingClass() {
+        // Simple mapping object – implements the marker interface.
+        class SimpleMapping implements ConfigMappingObject {
+        }
+
+        // The loader should recognise the class as a mapping class.
+        List<ConfigMappingMetadata> metadata = ConfigMappingLoader.getConfigMappingsMetadata(SimpleMapping.class);
+        assertNotNull(metadata);
+        // At least the class itself must be present.
+        assertFalse("Metadata should contain at least one element for the mapping class", metadata.isEmpty());
+
+        // Verify that the first element corresponds to the class we supplied.
+        ConfigMappingMetadata first = metadata.get(0);
+        assertEquals("The first metadata entry must refer to the supplied class",
+                SimpleMapping.class, first.getInterfaceType());
+    }
+
+    /* ----------------------------------------------------------------------
+     * 2. Tests contributed by Expert B – getConfigMapping()
+     * ---------------------------------------------------------------------- */
+
+    /**
+     * For a class that is not recognised as a configuration interface,
+     * {@code getConfigMapping} must return {@code null}.
+     */
+    @Test
+    public void testGetConfigMapping_NotAnInterface() {
+        class NotAnInterface {
+        }
+
+        ConfigMappingInterface mapping = ConfigMappingLoader.getConfigMapping(NotAnInterface.class);
+        assertNull("Non‑interface types must yield null mapping", mapping);
+    }
+
+    /**
+     * Verify that a real configuration interface (annotated with
+     * {@code @ConfigProperties}) is correctly resolved.  The test defines a
+     * minimal interface inside the test class – the SmallRye implementation
+     * recognises it because it follows the naming convention used by the
+     * generator (the generated implementation class is created lazily by the
+     * loader).  The test simply asserts that the returned object is not null
+     * and that it implements {@code ConfigMappingInterface}.
+     */
+    @Test
+    public void testGetConfigMapping_ValidInterface() {
+        // Minimal config interface – the library treats any interface as a mapping
+        // when it is annotated with @ConfigProperties.  The annotation is present
+        // at runtime, therefore the loader can discover it.
+        @ConfigProperties(prefix = "test")
+        interface MinimalConfig {
+            String hello();
+        }
+
+        ConfigMappingInterface mapping = ConfigMappingLoader.getConfigMapping(MinimalConfig.class);
+        assertNotNull("A valid @ConfigProperties interface must produce a mapping object", mapping);
+        assertEquals("Interface type reported by the metadata must match the source interface",
+                MinimalConfig.class, mapping.getInterfaceType());
+    }
+
+    /* ----------------------------------------------------------------------
+     * 3. Tests contributed by Expert C – private utilities
+     * ---------------------------------------------------------------------- */
+
+    /**
+     * {@code getClassLoaderLock} must return the *same* lock object for identical
+     * class names and a *different* object for different names.  The method
+     * internally uses a {@code ConcurrentHashMap} – this test confirms the
+     * contract.
+     */
+    @Test
+    public void testGetClassLoaderLock_UniquePerClassName() throws Exception {
+        Method m = getPrivateStaticMethod("getClassLoaderLock", String.class);
+
+        Object lockA1 = invokeStatic(m, "com.example.Foo");
+        Object lockA2 = invokeStatic(m, "com.example.Foo");
+        Object lockB = invokeStatic(m, "com.example.Bar");
+
+        assertSame("Locks for the same class name must be identical (reference equality)", lockA1, lockA2);
+        assertNotSame("Locks for different class names must be distinct", lockA1, lockB);
+    }
+
+    /**
+     * When the target class already exists in the parent class loader and is
+     * assignable to the parent type, {@code loadClass} should simply return the
+     * already loaded class without trying to define a new one.
+     */
+    @Test
+    public void testLoadClass_ExistingAssignableClass() throws Exception {
+        Method loadClassMethod = getPrivateStaticMethod("loadClass", Class.class, ConfigMappingMetadata.class);
+
+        // Use java.lang.String (assignable to Object) as the target.
+        ConfigMappingMetadata meta = new ConfigMappingMetadata() {
+            @Override public Class<?> getInterfaceType() { return null; }
+            @Override public String getClassName() { return String.class.getName(); }
+            @Override public byte[] getClassBytes() { return new byte[0]; }
+        };
+
+        Class<?> result = (Class<?>) invokeStatic(loadClassMethod, Object.class, meta);
+        assertEquals("loadClass must return the existing String class", String.class, result);
+    }
+
+    /**
+     * If the class exists but is *not* assignable to the parent, the loader
+     * normally would attempt to define a new class.  However, when the metadata
+     * instance is a {@code ConfigMappingClass} (the concrete inner class), the
+     * loader returns the already loaded class even if it is not assignable.
+     */
+    @Test
+    public void testLoadClass_ExistingNonAssignableButConfigMappingClass() throws Exception {
+        Method loadClassMethod = getPrivateStaticMethod("loadClass", Class.class, ConfigMappingMetadata.class);
+
+        // Create a ConfigMappingClass for java.lang.Integer (non‑assignable to String)
+        ConfigMappingClass meta = new ConfigMappingClass(Integer.class);
+
+        // Parent is String.class – Integer is not assignable.
+        Class<?> result = (Class<?>) invokeStatic(loadClassMethod, String.class, meta);
+        assertEquals("When metadata is a ConfigMappingClass, the existing class is returned regardless of assignability",
+                Integer.class, result);
+    }
+
+    /**
+     * Concurrency test for {@code getClassLoaderLock}.  Multiple threads request
+     * the lock for the same class name simultaneously – all must receive the same
+     * instance and no race conditions should occur.
+     */
+    @Test
+    public void testGetClassLoaderLock_ConcurrentAccess() throws Exception {
+        final String className = "com.example.Concurrent";
+        final int threadCount = 10;
+        final Method lockMethod = getPrivateStaticMethod("getClassLoaderLock", String.class);
+        final CountDownLatch startLatch = new CountDownLatch(1);
+        final CountDownLatch doneLatch = new CountDownLatch(threadCount);
+        final AtomicReference<Object> firstLock = new AtomicReference<>();
+
+        for (int i = 0; i < threadCount; i++) {
+            new Thread(() -> {
+                try {
+                    startLatch.await(); // ensure all threads start together
+                    Object lock = invokeStatic(lockMethod, className);
+                    // Capture the first lock we see
+                    firstLock.compareAndSet(null, lock);
+                    // Every lock must be the same as the first one
+                    assertSame("All threads must obtain the identical lock instance", firstLock.get(), lock);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    doneLatch.countDown();
+                }
+            }).start();
+        }
+
+        startLatch.countDown(); // release all threads
+        doneLatch.await(); // wait for completion
+        assertNotNull("The reference to the first lock must have been set", firstLock.get());
+    }
+
+    /**
+     * Verify that {@code loadClass} throws an {@code IllegalArgumentException}
+     * when supplied with {@code null} metadata.  The private method is invoked
+     * via reflection; the expected exception type is checked.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testLoadClass_NullMetadata() throws Exception {
+        Method loadClassMethod = getPrivateStaticMethod("loadClass", Class.class, ConfigMappingMetadata.class);
+        invokeStatic(loadClassMethod, Object.class, null);
+    }
+
+    /**
+     * Verify that {@code loadClass} throws a {@code NullPointerException}
+     * when the class name inside the metadata is {@code null}.  The loader
+     * attempts to call {@code ClassLoader#loadClass(null)} which results in
+     * an NPE.
+     */
+    @Test(expected = NullPointerException.class)
+    public void testLoadClass_MetadataWithNullClassName() throws Exception {
+        Method loadClassMethod = getPrivateStaticMethod("loadClass", Class.class, ConfigMappingMetadata.class);
+
+        ConfigMappingMetadata meta = new ConfigMappingMetadata() {
+            @Override public Class<?> getInterfaceType() { return null; }
+            @Override public String getClassName() { return null; } // illegal
+            @Override public byte[] getClassBytes() { return new byte[0]; }
+        };
+
+        invokeStatic(loadClassMethod, Object.class, meta);
+    }
+
+    /* ----------------------------------------------------------------------
+     * 4. Smoke tests for the public methods that rely on the rest of the
+     *    SmallRye Config infrastructure.  These tests simply verify that
+     *    the methods do not throw unexpected exceptions for simple inputs.
+     * ---------------------------------------------------------------------- */
+
+    /**
+     * The public method {@code getConfigMapping(Class)} should return {@code null}
+     * for a class that is not a configuration interface.  This is a basic
+     * smoke test that ensures the method can be called without triggering
+     * class‑loader errors.
+     */
+    @Test
+    public void testGetConfigMapping_Smoke() {
+        class Dummy {
+        }
+        assertNull("Non‑config class must yield null mapping", ConfigMappingLoader.getConfigMapping(Dummy.class));
+    }
+
+    /**
+     * The public method {@code getConfigMappingsMetadata(Class)} should return a
+     * non‑null immutable list even when the supplied class has no mapping metadata.
+     */
+    @Test
+    public void testGetConfigMappingsMetadata_Smoke() {
+        class Empty {
+        }
+        List<ConfigMappingMetadata> list = ConfigMappingLoader.getConfigMappingsMetadata(Empty.class);
+        assertNotNull("Resulting list must never be null", list);
+        // The list returned by List.copyOf is immutable – verify that.
+        try {
+            list.add(null);
+            fail("The returned metadata list must be immutable");
+        } catch (UnsupportedOperationException expected) {
+            // expected
+        }
+    }
+
+    /* ----------------------------------------------------------------------
+     * Utility: expose private constructor of ConfigMappingClass for test
+     * ---------------------------------------------------------------------- */
+
+    /**
+     * Helper to instantiate {@code ConfigMappingClass} via its public constructor.
+     * The constructor is package‑private, but we can access it reflectively.
+     */
+    private static ConfigMappingClass newConfigMappingClass(Class<?> target) throws Exception {
+        Constructor<ConfigMappingClass> ctor = ConfigMappingClass.class.getDeclaredConstructor(Class.class);
+        ctor.setAccessible(true);
+        return ctor.newInstance(target);
+    }
+}

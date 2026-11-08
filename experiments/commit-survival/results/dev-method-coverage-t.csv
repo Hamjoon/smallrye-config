@@ -1,0 +1,464 @@
+class,method,scope_lines_covered,scope_files,total_lines_covered,seconds,status
+io.smallrye.config.ConfigConfigSourceTest,configure,0,[],725,,pass
+io.smallrye.config.ConfigConfigSourceTest,lowerPriority,0,[],725,,pass
+io.smallrye.config.ConfigConfigSourceTest,iterate,0,[],736,,pass
+io.smallrye.config.ConfigConfigSourceTest,doNotOverrideInitialChain,0,[],813,,pass
+io.smallrye.config.ConfigConfigSourceTest,configOrdinal,0,[],719,,pass
+io.smallrye.config.ConfigConfigSourceTest,profiles,0,[],742,,pass
+io.smallrye.config.ConfigConfigSourceTest,interceptorsFirst,0,[],625,,pass
+io.smallrye.config.ConfigMappingClassTest,toClass,330,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1158,,pass
+io.smallrye.config.ConfigMappingClassTest,privateFields,330,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1158,,pass
+io.smallrye.config.ConfigMappingClassTest,optionals,296,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1123,,pass
+io.smallrye.config.ConfigMappingClassTest,names,332,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1159,,pass
+io.smallrye.config.ConfigMappingClassTest,defaults,333,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1157,,pass
+io.smallrye.config.ConfigMappingClassTest,converters,274,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1113,,pass
+io.smallrye.config.ConfigMappingClassTest,initialized,332,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1166,,pass
+io.smallrye.config.ConfigMappingClassTest,initializedDefault,296,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1060,,pass
+io.smallrye.config.ConfigMappingClassTest,mpConfig20,336,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1174,,pass
+io.smallrye.config.ConfigMappingClassTest,empty,177,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",782,,pass
+io.smallrye.config.ConfigMappingClassTest,camelCase,331,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1159,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mappingCollectionsSimple,309,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1092,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mappingCollections,385,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1224,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mappingCollectionsWithName,351,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1123,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mappingCollectionsWithDefaults,422,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1267,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mappingCollectionsOptionals,424,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1289,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mappingCollectionsConverters,362,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1166,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mappingCollectionsSet,386,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1225,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mappingOptionalGroupWithCollection,393,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1249,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mappingSingleCollection,404,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1202,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mappingCollectionProfile,404,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1433,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mappingCollectionsMap,525,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1482,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mapKeyWithIndexedSyntax,311,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1110,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mapWithColllections,354,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1223,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mapWithListsGroup,460,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1430,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mapWithListsAndParentName,416,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1317,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,mapIndexedAndPlain,348,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1179,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,simpleMap,348,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1179,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,nestedMaps,397,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1319,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,simpleMapList,387,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1275,,pass
+io.smallrye.config.ConfigMappingCollectionsTest,nestedMapsLists,443,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1427,,pass
+io.smallrye.config.ConfigMappingDefaultsTest,defaults,557,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1475,,pass
+io.smallrye.config.ConfigMappingDefaultsTest,emptyPrefix,543,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1456,,pass
+io.smallrye.config.ConfigMappingDefaultsTest,defaultsNamingStrategy,557,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1474,,pass
+io.smallrye.config.ConfigMappingDefaultsTest,defaultsParentName,277,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",985,,pass
+io.smallrye.config.ConfigMappingDefaultsTest,moreDefaults,517,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1391,,pass
+io.smallrye.config.ConfigMappingDefaultsTest,parentDefaults,179,"[""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",194,,pass
+io.smallrye.config.ConfigMappingDefaultsTest,mapDefaults,360,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1200,,pass
+io.smallrye.config.ConfigMappingDefaultsTest,groupParentDefaults,498,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1390,,pass
+io.smallrye.config.ConfigMappingDefaultsTest,multipleLevelDefaults,283,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1044,,pass
+io.smallrye.config.ConfigMappingFullTest,ambiguousUnnamedKeysDefaults,539,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1455,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,configMapping,338,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1098,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,noConfigMapping,10,"[""src/main/java/io/smallrye/config/ConfigMappingLoader.java""]",375,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,unregisteredConfigMapping,10,"[""src/main/java/io/smallrye/config/ConfigMappingLoader.java""]",379,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,unregistedPrefix,328,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1096,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,noPrefix,328,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1093,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,unknownConfigElement,321,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1043,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,ignorePropertiesInUnregisteredRoots,339,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1099,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,ignoreSomeProperties,351,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1222,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,ignoreProperties,341,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1253,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,validateUnknown,336,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1392,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,splitRoots,338,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1098,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,splitRootsInConfig,338,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1098,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,subGroups,363,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1126,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,types,330,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1102,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,optionals,487,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1356,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,collectionTypes,302,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1085,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,maps,465,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1376,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapsEmptyPrefix,451,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1362,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,converters,334,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1099,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mix,393,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1175,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,noDynamicValues,313,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1056,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapClass,328,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1149,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,configMappingAnnotation,340,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1106,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,prefixFromAnnotation,340,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1106,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,superTypes,347,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1108,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,configValue,280,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1028,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,empty,174,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",763,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapsInGroup,425,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1325,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,prefixPropertyInRoot,341,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1101,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,prefixPropertyInRootUnknown,347,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1312,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapEnv,436,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1549,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,optionalWithName,399,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1257,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,hierarchy,412,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1195,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,expandDefaults,282,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1209,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,hierarchyOverrides,523,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1478,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,nestedGroupMaps,461,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1369,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,path,279,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1028,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,properties,318,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1097,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapWithMultipleGroupsAndSameMethodNames,463,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1318,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,defaultMethods,316,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1066,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,defaultKotlinMethods,380,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1140,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapKeyEnum,495,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1387,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,hyphenateEnum,270,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1024,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,listElementConverter,320,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1103,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,envPropertiesWithoutDottedProperties,504,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1714,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,nestedOptionals,336,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1104,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,nestedOptionalMap,427,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1275,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,nestedOptionalsGroupMap,380,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1217,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,nestedOptionalAndMaps,411,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1277,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,optionalExpressions,306,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1256,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,defaultsBuilderAndMapping,380,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1341,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,ignoreNestedUnknown,485,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1588,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,withNameDotted,423,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1440,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,optionalWithConverter,366,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1284,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,expressionDefaults,285,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1197,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapKeys,373,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1413,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,defaultsPropertyNames,285,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1179,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,unnamedMapKeys,480,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1533,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,explicitUnnamedMapKeys,410,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1404,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,ambiguousMapping,403,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1237,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,withNameMultipleSegments,484,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1548,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,unmmapedPropertiesLocation,192,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",913,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapDefaults,502,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1569,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapDefaultsWithParentName,407,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1406,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,invalidMapDefaults,350,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1066,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,emptyDefault,278,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1034,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,withConverterListElement,347,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1292,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapKeyQuotes,323,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1122,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapWithEnvVarsOnlyInProfile,322,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1469,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,overrideEnvPropertyName,398,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1476,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,doNotOverrideBuilderDefault,404,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1252,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,invalidKeys,370,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1269,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,mapWithParentName,381,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1227,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,superOptionals,453,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1359,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,embeddedMapping,396,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1253,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,nestedMaps,426,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1349,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,ambiguousUnnamedKeys,433,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1278,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,ambiguousMapKeyWithGroup,412,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1255,,pass
+io.smallrye.config.ConfigMappingInterfaceTest,ignorePathsRecursive,205,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",931,,pass
+io.smallrye.config.ConfigMappingLoaderParallelTest,testParallelThreadOne,343,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1109,,pass
+io.smallrye.config.ConfigMappingLoaderParallelTest,testParallelThreadTwo,343,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1109,,pass
+io.smallrye.config.ConfigMappingLoaderParallelTest,testParallelThreadThree,343,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1109,,pass
+io.smallrye.config.ConfigMappingLoaderParallelTest,testParallelThreadFour,343,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1109,,pass
+io.smallrye.config.ConfigMappingLoaderTest,multipleLoads,343,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1109,,pass
+io.smallrye.config.ConfigMappingLoaderTest,loadManually,199,"[""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java""]",358,,pass
+io.smallrye.config.ConfigMappingLoaderTest,discoverNested,226,"[""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java""]",232,,pass
+io.smallrye.config.ConfigMappingLoaderTest,noArgsConstructor,251,"[""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java""]",459,,pass
+io.smallrye.config.ConfigMappingLoaderTest,optionalCollectionGroup,223,"[""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java""]",400,,pass
+io.smallrye.config.ConfigMappingLoaderTest,optionalCollectionPrimitive,205,"[""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java""]",380,,pass
+io.smallrye.config.ConfigMappingLoaderTest,collectionGroup,223,"[""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java""]",400,,pass
+io.smallrye.config.ConfigMappingLoaderTest,parentNested,138,"[""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java""]",144,,pass
+io.smallrye.config.ConfigMappingNamingStrategyTest,namingStrategy,363,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1129,,pass
+io.smallrye.config.ConfigMappingNamingStrategyTest,composedNamingStrategy,439,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1264,,pass
+io.smallrye.config.ConfigMappingNamingStrategyTest,interfaceAndClass,408,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1335,,pass
+io.smallrye.config.ConfigMappingNamingStrategyTest,namingStrategyVerbatimOptionalGroup,482,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1341,,pass
+io.smallrye.config.ConfigMappingNamingStrategyTest,namingStrategyDefaults,312,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1076,,pass
+io.smallrye.config.ConfigMappingReloadableTest,reloadMapping,281,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1179,,pass
+io.smallrye.config.ConfigMappingWithConverterTest,wrongConverter,90,"[""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",168,,pass
+io.smallrye.config.ConfigMappingWithConverterTest,superConverter,275,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1015,,pass
+io.smallrye.config.ConfigMappingsTest,registerMapping,402,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1250,,pass
+io.smallrye.config.ConfigMappingsTest,registerProperties,391,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1330,,pass
+io.smallrye.config.ConfigMappingsTest,validate,425,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1431,,pass
+io.smallrye.config.ConfigMappingsTest,validateWithBuilderOrConfig,380,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1318,,pass
+io.smallrye.config.ConfigMappingsTest,validateDisableOnConfigProperties,380,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1293,,pass
+io.smallrye.config.ConfigMappingsTest,validateAnnotations,19,"[""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",459,,pass
+io.smallrye.config.ConfigMappingsTest,generateToString,412,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1255,,pass
+io.smallrye.config.ConfigMappingsTest,superToString,366,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1183,,pass
+io.smallrye.config.ConfigMappingsTest,properties,202,"[""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",217,,pass
+io.smallrye.config.ConfigMappingsTest,mappedProperties,220,"[""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",299,,pass
+io.smallrye.config.ConfigReleaseTest,releaseWithoutClassloader,0,[],869,,pass
+io.smallrye.config.ConfigReleaseTest,releaseWithClassLoader,0,[],875,,pass
+io.smallrye.config.ConfigSourceFactoryTest,mapping,314,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1274,,pass
+io.smallrye.config.ConfigSourceFactoryTest,expression,286,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1340,,pass
+io.smallrye.config.ConfigSourceInterceptorTest,interceptor,0,[],603,,pass
+io.smallrye.config.ConfigSourceInterceptorTest,priority,0,[],550,,pass
+io.smallrye.config.ConfigSourceInterceptorTest,serviceLoader,0,[],590,,pass
+io.smallrye.config.ConfigSourceInterceptorTest,serviceLoaderAndPriorities,0,[],592,,pass
+io.smallrye.config.ConfigSourceInterceptorTest,defaultInterceptors,0,[],833,,pass
+io.smallrye.config.ConfigSourceInterceptorTest,notFailExpansionInactive,0,[],833,,pass
+io.smallrye.config.ConfigSourceInterceptorTest,names,0,[],794,,pass
+io.smallrye.config.ConfigSourceInterceptorTest,replaceNames,0,[],593,,pass
+io.smallrye.config.ConfigSourceInterceptorTest,expandActiveProfile,0,[],804,,pass
+io.smallrye.config.ConfigSourceInterceptorTest,priorityInParentClass,0,[],18,,pass
+io.smallrye.config.ConfigSourceOrdinalTest,propertiesOrdinal,0,[],417,,pass
+io.smallrye.config.ConfigSourceOrdinalTest,valuesOrdinal,0,[],434,,pass
+io.smallrye.config.ConfigSourcePropertySubstitutionTest,interceptor,0,[],603,,pass
+io.smallrye.config.ConfigValueConfigSourceWrapperTest,getConfigValue,0,[],46,,pass
+io.smallrye.config.ConfigValueConfigSourceWrapperTest,getConfigValueProperties,0,[],54,,pass
+io.smallrye.config.ConfigValueConfigSourceWrapperTest,getProperties,0,[],6,,pass
+io.smallrye.config.ConfigValueConfigSourceWrapperTest,getValue,0,[],6,,pass
+io.smallrye.config.ConfigValueConfigSourceWrapperTest,getPropertyNames,0,[],6,,pass
+io.smallrye.config.ConfigValueConfigSourceWrapperTest,getName,0,[],6,,pass
+io.smallrye.config.ConfigValueConfigSourceWrapperTest,getOrdinal,0,[],6,,pass
+io.smallrye.config.ConfigValueConversionRulesExceptionsTest,missingString,0,[],401,,pass
+io.smallrye.config.ConfigValueConversionRulesExceptionsTest,missingStringArray,0,[],409,,pass
+io.smallrye.config.ConfigValueConversionRulesExceptionsTest,emptyString,0,[],447,,pass
+io.smallrye.config.ConfigValueConversionRulesExceptionsTest,emptyStringArray,0,[],455,,pass
+io.smallrye.config.ConfigValueConversionRulesExceptionsTest,commaStringArray,0,[],460,,pass
+io.smallrye.config.ConfigValueConversionRulesExceptionsTest,doubleCommaStringArray,0,[],460,,pass
+io.smallrye.config.ConfigValueConversionRulesExceptionsTest,missingStringWithBadDefault,0,[],454,,pass
+io.smallrye.config.ConfigValueConversionRulesExceptionsTest,badConversion,0,[],454,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,size,0,[],6,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,isEmpty,0,[],6,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,containsKey,0,[],6,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,containsValue,0,[],30,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,get,0,[],53,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,put,0,[],33,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,remove,0,[],52,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,putAll,0,[],33,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,clear,0,[],16,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,keySet,0,[],6,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,entrySet,0,[],62,,pass
+io.smallrye.config.ConfigValueMapStringViewTest,values,0,[],71,,pass
+io.smallrye.config.ConfigValueMapViewTest,size,0,[],26,,pass
+io.smallrye.config.ConfigValueMapViewTest,isEmpty,0,[],4,,pass
+io.smallrye.config.ConfigValueMapViewTest,containsKey,0,[],26,,pass
+io.smallrye.config.ConfigValueMapViewTest,containsValue,0,[],35,,pass
+io.smallrye.config.ConfigValueMapViewTest,get,0,[],28,,pass
+io.smallrye.config.ConfigValueMapViewTest,put,0,[],25,,pass
+io.smallrye.config.ConfigValueMapViewTest,remove,0,[],37,,pass
+io.smallrye.config.ConfigValueMapViewTest,putAll,0,[],25,,pass
+io.smallrye.config.ConfigValueMapViewTest,clear,0,[],36,,pass
+io.smallrye.config.ConfigValueMapViewTest,keySet,0,[],26,,pass
+io.smallrye.config.ConfigValueMapViewTest,entrySet,0,[],38,,pass
+io.smallrye.config.ConfigValueMapViewTest,values,0,[],35,,pass
+io.smallrye.config.ConfigValueMapViewTest,configSourceMap,0,[],164,,pass
+io.smallrye.config.ConfigValuePropertiesConfigSourceTest,interceptor,0,[],730,,pass
+io.smallrye.config.ConfigValuePropertiesConfigSourceTest,configSourceMap,0,[],164,,pass
+io.smallrye.config.ConfigValuePropertiesTest,singleLine,0,[],123,,pass
+io.smallrye.config.ConfigValuePropertiesTest,multipleLines,0,[],135,,pass
+io.smallrye.config.ConfigValuePropertiesTest,comments,0,[],141,,pass
+io.smallrye.config.ConfigValuePropertiesTest,wrapValue,0,[],157,,pass
+io.smallrye.config.ConfigValueTest,configValue,0,[],705,,pass
+io.smallrye.config.ConfigValueTest,configValueEquals,0,[],33,,pass
+io.smallrye.config.ConfigValueTest,configValueCloning,0,[],60,,pass
+io.smallrye.config.ConvertersStringCleanupTest,simple,0,[],378,,pass
+io.smallrye.config.ConvertersStringCleanupTest,trailingSpace,0,[],375,,pass
+io.smallrye.config.ConvertersStringCleanupTest,leadingSpace,0,[],375,,pass
+io.smallrye.config.ConvertersStringCleanupTest,leadingAndTrailingWhitespaces,0,[],375,,pass
+io.smallrye.config.ConvertersTest,collectionConverters,0,[],644,,pass
+io.smallrye.config.ConvertersTest,arrayConverters,0,[],646,,pass
+io.smallrye.config.ConvertersTest,minimumValue,0,[],662,,pass
+io.smallrye.config.ConvertersTest,maximumValue,0,[],662,,pass
+io.smallrye.config.ConvertersTest,empty,0,[],634,,pass
+io.smallrye.config.ConvertersTest,shortValue,0,[],576,,pass
+io.smallrye.config.ConvertersTest,byteValue,0,[],576,,pass
+io.smallrye.config.ConvertersTest,byteArray,0,[],446,,pass
+io.smallrye.config.ConvertersTest,currency,0,[],572,,pass
+io.smallrye.config.ConvertersTest,bitSet,0,[],574,,pass
+io.smallrye.config.ConvertersTest,pattern,0,[],572,,pass
+io.smallrye.config.ConvertersTest,path,0,[],570,,pass
+io.smallrye.config.ConvertersTest,nulls,0,[],794,,pass
+io.smallrye.config.CustomConverterTest,customInetAddressConverter,0,[],573,,pass
+io.smallrye.config.CustomConverterTest,characterConverter,0,[],572,,pass
+io.smallrye.config.CustomConverterTest,explicitConverter,0,[],660,,pass
+io.smallrye.config.CustomConverterTest,UUID,0,[],614,,pass
+io.smallrye.config.CustomConverterTest,malformedUUID,0,[],581,,pass
+io.smallrye.config.DefaultValuesTest,defaultValue,0,[],427,,pass
+io.smallrye.config.DefaultValuesTest,defaultValuesMap,475,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1436,,pass
+io.smallrye.config.DotEnvConfigSourceProviderTest,dotEnvSource,0,[],713,,pass
+io.smallrye.config.DotEnvConfigSourceProviderTest,dotEnvSourceProfiles,0,[],762,,pass
+io.smallrye.config.DotEnvConfigSourceProviderTest,dotEnvSourceConvertNames,0,[],713,,pass
+io.smallrye.config.DotEnvConfigSourceProviderTest,missing,0,[],381,,pass
+io.smallrye.config.EmptyValuesTest,missingForArray,0,[],549,,pass
+io.smallrye.config.EmptyValuesTest,emptyForArray,0,[],608,,pass
+io.smallrye.config.EmptyValuesTest,commaForArray,0,[],625,,pass
+io.smallrye.config.EmptyValuesTest,multipleCommasForArray,0,[],613,,pass
+io.smallrye.config.EmptyValuesTest,valuesForArray,0,[],608,,pass
+io.smallrye.config.EmptyValuesTest,valuesCommaEndForArray,0,[],608,,pass
+io.smallrye.config.EmptyValuesTest,valuesCommaStartForArray,0,[],608,,pass
+io.smallrye.config.EmptyValuesTest,whitespaceForArray,0,[],608,,pass
+io.smallrye.config.EmptyValuesTest,value,0,[],589,,pass
+io.smallrye.config.EmptyValuesTest,empty,0,[],600,,pass
+io.smallrye.config.EmptyValuesTest,comma,0,[],589,,pass
+io.smallrye.config.EmptyValuesTest,missing,0,[],541,,pass
+io.smallrye.config.EmptyValuesTest,valueForOptional,0,[],603,,pass
+io.smallrye.config.EmptyValuesTest,emptyForOptional,0,[],601,,pass
+io.smallrye.config.EmptyValuesTest,missingForOptional,0,[],548,,pass
+io.smallrye.config.EmptyValuesTest,emptyForOptionalArray,0,[],609,,pass
+io.smallrye.config.EmptyValuesTest,commaForOptionalArray,0,[],622,,pass
+io.smallrye.config.EmptyValuesTest,mutipleCommasForOptionalArray,0,[],613,,pass
+io.smallrye.config.EmptyValuesTest,missingForOptionalArray,0,[],556,,pass
+io.smallrye.config.EmptyValuesTest,commaForOptionalList,0,[],613,,pass
+io.smallrye.config.EnvConfigSourceTest,conversionOfEnvVariableNames,0,[],0,,fail
+io.smallrye.config.EnvConfigSourceTest,profileEnvVariables,0,[],0,,fail
+io.smallrye.config.EnvConfigSourceTest,empty,0,[],558,,fail
+io.smallrye.config.EnvConfigSourceTest,ordinal,0,[],392,,fail
+io.smallrye.config.EnvConfigSourceTest,indexed,0,[],735,,pass
+io.smallrye.config.EnvConfigSourceTest,numbers,0,[],716,,pass
+io.smallrye.config.EnvConfigSourceTest,map,0,[],747,,pass
+io.smallrye.config.EnvConfigSourceTest,envEquals,0,[],199,,pass
+io.smallrye.config.EnvConfigSourceTest,sameSemanticMeaning,0,[],768,,pass
+io.smallrye.config.EnvConfigSourceTest,sameNames,0,[],190,,pass
+io.smallrye.config.EnvConfigSourceTest,dashedEnvNames,399,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1456,,pass
+io.smallrye.config.EnvConfigSourceTest,dottedDashedEnvNames,391,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1372,,pass
+io.smallrye.config.EnvConfigSourceTest,ignoreUnmappedWithMappingIgnore,364,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1416,,pass
+io.smallrye.config.EnvConfigSourceTest,unmappedProfile,342,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1528,,pass
+io.smallrye.config.EnvConfigSourceTest,ignoreUnmappedWithMap,396,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1401,,pass
+io.smallrye.config.EnvConfigSourceTest,mappingFactory,342,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1449,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,simpleExpression,0,[],605,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,multipleExpressions,0,[],604,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,composedExpressions,0,[],604,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,defaultExpression,0,[],604,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,defaultExpressionEmpty,0,[],604,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,defaultExpressionComposed,0,[],607,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,defaultExpressionComposedEmpty,0,[],604,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,noExpression,0,[],623,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,noExpressionComposed,0,[],623,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,multipleExpansions,0,[],584,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,infiniteExpansion,0,[],576,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,withoutExpansion,0,[],613,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,escape,0,[],582,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,expressionMissing,0,[],623,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,expressionMissingOptional,0,[],656,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,arrayEscapes,0,[],618,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,escapeDollar,0,[],581,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,escapeBraces,0,[],583,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,windowPath,0,[],568,,pass
+io.smallrye.config.ExpressionConfigSourceInterceptorTest,nullValue,0,[],539,,pass
+io.smallrye.config.ImplicitConverterTest,implicitURLConverter,0,[],463,,pass
+io.smallrye.config.ImplicitConverterTest,implicitLocalDateConverter,0,[],464,,pass
+io.smallrye.config.ImplicitConverterTest,serializationOfConstructorConverter,0,[],36,,pass
+io.smallrye.config.ImplicitConverterTest,convertMyEnum,0,[],13,,pass
+io.smallrye.config.ImplicitConverterTest,convertMyOtherEnum,0,[],13,,pass
+io.smallrye.config.ImplicitConverterTest,illegalEnumConfigUtilConversion,0,[],25,,pass
+io.smallrye.config.ImplicitConverterTest,convertKeyEncryptionAlgorithm,0,[],13,,pass
+io.smallrye.config.ImplicitConverterTest,convertHttpConduit,0,[],13,,pass
+io.smallrye.config.InterceptorChainTest,chain,0,[],849,,pass
+io.smallrye.config.KeyMapBackedConfigSourceTest,getProperties,0,[],96,,pass
+io.smallrye.config.KeyMapBackedConfigSourceTest,getValue,0,[],116,,pass
+io.smallrye.config.KeyMapTest,find,0,[],105,,pass
+io.smallrye.config.KeyMapTest,findOrAddPath,0,[],112,,pass
+io.smallrye.config.KeyMapTest,findOrAddVarArgs,0,[],86,,pass
+io.smallrye.config.KeyMapTest,findOrAddIterator,0,[],88,,pass
+io.smallrye.config.KeyMapTest,merge,0,[],112,,pass
+io.smallrye.config.KeyMapTest,string,0,[],113,,pass
+io.smallrye.config.KeyMapTest,indexed,0,[],137,,pass
+io.smallrye.config.KeyMapTest,indexedRoot,0,[],114,,pass
+io.smallrye.config.KeyMapTest,putAll,0,[],120,,pass
+io.smallrye.config.KeyMapTest,putAllAny,0,[],144,,pass
+io.smallrye.config.KeyMapTest,map,0,[],139,,pass
+io.smallrye.config.KeyMapTest,findOrAdd,0,[],116,,pass
+io.smallrye.config.KeyMapTest,findOrAddDotted,0,[],130,,pass
+io.smallrye.config.KeyMapTest,star,0,[],129,,pass
+io.smallrye.config.KeyMapTest,keySet,0,[],155,,pass
+io.smallrye.config.KeyMapTest,emptySegment,0,[],112,,pass
+io.smallrye.config.LoggingConfigSourceInterceptorTest,disabled,0,[],705,,pass
+io.smallrye.config.LoggingConfigSourceInterceptorTest,interceptor,0,[],917,,pass
+io.smallrye.config.LoggingConfigSourceInterceptorTest,expansion,0,[],610,,pass
+io.smallrye.config.LoggingConfigSourceInterceptorTest,profiles,0,[],678,,pass
+io.smallrye.config.MultiValueTest,getValuesAsList,0,[],622,,pass
+io.smallrye.config.MultiValueTest,getValuesAsSet,0,[],622,,pass
+io.smallrye.config.MultiValueTest,getValuesAsSortedSet,0,[],622,,pass
+io.smallrye.config.NameIteratorTest,getNextSegment,0,[],40,,pass
+io.smallrye.config.NameIteratorTest,next,0,[],47,,pass
+io.smallrye.config.NameIteratorTest,getPreviousSegment,0,[],59,,pass
+io.smallrye.config.NameIteratorTest,previous,0,[],65,,pass
+io.smallrye.config.NameIteratorTest,quotes,0,[],53,,pass
+io.smallrye.config.ObjectCreatorTest,objectCreator,495,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1331,,pass
+io.smallrye.config.ObjectCreatorTest,optionalGroup,294,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",963,,pass
+io.smallrye.config.ObjectCreatorTest,unnamedKeys,412,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1258,,pass
+io.smallrye.config.ObjectCreatorTest,mapDefaults,481,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1423,,pass
+io.smallrye.config.ObjectCreatorTest,namingStrategy,262,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",893,,pass
+io.smallrye.config.ObjectCreatorTest,splitRootsRequiredGroup,299,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1071,,pass
+io.smallrye.config.ObjectCreatorTest,hierarchy,347,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1121,,pass
+io.smallrye.config.OptionalNumericalTypesTest,optionalIntWithExistingProperty,0,[],627,,pass
+io.smallrye.config.OptionalNumericalTypesTest,optionalIntWithAbsentProperty,0,[],590,,pass
+io.smallrye.config.OptionalNumericalTypesTest,optionalLongWithExistingProperty,0,[],627,,pass
+io.smallrye.config.OptionalNumericalTypesTest,optionalLongWithAbsentProperty,0,[],590,,pass
+io.smallrye.config.OptionalNumericalTypesTest,optionalDoubleWithExistingProperty,0,[],627,,pass
+io.smallrye.config.OptionalNumericalTypesTest,optionalDoubleWithAbsentProperty,0,[],590,,pass
+io.smallrye.config.OptionalNumericalTypesTest,emptyPropertyIsConsideredOptionalEmpty,0,[],623,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,profile,0,[],673,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,profileOnly,0,[],666,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,fallback,0,[],608,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,expressions,0,[],671,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,profileExpressions,0,[],688,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,cannotExpand,0,[],721,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,customConfigProfile,0,[],671,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,noConfigProfile,0,[],660,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,priorityProfile,0,[],669,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,priorityOverrideProfile,0,[],660,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,priorityProfileOverOriginal,0,[],673,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,propertyNames,0,[],681,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,excludePropertiesFromInactiveProfiles,0,[],589,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,profileName,0,[],655,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,multipleProfiles,0,[],664,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,multipleProfilesDocs,0,[],672,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,multipleProfilesSamePriority,0,[],650,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,multipleProfilesDifferentPriorities,0,[],664,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,multipleProfilesDifferentPrioritiesMain,0,[],666,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,builderProfiles,0,[],650,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,mpProfileRelocate,0,[],714,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,parentProfile,0,[],664,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,parentProfileInActiveProfile,0,[],671,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,multipleProfilesSingleParent,0,[],671,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,parentProfileInActiveProfileWithRelocate,0,[],680,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,whitespaceProfiles,0,[],569,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,profileInConfigValue,0,[],646,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,hierarchicalParentProfile,0,[],660,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,hierarchicalParentProfileMultiple,0,[],633,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,multipleProfileProperty,0,[],722,,pass
+io.smallrye.config.ProfileConfigSourceInterceptorTest,duplicatedProfilesActive,0,[],633,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,systemFile,0,[],732,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,systemFolder,0,[],686,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,http,0,[],680,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,classpath,0,[],693,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,all,0,[],703,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,notFound,0,[],699,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,noPropertiesFile,0,[],671,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,invalidHttp,0,[],674,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,profiles,0,[],846,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,onlyProfileFile,0,[],581,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,profilesHttp,0,[],844,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,ordinal,0,[],686,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,warningConfigLocationsNotFound,0,[],506,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,warningConfigLocationsNotFoundFromExisting,0,[],671,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,profileSourcesInContext,0,[],838,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,missingFile,0,[],564,,pass
+io.smallrye.config.PropertiesLocationConfigSourceFactoryTest,multipleProfilesAndFiles,0,[],707,,pass
+io.smallrye.config.PropertyNameTest,mappingNameEquals,0,[],60,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,relocateAndFallback,0,[],628,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,relocate,0,[],627,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,fallback,0,[],622,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,fallbackEmpty,0,[],605,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,relocateWithProfile,0,[],713,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,relocateWithProfileWithMappingProperties,0,[],675,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,relocateWithProfileAndExpression,0,[],728,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,relocateWithProfileExpressionAndFallback,0,[],714,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,relocateIsSecret,0,[],678,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,relocatePropertyNames,0,[],633,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,fallbackPropertyNames,0,[],631,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,relocatePropertyNameToProfile,0,[],673,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,fallbackPropertyNameToProfile,0,[],679,,pass
+io.smallrye.config.RelocateConfigSourceInterceptorTest,fallbackMaps,438,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1394,,pass
+io.smallrye.config.SecretKeysHandlerTest,notFound,0,[],612,,pass
+io.smallrye.config.SecretKeysHandlerTest,handler,0,[],606,,pass
+io.smallrye.config.SecretKeysHandlerTest,handlerFactory,0,[],605,,pass
+io.smallrye.config.SecretKeysTest,lock,0,[],634,,pass
+io.smallrye.config.SecretKeysTest,unlock,0,[],643,,pass
+io.smallrye.config.SecretKeysTest,unlockAndLock,0,[],624,,pass
+io.smallrye.config.SecretKeysTest,lockAndUnlock,0,[],622,,pass
+io.smallrye.config.SecretKeysTest,mapping,269,"[""src/main/java/io/smallrye/config/ConfigMappingContext.java"", ""src/main/java/io/smallrye/config/ConfigMappingInterface.java"", ""src/main/java/io/smallrye/config/ConfigMappingLoader.java"", ""src/main/java/io/smallrye/config/ConfigMappings.java""]",1168,,pass
+io.smallrye.config.SmallRyeConfigTest,getValues,0,[],457,,pass
+io.smallrye.config.SmallRyeConfigTest,getValuesConverter,0,[],454,,pass
+io.smallrye.config.SmallRyeConfigTest,getOptionalValues,0,[],467,,pass
+io.smallrye.config.SmallRyeConfigTest,getOptionalValuesConverter,0,[],464,,pass
+io.smallrye.config.SmallRyeConfigTest,convert,0,[],355,,pass
+io.smallrye.config.SmallRyeConfigTest,configValue,0,[],445,,pass
+io.smallrye.config.SmallRyeConfigTest,profiles,0,[],499,,pass
+io.smallrye.config.SmallRyeConfigTest,unwrap,0,[],355,,pass
+io.smallrye.config.SmallRyeConfigTest,getIndexedValues,0,[],506,,pass
+io.smallrye.config.SmallRyeConfigTest,getValuesNotIndexed,0,[],455,,pass
+io.smallrye.config.SmallRyeConfigTest,getValuesNotFound,0,[],505,,pass
+io.smallrye.config.SmallRyeConfigTest,getOptionalValuesIndexed,0,[],507,,pass
+io.smallrye.config.SmallRyeConfigTest,getOptionalValuesNotIndexed,0,[],465,,pass
+io.smallrye.config.SmallRyeConfigTest,getOptionalValuesEmpty,0,[],505,,pass
+io.smallrye.config.SmallRyeConfigTest,invalidIndexes,0,[],379,,pass
+io.smallrye.config.SmallRyeConfigTest,nestedIndexes,0,[],379,,pass
+io.smallrye.config.SmallRyeConfigTest,quotedIndexes,0,[],379,,pass
+io.smallrye.config.SmallRyeConfigTest,overrideIndexedValues,0,[],501,,pass
+io.smallrye.config.SmallRyeConfigTest,isPropertyPresent,0,[],446,,pass
+io.smallrye.config.SmallRyeConfigTest,getPropertyNames,0,[],656,,fail
+io.smallrye.config.SmallRyeConfigTest,getConfigSource,0,[],346,,pass
+io.smallrye.config.SmallRyeConfigTest,builderSourcesProvider,0,[],420,,pass
+io.smallrye.config.SmallRyeConfigTest,builderWithFlagSetters,0,[],803,,pass
+io.smallrye.config.SmallRyeConfigTest,getValuesMap,0,[],523,,pass
+io.smallrye.config.SmallRyeConfigTest,getValuesMapInline,0,[],477,,pass
+io.smallrye.config.SmallRyeConfigTest,getValuesMapList,0,[],552,,pass
+io.smallrye.config.SmallRyeConfigTest,getValuesMapListInline,0,[],490,,pass
+io.smallrye.config.SmallRyeConfigTest,getValuesMapIntegers,0,[],505,,pass
+io.smallrye.config.SmallRyeConfigTest,getValuesMapEmpty,0,[],450,,pass
+io.smallrye.config.SmallRyeConfigTest,quotedKeysInEnv,0,[],661,,pass
+io.smallrye.config.SmallRyeConfigTest,emptyPropertyNames,0,[],627,,pass
+io.smallrye.config.SysPropConfigSourceTest,ordinal,0,[],348,,pass

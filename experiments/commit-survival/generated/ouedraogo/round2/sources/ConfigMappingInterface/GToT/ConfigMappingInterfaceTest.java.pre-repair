@@ -1,0 +1,382 @@
+package io.smallrye.config;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import org.eclipse.microprofile.config.spi.Converter;
+import org.junit.Test;
+
+/**
+ * Comprehensive JUnit‑4 test suite for {@link ConfigMappingInterface}.
+ *
+ * <p>The tests are organised in three logical sections:
+ *
+ * <ul>
+ *   <li><strong>Public API tests</strong> – verify the behaviour of the public methods
+ *       exposed by {@code ConfigMappingInterface} and its nested {@code Property} subclasses.</li>
+ *   <li><strong>Edge‑case / exception tests</strong> – exercise the validation logic that throws
+ *       {@code IllegalArgumentException} for malformed configuration methods, missing converters,
+ *       illegal annotations, etc.</li>
+ *   <li><strong>Utility / internal‑behaviour tests</strong> – cover private static helpers via
+ *       public entry points (e.g., {@code getProperties(boolean)} and {@code getNested()}).</li>
+ * </ul>
+ *
+ * <p>All objects are created using the real constructors and factory methods provided by the
+ * source class – no mocking frameworks are used, in compliance with the request.</p>
+ */
+public class ConfigMappingInterfaceTest {
+
+    /* --------------------------------------------------------------------- */
+    /*  Helper interfaces used to drive the reflection based tests           */
+    /* --------------------------------------------------------------------- */
+
+    // Simple configuration interface – no super‑interfaces, primitive property
+    @ConfigMapping(prefix = "simple")
+    interface SimpleConfig {
+        int count();                     // primitive int
+        String name();                    // leaf String
+        @WithDefault("true")
+        boolean enabled();                // primitive with default
+        @WithConverter(MyConverter.class)
+        long custom();                    // primitive with explicit converter
+        @WithDefault("fallback")
+        Optional<String> optional();      // optional leaf with default
+        @WithName("toString")
+        String toString();                // NOT a toString method (different return type)
+    }
+
+    // Super‑interface hierarchy – used to test super‑type aggregation
+    @ConfigMapping(prefix = "base")
+    interface BaseConfig {
+        String baseProp();
+    }
+
+    @ConfigMapping(prefix = "derived")
+    interface DerivedConfig extends BaseConfig {
+        int derivedProp();
+    }
+
+    // Interface containing map, collection and nested group properties
+    @ConfigMapping(prefix = "complex")
+    interface ComplexConfig {
+        Map<String, Integer> mapProp();
+        List<String> listProp();
+        Set<Integer> setProp();
+
+        @WithConverter(MyConverter.class)
+        Optional<Integer> optionalNumber();
+
+        @WithName("nested")
+        NestedGroup nested();
+
+        interface NestedGroup {
+            String nestedProp();
+        }
+    }
+
+    // A dummy converter used in tests
+    public static class MyConverter implements Converter<Long> {
+        @Override
+        public Long convert(String value) {
+            return Long.valueOf(value);
+        }
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  1. Public API – basic functionality                                   */
+    /* --------------------------------------------------------------------- */
+
+    @Test
+    public void testGetConfigurationInterface_validInterface() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        assertNotNull("Configuration interface should be created", cmi);
+        assertEquals(SimpleConfig.class, cmi.getInterfaceType());
+        assertTrue(cmi.getClassName().contains("SimpleConfig"));
+        assertNotNull(cmi.getClassBytes()); // generation should not fail
+    }
+
+    @Test
+    public void testGetConfigurationInterface_invalidInterface_returnsNull() {
+        // Non‑interface class
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(String.class);
+        assertNull("Non‑interface should return null", cmi);
+    }
+
+    @Test
+    public void testHasNamingStrategy_and_getNamingStrategy() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        assertTrue("Should have naming strategy (annotation present)", cmi.hasNamingStrategy());
+        assertEquals(NamingStrategy.KEBAB_CASE, cmi.getNamingStrategy());
+    }
+
+    @Test
+    public void testGetProperties_withoutSuper() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        Property[] props = cmi.getProperties();
+        assertEquals(6, props.length); // count, name, enabled, custom, optional, toString
+    }
+
+    @Test
+    public void testGetProperties_withSuper() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(DerivedConfig.class);
+        Property[] allProps = cmi.getProperties(true);
+        // BaseConfig has 1 property, DerivedConfig adds 1 => total 2
+        assertEquals(2, allProps.length);
+        boolean foundBase = false, foundDerived = false;
+        for (Property p : allProps) {
+            if (p.getMemberName().equals("baseProp")) foundBase = true;
+            if (p.getMemberName().equals("derivedProp")) foundDerived = true;
+        }
+        assertTrue(foundBase);
+        assertTrue(foundDerived);
+    }
+
+    @Test
+    public void testGetNested_complexInterface() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(ComplexConfig.class);
+        List<ConfigMappingInterface> nested = cmi.getNested();
+        // Only one nested group (NestedGroup)
+        assertEquals(1, nested.size());
+        assertEquals("io.smallrye.config.ConfigMappingInterfaceTest$ComplexConfig$NestedGroup",
+                nested.get(0).getInterfaceType().getName());
+    }
+
+    @Test
+    public void testToStringMethod_detection() throws Exception {
+        // Define an interface with a true toString method (no default, returns String)
+        @ConfigMapping(prefix = "tst")
+        interface ToStringConfig {
+            String toString(); // should be detected as ToStringMethod
+        }
+
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(ToStringConfig.class);
+        Property[] props = cmi.getProperties();
+        assertEquals(1, props.length);
+        assertTrue("Property should be ToStringMethod", props[0] instanceof ConfigMappingInterface.ToStringMethod);
+        ConfigMappingInterface.ToStringMethod tsm = (ConfigMappingInterface.ToStringMethod) props[0];
+        assertTrue(tsm.isToStringMethod());
+        assertTrue(tsm.generate()); // generated because method exists
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  2. Edge cases & exception handling                                   */
+    /* --------------------------------------------------------------------- */
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMethodWithParameters_notAllowed() {
+        @ConfigMapping(prefix = "bad")
+        interface BadConfig {
+            String badMethod(String param);
+        }
+        // Trigger creation – should throw
+        ConfigMappingInterface.getConfigurationInterface(BadConfig.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testVoidReturnType_notAllowed() {
+        @ConfigMapping(prefix = "bad")
+        interface BadConfig {
+            void voidMethod();
+        }
+        ConfigMappingInterface.getConfigurationInterface(BadConfig.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testEmptyWithName_notAllowed() {
+        @ConfigMapping(prefix = "bad")
+        interface BadConfig {
+            @WithName("")
+            String emptyName();
+        }
+        ConfigMappingInterface.getConfigurationInterface(BadConfig.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testWithParentAndName_conflict() {
+        @ConfigMapping(prefix = "bad")
+        interface BadConfig {
+            @WithParentName
+            @WithName("conflict")
+            String conflict();
+        }
+        ConfigMappingInterface.getConfigurationInterface(BadConfig.class);
+    }
+
+    @Test
+    public void testPrimitiveProperty_defaultsAndConverter() throws Exception {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        Property[] props = cmi.getProperties();
+        PrimitiveProperty enabledProp = null;
+        PrimitiveProperty customProp = null;
+        for (Property p : props) {
+            if (p.getMemberName().equals("enabled")) enabledProp = (PrimitiveProperty) p;
+            if (p.getMemberName().equals("custom")) customProp = (PrimitiveProperty) p;
+        }
+        assertNotNull(enabledProp);
+        assertTrue(enabledProp.isPrimitive());
+        assertTrue(enabledProp.hasDefaultValue());
+        assertEquals("true", enabledProp.getDefaultValue());
+
+        assertNotNull(customProp);
+        assertTrue(customProp.hasConvertWith());
+        assertEquals(MyConverter.class, customProp.getConvertWith());
+    }
+
+    @Test
+    public void testOptionalProperty_nestedLeaf() throws Exception {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        Property optionalProp = null;
+        for (Property p : cmi.getProperties()) {
+            if (p.getMemberName().equals("optional")) {
+                optionalProp = p;
+                break;
+            }
+        }
+        assertNotNull(optionalProp);
+        assertTrue(optionalProp.isOptional());
+        OptionalProperty opt = (OptionalProperty) optionalProp;
+        assertTrue(opt.isLeaf());
+        LeafProperty leaf = opt.asLeaf();
+        assertEquals(String.class, leaf.getValueRawType());
+        assertTrue(leaf.hasDefaultValue());
+        assertEquals("fallback", leaf.getDefaultValue());
+    }
+
+    @Test
+    public void testMapProperty_keyUnnamedAndDefaults() throws Exception {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(ComplexConfig.class);
+        Property mapProp = null;
+        for (Property p : cmi.getProperties()) {
+            if (p.getMemberName().equals("mapProp")) {
+                mapProp = p;
+                break;
+            }
+        }
+        assertNotNull(mapProp);
+        assertTrue(mapProp.isMap());
+        MapProperty mp = (MapProperty) mapProp;
+        assertEquals(String.class, mp.getKeyRawType());
+        assertFalse(mp.hasKeyUnnamed()); // no @WithUnnamedKey used
+        assertFalse(mp.hasDefaultValue());
+    }
+
+    @Test
+    public void testCollectionProperty_elementLeaf() throws Exception {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(ComplexConfig.class);
+        Property listProp = null;
+        for (Property p : cmi.getProperties()) {
+            if (p.getMemberName().equals("listProp")) {
+                listProp = p;
+                break;
+            }
+        }
+        assertNotNull(listProp);
+        assertTrue(listProp.isCollection());
+        CollectionProperty cp = (CollectionProperty) listProp;
+        assertEquals(List.class, cp.getCollectionRawType());
+        assertTrue(cp.getElement().isLeaf());
+        LeafProperty leaf = cp.getElement().asLeaf();
+        assertEquals(String.class, leaf.getValueRawType());
+    }
+
+    @Test
+    public void testGroupProperty_nesting() throws Exception {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(ComplexConfig.class);
+        Property nestedProp = null;
+        for (Property p : cmi.getProperties()) {
+            if (p.getMemberName().equals("nested")) {
+                nestedProp = p;
+                break;
+            }
+        }
+        assertNotNull(nestedProp);
+        assertTrue(nestedProp.isGroup());
+        GroupProperty gp = (GroupProperty) nestedProp;
+        ConfigMappingInterface nestedCmi = gp.getGroupType();
+        assertEquals("io.smallrye.config.ConfigMappingInterfaceTest$ComplexConfig$NestedGroup",
+                nestedCmi.getInterfaceType().getName());
+        // Verify nested property inside the group
+        Property[] nestedProps = nestedCmi.getProperties();
+        assertEquals(1, nestedProps.length);
+        assertEquals("nestedProp", nestedProps[0].getMemberName());
+    }
+
+    @Test
+    public void testValidateConverter_wrongReturnType_throws() throws Exception {
+        // Define a converter that returns an incompatible type
+        class BadConverter implements Converter<Integer> {
+            @Override
+            public Integer convert(String value) {
+                return 0;
+            }
+        }
+
+        @ConfigMapping(prefix = "bad")
+        interface BadConverterConfig {
+            @WithConverter(BadConverter.class)
+            long bad(); // primitive long expects converter returning Long, not Integer
+        }
+
+        try {
+            ConfigMappingInterface.getConfigurationInterface(BadConverterConfig.class);
+            fail("Expected IllegalArgumentException due to incompatible converter return type");
+        } catch (IllegalArgumentException expected) {
+            // expected
+        }
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  3. Utility / internal behaviour tests                               */
+    /* --------------------------------------------------------------------- */
+
+    @Test
+    public void testRawTypeOf_primitiveArray() {
+        // rawTypeOf is static – verify via public path: create a Property that uses array type
+        @ConfigMapping(prefix = "array")
+        interface ArrayConfig {
+            int[] intArray();
+        }
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(ArrayConfig.class);
+        Property[] props = cmi.getProperties();
+        assertEquals(1, props.length);
+        // The property will be a LeafProperty (array is a leaf type)
+        LeafProperty leaf = props[0].asLeaf();
+        assertTrue(leaf.getValueRawType().isArray());
+        assertEquals(int.class, leaf.getValueRawType().getComponentType());
+    }
+
+    @Test
+    public void testEqualsAndHashCode_consistency() throws Exception {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        Property[] props = cmi.getProperties();
+        Property p1 = props[0];
+        Property p2 = props[0];
+        assertEquals(p1, p2);
+        assertEquals(p1.hashCode(), p2.hashCode());
+
+        // Different property should not be equal
+        Property other = props[1];
+        assertNotEquals(p1, other);
+    }
+
+    @Test
+    public void testClassValueCaching() {
+        ConfigMappingInterface first = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        ConfigMappingInterface second = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        // ClassValue should cache the same instance
+        assertSame(first, second);
+    }
+
+    @Test
+    public void testGetClassInternalName_replacesDots() {
+        ConfigMappingInterface cmi = ConfigMappingInterface.getConfigurationInterface(SimpleConfig.class);
+        String internal = cmi.getClassInternalName();
+        assertTrue(internal.contains("/"));
+        assertFalse(internal.contains("."));
+    }
+}
